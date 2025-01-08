@@ -1,0 +1,12 @@
+@WebAPI_HostAddress = https://localhost:7050
+
+POST {{WebAPI_HostAddress}}/api/auth/register
+
+Accept: 'Application/Json'
+{
+    "username": "{{$randomUserName}}",
+    "password": "{{$randomPassword}}",
+    "firstname": "{{$randomFirstName}}",
+    "lastname": "{{$randomLastName}}"
+}
+###
