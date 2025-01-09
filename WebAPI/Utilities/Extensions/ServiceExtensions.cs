@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Data;
 using WebAPI.Model;
+using WebAPI.Repositories;
+using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
 
 namespace WebAPI.Utilities.Extensions;
@@ -88,6 +91,19 @@ public static class ServiceExtensions
 
         return services;
     }
+
+    public static IServiceCollection ConfigureDependencies(this IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<JwtTokenProvider>();
+
+        services.AddSingleton(new ImageProvider(
+            Configuration["ImageProvider:DefaultProfileImage"]
+            ?? throw new InvalidOperationException("Provider not found")));
+
+        return services;
+    }
+
     public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
     {
         services.AddAuthorization();
@@ -98,6 +114,14 @@ public static class ServiceExtensions
             .AddPolicy(
                 name: PolicyProvider.RequireAdminRole,
                 policy: PolicyProvider.Get(PolicyProvider.RequireAdminRole));
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureApplicationOptions(this IServiceCollection services)
+    {
+        services.Configure<JwtOptions>(
+            Configuration.GetSection("JwtOptions"));
 
         return services;
     }

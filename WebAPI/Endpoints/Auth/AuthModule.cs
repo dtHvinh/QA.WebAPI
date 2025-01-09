@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
 using WebAPI.Utilities.Contract;
 using E = WebAPI.Utilities.Constants.Endpoints;
@@ -23,11 +26,23 @@ public class AuthModule : IModule
 
     private static void MapRegister(RouteGroupBuilder group)
     {
-        group.MapPost(E.Register, ([FromBody] RegisterDto dto, [FromServices] ILogger logger) =>
+        group.MapPost(E.Register,
+                      async Task<Results<Ok<AuthResponseDto>, BadRequest<string>>> (
+                                        [FromBody] RegisterDto dto,
+                                        [FromServices] IMediator mediator,
+                                        CancellationToken cancellationToken) =>
         {
-            logger.LogInformation("Hihi");
-            return Results.Ok(dto);
-        }).AllowAnonymous();
+            var command = new CreateUserCommand(dto);
+
+            var result = await mediator.Send(command, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return TypedResults.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        });
     }
 
     private static void MapLogin(RouteGroupBuilder group)
