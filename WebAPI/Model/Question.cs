@@ -16,7 +16,9 @@ public class Question : IEntity<Guid>, ISoftDeleteEntity
     public Guid AuthorId { get; set; }
     public AppUser Author { get; set; } = default!;
 
+    [Column(TypeName = "nvarchar(150)")]
     public required string Title { get; set; }
+    [Column(TypeName = "nvarchar(250)")]
     public required string Slug { get; set; }
     public required string Content { get; set; }
     public int Upvote { get; set; }

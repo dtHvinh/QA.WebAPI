@@ -10,8 +10,6 @@ public static class MapExtensions
         return new AppUser
         {
             UserName = dto.Email,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
             Email = dto.Email
         };
     }

@@ -20,7 +20,7 @@ public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
 
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
-    public async Task<string> CreateTokenAsync(AppUser user, IEnumerable<Claim>? claims = null)
+    public async Task<string> CreateTokenAsync(AppUser user, IEnumerable<Claim>? externalClaims = null)
     {
         ArgumentNullException.ThrowIfNull(_options.SecretKey);
 
@@ -29,9 +29,10 @@ public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
         JwtHeader header = new(signingCredentials);
 
         List<Claim> userClaims = [.. await _userManager.GetClaimsAsync(user)];
-        if (claims != null)
+
+        if (externalClaims != null)
         {
-            userClaims.AddRange(claims);
+            userClaims.AddRange(externalClaims);
         }
 
         JwtPayload payload = new(

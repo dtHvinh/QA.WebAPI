@@ -1,10 +1,10 @@
 ﻿using CQRS;
 using WebAPI.Dto;
-using WebAPI.Utilities;
+using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public class CreateUserCommand(RegisterDto dto) : ICommand<HandlerResult<AuthResponseDto>>
+public class CreateUserCommand(RegisterDto dto) : ICommand<ResultBase<AuthResponseDto>>
 {
     public RegisterDto User { get; } = dto;
 }

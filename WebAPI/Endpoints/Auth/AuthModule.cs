@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
+using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
 using E = WebAPI.Utilities.Constants.Endpoints;
 using EG = WebAPI.Utilities.Constants.EndpointGroup;
@@ -42,7 +43,8 @@ public class AuthModule : IModule
             }
 
             return TypedResults.Ok(result.Value);
-        });
+        })
+            .AddEndpointFilter<FluentValidationFilter<RegisterDto>>();
     }
 
     private static void MapLogin(RouteGroupBuilder group)

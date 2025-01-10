@@ -1,4 +1,5 @@
-﻿using WebAPI.Utilities.Contract;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
@@ -8,7 +9,9 @@ public class Tag : IEntity<Guid>
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    [Column(TypeName = "nvarchar(50)")]
     public required string Name { get; set; }
+    public int QuestionsCount { get; set; }
 
     public ICollection<QuestionTag> QuestionTags { get; set; } = default!;
 }

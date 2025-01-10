@@ -12,6 +12,8 @@ public class AnswerReport : IEntity<Guid>
     public DateTime UpdatedAt { get; set; }
 
     public AnswerReportKind Kind { get; set; }
+
+    [Column(TypeName = "nvarchar(250)")]
     public required string Description { get; set; }
 
     [ForeignKey(nameof(Reporter))]

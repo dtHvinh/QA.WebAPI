@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,8 +8,10 @@ using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories;
 using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
+using WebAPI.Utilities.Services;
 
 namespace WebAPI.Utilities.Extensions;
 
@@ -39,6 +42,12 @@ public static class ServiceExtensions
             options.Password.RequiredLength = 8;
         })
         .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = Configuration.GetConnectionString("Redis");
+            options.InstanceName = "QA_";
+        });
 
         return services;
     }
@@ -96,10 +105,13 @@ public static class ServiceExtensions
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<JwtTokenProvider>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         services.AddSingleton(new ImageProvider(
             Configuration["ImageProvider:DefaultProfileImage"]
             ?? throw new InvalidOperationException("Provider not found")));
+
+        services.AddValidatorsFromAssembly(typeof(ServiceExtensions).Assembly);
 
         return services;
     }

@@ -10,6 +10,7 @@ public class QuestionReport : IEntity<Guid>
     public DateTime UpdatedAt { get; set; }
 
     public QuestionReportKind Kind { get; set; }
+    [Column(TypeName = "nvarchar(150)")]
     public required string Description { get; set; }
 
     [ForeignKey(nameof(Reporter))]

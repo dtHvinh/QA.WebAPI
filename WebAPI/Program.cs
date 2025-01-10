@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using WebAPI.Auto;
 using WebAPI.Utilities.Extensions;
-using static WebAPI.Utilities.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +25,9 @@ app.UseAuthorization();
 
 app.RegisterEndpoints();
 
-using var scope = app.Services.CreateScope();
-var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-await roleManager.CreateAsync(new IdentityRole<Guid>(Roles.Admin));
-await roleManager.CreateAsync(new IdentityRole<Guid>(Roles.User));
+//using var scope = app.Services.CreateScope();
+//var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+//await roleManager.CreateAsync(new IdentityRole<Guid>(Roles.Admin));
+//await roleManager.CreateAsync(new IdentityRole<Guid>(Roles.User));
 
-app.Run();
+await app.RunAsync();
