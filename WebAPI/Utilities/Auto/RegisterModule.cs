@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using WebAPI.Utilities.Contract;
 
-namespace WebAPI.Auto;
+namespace WebAPI.Utilities.Auto;
 
 public static class RegisterModule
 {
@@ -17,7 +17,7 @@ public static class RegisterModule
         foreach (var module in GetModules())
         {
             var instance = Activator.CreateInstance(module) as IModule
-                ?? throw new Exception($"Failed to create instance of {module.Name}");
+                ?? throw new InvalidOperationException($"Failed to create instance of {module.Name}");
 
             instance.RegisterEndpoints(endpoints);
         }

@@ -4,12 +4,14 @@ using System.Security.Claims;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Attributes;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Repositories;
 
+[RepositoryImplOf(Type = typeof(IUserRepository))]
 public class UserRepository(ApplicationDbContext dbContext,
                             UserManager<AppUser> userManager,
                             ImageProvider imageProvider,

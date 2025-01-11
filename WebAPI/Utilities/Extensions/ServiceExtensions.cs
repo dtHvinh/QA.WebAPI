@@ -6,8 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Data;
 using WebAPI.Model;
-using WebAPI.Repositories;
-using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Auto;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
@@ -103,7 +102,7 @@ public static class ServiceExtensions
 
     public static IServiceCollection ConfigureDependencies(this IServiceCollection services)
     {
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.RegisterRepositories();
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();

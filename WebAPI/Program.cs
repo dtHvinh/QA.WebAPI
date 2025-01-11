@@ -1,4 +1,4 @@
-using WebAPI.Auto;
+using WebAPI.Utilities.Auto;
 using WebAPI.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
