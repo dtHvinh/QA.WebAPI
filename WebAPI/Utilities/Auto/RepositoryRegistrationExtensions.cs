@@ -3,7 +3,7 @@ using WebAPI.Utilities.Attributes;
 
 namespace WebAPI.Utilities.Auto;
 
-public static class RegisterRepository
+public static class RepositoryRegistrationExtensions
 {
     public static IServiceCollection RegisterRepositories(this IServiceCollection services)
     {

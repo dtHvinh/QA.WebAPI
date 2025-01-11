@@ -9,8 +9,7 @@ public static class RegisterModule
         => Assembly
         .GetExecutingAssembly()
         .GetTypes()
-        .Where(x => x.GetInterfaces()
-        .Contains(typeof(IModule)));
+        .Where(x => x.GetInterfaces().Contains(typeof(IModule)));
 
     public static void RegisterEndpoints(this IEndpointRouteBuilder endpoints)
     {

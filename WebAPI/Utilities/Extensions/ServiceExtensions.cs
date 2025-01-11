@@ -58,7 +58,12 @@ public static class ServiceExtensions
         var aud = Configuration["JwtOptions:Aud"]?.Split(',');
         var iss = Configuration["JwtOptions:Iss"]?.Split(',');
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.TokenValidationParameters = new()
