@@ -17,7 +17,7 @@ public class AuthenticationService(IUserRepository userRepository,
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<ResultBase<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<OperationResult<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -27,7 +27,7 @@ public class AuthenticationService(IUserRepository userRepository,
         if (!queryResult.IsSuccess)
         {
             var errorMessage = string.Format(EM.EMAIL_NOTFOUND, email);
-            return ResultBase<AuthResponseDto>.Failure(errorMessage);
+            return OperationResult<AuthResponseDto>.Failure(errorMessage);
         }
 
         var user = queryResult.Value!;
@@ -38,7 +38,7 @@ public class AuthenticationService(IUserRepository userRepository,
         {
             await _userManager.AccessFailedAsync(user);
 
-            return ResultBase<AuthResponseDto>.Failure("Password is wrong");
+            return OperationResult<AuthResponseDto>.Failure("Password is wrong");
         }
 
         var at = await _tokenProvider.CreateTokenAsync(user);
@@ -46,6 +46,6 @@ public class AuthenticationService(IUserRepository userRepository,
 
         var authResponse = new AuthResponseDto(at, rt, user.UserName!, user.ProfilePicture);
 
-        return ResultBase<AuthResponseDto>.Success(authResponse);
+        return OperationResult<AuthResponseDto>.Success(authResponse);
     }
 }

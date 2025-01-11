@@ -11,6 +11,7 @@ public static class PolicyProvider
     /// </summary>
     public const string RequireNameIdClaim = "RequireNameIdClaim";
     public const string RequireAdminRole = "RequireAdminRole";
+    public const string RequireNameIdClaimAndRole = "RequireNameIdClaimAndRole";
 
     public static AuthorizationPolicy Get(string name)
     {
@@ -22,6 +23,11 @@ public static class PolicyProvider
 
             RequireAdminRole => new AuthorizationPolicyBuilder()
             .RequireClaim(ClaimTypes.Role, Roles.Admin)
+            .Build(),
+
+            RequireNameIdClaimAndRole => new AuthorizationPolicyBuilder()
+            .RequireClaim(ClaimTypes.Role)
+            .RequireClaim(ClaimTypes.NameIdentifier)
             .Build(),
 
             _ => throw new InvalidOperationException($"Do not recognize policy \'{name}\'"),

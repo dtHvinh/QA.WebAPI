@@ -8,10 +8,11 @@ public static class Constants
         public const string User = "User";
     }
 
-    public static class EndpointGroup
+    public static class EG
     {
         private const string _prefix = "/api";
         public const string Auth = _prefix + "/auth";
+        public const string Question = _prefix + "/question";
     }
 
     public static class Endpoints

@@ -20,20 +20,20 @@ public class ResultBase
         => new(false, message);
 }
 
-public class ResultBase<T> : ResultBase
+public class OperationResult<T> : ResultBase
 {
     public T? Value { get; private set; }
 
-    protected ResultBase() : base() { }
+    protected OperationResult() : base() { }
 
-    protected ResultBase(T? value, bool isSuccess, string message) : base(isSuccess, message)
+    protected OperationResult(T? value, bool isSuccess, string message) : base(isSuccess, message)
     {
         Value = value;
     }
 
-    public static ResultBase<T> Success(T value, string message = "")
+    public static OperationResult<T> Success(T value, string message = "")
         => new(value, true, message);
 
-    public new static ResultBase<T> Failure(string message)
+    public new static OperationResult<T> Failure(string message)
         => new(default, false, message);
 }

@@ -3,7 +3,7 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Utilities.Auto;
 
-public static class RegisterModule
+public static class ModuleRegistration
 {
     private static IEnumerable<Type> GetModules()
         => Assembly

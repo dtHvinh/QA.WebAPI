@@ -5,5 +5,5 @@ namespace WebAPI.Utilities.Contract;
 
 public interface IAuthenticationService
 {
-    Task<ResultBase<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default);
+    Task<OperationResult<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default);
 }
