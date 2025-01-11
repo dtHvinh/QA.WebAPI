@@ -33,7 +33,7 @@ public class UserRepository(ApplicationDbContext dbContext,
     /// Set the user's role to <see cref="Roles.User"/> and add the user's claims.
     /// </para>
     /// </remarks>
-    public async Task<ResultBase<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
+    public async Task<OperationResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
     {
         try
         {
@@ -46,7 +46,7 @@ public class UserRepository(ApplicationDbContext dbContext,
 
             if (!result.Succeeded)
             {
-                return ResultBase<AppUser>.Failure(
+                return OperationResult<AppUser>.Failure(
                     string.Join(',', result.Errors.Select(e => e.Description)));
             }
 
@@ -61,15 +61,15 @@ public class UserRepository(ApplicationDbContext dbContext,
             // Cache the user's email for fast look up
             await _cache.SetStringAsync(RedisKeyGen.ForEmailDuplicate(user.Email!), "", cancellationToken);
 
-            return ResultBase<AppUser>.Success(user);
+            return OperationResult<AppUser>.Success(user);
         }
         catch (Exception ex)
         {
-            return ResultBase<AppUser>.Failure(ex.Message);
+            return OperationResult<AppUser>.Failure(ex.Message);
         }
     }
 
-    public async Task<ResultBase<AppUser>> FindByEmail(string email, CancellationToken cancellationToken)
+    public async Task<OperationResult<AppUser>> FindByEmail(string email, CancellationToken cancellationToken)
     {
         return await FindFirstAsync(e => e.Email!.Equals(email), cancellationToken);
     }
