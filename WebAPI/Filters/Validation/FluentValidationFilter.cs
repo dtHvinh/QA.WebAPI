@@ -1,4 +1,5 @@
 using FluentValidation;
+using WebAPI.Utilities.Extensions;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Filters.Validation;
@@ -15,10 +16,7 @@ public class FluentValidationFilter<T>(IValidator<T> validator) : IEndpointFilte
 
         if (!result.IsValid)
         {
-            var errors = result.Errors.Select(e => e.ErrorMessage).ToList();
-            var error = string.Join(", ", errors);
-
-            return TypedResults.Problem(detail: error);
+            return TypedResultsExtensions.ValidationProblem(result.Errors);
         }
 
         return await next(context);
