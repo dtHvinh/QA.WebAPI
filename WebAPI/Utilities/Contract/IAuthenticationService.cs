@@ -1,9 +1,9 @@
 ﻿using WebAPI.Dto;
-using WebAPI.Utilities.Result;
+using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Utilities.Contract;
 
 public interface IAuthenticationService
 {
-    Task<AuthResult<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken);
+    Task<ResultBase<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default);
 }

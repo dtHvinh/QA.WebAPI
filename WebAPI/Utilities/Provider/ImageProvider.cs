@@ -11,6 +11,6 @@ public class ImageProvider(string providerUrl)
     /// <returns></returns>
     public string GetDefaultPFP(string name)
     {
-        return _providerUrl + "/?name=" + name;
+        return _providerUrl + "/?name=" + name + "&background=random";
     }
 }

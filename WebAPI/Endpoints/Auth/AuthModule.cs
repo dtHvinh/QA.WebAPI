@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
+using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
@@ -44,14 +45,29 @@ public class AuthModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .AllowAnonymous()
             .AddEndpointFilter<FluentValidationFilter<RegisterDto>>();
     }
 
     private static void MapLogin(RouteGroupBuilder group)
     {
-        group.MapPost(E.Login, ([FromBody] LoginDto dto, [FromServices] ILogger logger) =>
+        group.MapPost(E.Login,
+            async Task<Results<Ok<AuthResponseDto>, BadRequest<string>>> ([FromBody] LoginDto dto,
+                                                                          [FromServices] IMediator mediator,
+                                                                          CancellationToken cancellationToken) =>
         {
-            return Results.Ok(dto);
-        }).AllowAnonymous();
+            var query = new LoginQuery(dto);
+
+            var result = await mediator.Send(query, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return TypedResults.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .AllowAnonymous()
+            .AddEndpointFilter<FluentValidationFilter<LoginDto>>();
     }
 }

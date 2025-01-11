@@ -4,7 +4,7 @@ using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Provider;
-using WebAPI.Utilities.Result;
+using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Services;
@@ -17,7 +17,7 @@ public class AuthenticationService(IUserRepository userRepository,
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<AuthResult<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken)
+    public async Task<ResultBase<AuthResponseDto>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -27,7 +27,7 @@ public class AuthenticationService(IUserRepository userRepository,
         if (!queryResult.IsSuccess)
         {
             var errorMessage = string.Format(EM.EMAIL_NOTFOUND, email);
-            return (AuthResult<AuthResponseDto>)AuthResult<AuthResponseDto>.Failure(errorMessage);
+            return ResultBase<AuthResponseDto>.Failure(errorMessage);
         }
 
         var user = queryResult.Value!;
@@ -38,7 +38,7 @@ public class AuthenticationService(IUserRepository userRepository,
         {
             await _userManager.AccessFailedAsync(user);
 
-            return (AuthResult<AuthResponseDto>)AuthResult<AuthResponseDto>.Failure("Password is wrong");
+            return ResultBase<AuthResponseDto>.Failure("Password is wrong");
         }
 
         var at = await _tokenProvider.CreateTokenAsync(user);
@@ -46,6 +46,6 @@ public class AuthenticationService(IUserRepository userRepository,
 
         var authResponse = new AuthResponseDto(at, rt, user.UserName!, user.ProfilePicture);
 
-        return (AuthResult<AuthResponseDto>)AuthResult<AuthResponseDto>.Success(authResponse);
+        return ResultBase<AuthResponseDto>.Success(authResponse);
     }
 }

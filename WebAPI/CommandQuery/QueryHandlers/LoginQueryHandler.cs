@@ -1,17 +1,22 @@
 ﻿using CQRS;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
-using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class LoginQueryHandler(IUserRepository userRepository) : IQueryHandler<LoginQuery, ResultBase<AuthResponseDto>>
+public class LoginQueryHandler(IAuthenticationService authenticationService)
+    : IQueryHandler<LoginQuery, ResultBase<AuthResponseDto>>
 {
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IAuthenticationService _authenticationService = authenticationService;
 
-    public Task<ResultBase<AuthResponseDto>> Handle(LoginQuery request, CancellationToken cancellationToken)
+    public async Task<ResultBase<AuthResponseDto>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var authResult = await _authenticationService.LoginAsync(request.Dto.Email,
+                                                                 request.Dto.Password,
+                                                                 cancellationToken);
+
+        return authResult;
     }
 }

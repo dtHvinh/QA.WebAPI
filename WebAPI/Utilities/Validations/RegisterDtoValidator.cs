@@ -1,19 +1,20 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Caching.Distributed;
 using WebAPI.Dto;
+using WebAPI.Utilities.Contract;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Validations;
 
 public class RegisterDtoValidator : AbstractValidator<RegisterDto>
 {
-    public RegisterDtoValidator(IDistributedCache cache)
+    public RegisterDtoValidator(IDistributedCache cache, IValidationRuleProvider ruleProvider)
     {
         RuleFor(e => e.Email).EmailAddress().MustAsync(async (email, canceleation) =>
         {
             return await cache.GetAsync(RedisKeyGen.ForEmailDuplicate(email), canceleation) is null;
         }).WithMessage("Email has been used!!!");
 
-        RuleFor(e => e.Password).MinimumLength(6);
+        ruleProvider.GetPasswordRule(RuleFor(e => e.Password));
     }
 }

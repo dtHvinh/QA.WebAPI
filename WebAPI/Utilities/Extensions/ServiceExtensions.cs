@@ -106,6 +106,7 @@ public static class ServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
 
         services.AddSingleton(new ImageProvider(
             Configuration["ImageProvider:DefaultProfileImage"]
