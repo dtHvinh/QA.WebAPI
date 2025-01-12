@@ -41,3 +41,15 @@ public static class QuestionMap
         };
     }
 }
+
+public static class TagMap
+{
+    public static Tag ToTag(this CreateTagDto dto)
+    {
+        return new Tag
+        {
+            Name = dto.Name,
+            Description = dto.Description
+        };
+    }
+}

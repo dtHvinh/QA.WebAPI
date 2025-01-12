@@ -2,7 +2,7 @@
 
 namespace WebAPI.Utilities.Context;
 
-public class AuthentcationContext(IHttpContextAccessor hca)
+public class AuthenticationContext(IHttpContextAccessor hca)
 {
     private readonly HttpContext? _httpContext = hca.HttpContext;
 

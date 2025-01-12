@@ -13,6 +13,7 @@ public static class Constants
         private const string _prefix = "/api";
         public const string Auth = _prefix + "/auth";
         public const string Question = _prefix + "/question";
+        public const string Tag = _prefix + "/tag";
     }
 
     public static class Endpoints

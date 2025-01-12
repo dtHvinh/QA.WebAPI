@@ -11,7 +11,7 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Repositories;
 
-[RepositoryImplOf(Type = typeof(IUserRepository))]
+[RepositoryImpl(typeof(IUserRepository))]
 public class UserRepository(ApplicationDbContext dbContext,
                             UserManager<AppUser> userManager,
                             ImageProvider imageProvider,
@@ -22,17 +22,6 @@ public class UserRepository(ApplicationDbContext dbContext,
     private readonly ImageProvider _imgProv = imageProvider;
     private readonly IDistributedCache _cache = cache;
 
-    /// <summary>
-    /// Add a new user to the database.
-    /// 
-    /// </summary>
-    /// 
-    /// <remarks>
-    /// 
-    /// <para>
-    /// Set the user's role to <see cref="Roles.User"/> and add the user's claims.
-    /// </para>
-    /// </remarks>
     public async Task<OperationResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
     {
         try
@@ -50,8 +39,10 @@ public class UserRepository(ApplicationDbContext dbContext,
                     string.Join(',', result.Errors.Select(e => e.Description)));
             }
 
+            // Add to role
             await _userManager.AddToRoleAsync(user, Roles.User);
 
+            // Add Claim
             await _userManager.AddClaimsAsync(user,
             [
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -69,8 +60,25 @@ public class UserRepository(ApplicationDbContext dbContext,
         }
     }
 
-    public async Task<OperationResult<AppUser>> FindByEmail(string email, CancellationToken cancellationToken)
+    public async Task<OperationResult<AppUser>> FindByEmail(string email,
+                                                            CancellationToken cancellationToken = default)
     {
-        return await FindFirstAsync(e => e.Email!.Equals(email), cancellationToken);
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+            return OperationResult<AppUser>.Failure(string.Format(EM.EMAIL_NOTFOUND, email));
+
+        return OperationResult<AppUser>.Success(user);
+    }
+
+    public async Task<OperationResult<AppUser>> FindByIdAsync(Guid id,
+                                                              CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(id.ToString());
+
+        if (user is null)
+            return OperationResult<AppUser>.Failure("User not found");
+
+        return OperationResult<AppUser>.Success(user);
     }
 }

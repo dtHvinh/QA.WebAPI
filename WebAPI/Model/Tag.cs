@@ -11,6 +11,8 @@ public class Tag : IEntity<Guid>
 
     [Column(TypeName = "nvarchar(50)")]
     public required string Name { get; set; }
+    [Column(TypeName = "nvarchar(1000)")]
+    public string Description { get; set; } = default!;
     public int QuestionsCount { get; set; }
 
     public ICollection<QuestionTag> QuestionTags { get; set; } = default!;

@@ -18,7 +18,7 @@ public class Answer : IEntityWithTime<Guid>
     [ForeignKey(nameof(Author))]
     public Guid AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
-
+    [Column(TypeName = "nvarchar(2000)")]
     public required string Content { get; set; }
     public int Upvote { get; set; }
     public int Downvote { get; set; }

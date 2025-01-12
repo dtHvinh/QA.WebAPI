@@ -24,4 +24,14 @@ public static class ProblemResultExtensions
                                         {"errors", message }
                                     });
     }
+
+    public static ProblemHttpResult Forbidden(string message)
+    {
+        return TypedResults.Problem(statusCode: StatusCodes.Status403Forbidden,
+                                    title: "Error",
+                                    extensions: new Dictionary<string, object?>()
+                                    {
+                                        {"errors", message }
+                                    });
+    }
 }

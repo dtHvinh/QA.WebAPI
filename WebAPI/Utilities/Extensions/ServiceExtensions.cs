@@ -112,7 +112,7 @@ public static class ServiceExtensions
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
-        services.AddTransient<AuthentcationContext>();
+        services.AddTransient<AuthenticationContext>();
 
         services.AddSingleton(new ImageProvider(
             Configuration["ImageProvider:DefaultProfileImage"]
@@ -144,6 +144,9 @@ public static class ServiceExtensions
     {
         services.Configure<JwtOptions>(
             Configuration.GetSection("JwtOptions"));
+
+        services.Configure<ApplicationProperties>(
+            Configuration.GetSection("ApplicationProperties"));
 
         return services;
     }

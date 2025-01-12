@@ -2,20 +2,20 @@
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class CreateUserCommandHandler(IUserRepository userRepository,
+public class CreateUserHandler(IUserRepository userRepository,
                                       JwtTokenProvider tokenProvider)
-    : ICommandHandler<CreateUserCommand, ResultBase<AuthResponseDto>>
+    : ICommandHandler<CreateUserCommand, OperationResult<AuthResponseDto>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<ResultBase<AuthResponseDto>> Handle(
+    public async Task<OperationResult<AuthResponseDto>> Handle(
         CreateUserCommand request, CancellationToken cancellationToken)
     {
         var newUser = request.User.ToAppUser();
@@ -24,7 +24,7 @@ public class CreateUserCommandHandler(IUserRepository userRepository,
 
         if (!result.IsSuccess)
         {
-            return ResultBase<AuthResponseDto>
+            return OperationResult<AuthResponseDto>
                 .Failure(result.Message);
         }
 
@@ -33,7 +33,7 @@ public class CreateUserCommandHandler(IUserRepository userRepository,
         var jwtToken = await _tokenProvider.CreateTokenAsync(newUser);
         var refreshToken = _tokenProvider.CreateRefreshToken();
 
-        return ResultBase<AuthResponseDto>
+        return OperationResult<AuthResponseDto>
             .Success(newUser.ToLoginResponseDto(jwtToken, refreshToken));
     }
 }

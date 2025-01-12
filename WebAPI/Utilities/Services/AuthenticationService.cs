@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Result.Base;
@@ -9,11 +8,9 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Services;
 
-public class AuthenticationService(IUserRepository userRepository,
-                                   UserManager<AppUser> userManager,
+public class AuthenticationService(UserManager<AppUser> userManager,
                                    JwtTokenProvider tokenProvider) : IAuthenticationService
 {
-    private readonly IUserRepository _userRepository = userRepository;
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
@@ -22,15 +19,13 @@ public class AuthenticationService(IUserRepository userRepository,
         cancellationToken.ThrowIfCancellationRequested();
 
         /// Check if user exists
-        var queryResult = await _userRepository.FindByEmail(email, cancellationToken);
+        var user = await _userManager.FindByEmailAsync(email);
 
-        if (!queryResult.IsSuccess)
+        if (user is null)
         {
             var errorMessage = string.Format(EM.EMAIL_NOTFOUND, email);
             return OperationResult<AuthResponseDto>.Failure(errorMessage);
         }
-
-        var user = queryResult.Value!;
 
         // Check password
         bool checkPass = await _userManager.CheckPasswordAsync(user, password);

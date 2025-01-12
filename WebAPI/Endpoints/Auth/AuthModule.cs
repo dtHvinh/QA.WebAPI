@@ -47,15 +47,16 @@ public sealed class AuthModule : IModule
             return TypedResults.Ok(result.Value);
         })
             .AllowAnonymous()
-            .AddEndpointFilter<FluentValidationFilter<RegisterDto>>();
+            .AddEndpointFilter<FluentValidation<RegisterDto>>();
     }
 
     private static void MapLogin(RouteGroupBuilder group)
     {
         group.MapPost(E.Login,
-            async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> ([FromBody] LoginDto dto,
-                                                                          [FromServices] IMediator mediator,
-                                                                          CancellationToken cancellationToken) =>
+            async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> (
+                [FromBody] LoginDto dto,
+                [FromServices] IMediator mediator,
+                CancellationToken cancellationToken) =>
         {
             var query = new LoginQuery(dto);
 
@@ -69,6 +70,6 @@ public sealed class AuthModule : IModule
             return TypedResults.Ok(result.Value);
         })
             .AllowAnonymous()
-            .AddEndpointFilter<FluentValidationFilter<LoginDto>>();
+            .AddEndpointFilter<FluentValidation<LoginDto>>();
     }
 }

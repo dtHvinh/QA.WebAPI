@@ -12,65 +12,65 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
     protected DbSet<T> Entities => dbContext.Set<T>();
     protected IQueryable<T> Table => Entities;
 
-    public async Task<ResultBase<T>> AddAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<OperationResult<T>> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         try
         {
             var e = Entities.Add(entity).Entity;
             await dbContext.SaveChangesAsync(cancellationToken);
-            return ResultBase<T>.Success(e);
+            return OperationResult<T>.Success(e);
         }
         catch (Exception ex)
         {
-            return ResultBase<T>.Failure(ex.Message);
+            return OperationResult<T>.Failure(ex.Message);
         }
     }
 
-    public async Task<ResultBase> AddRangeAsync(IEnumerable<T> entities,
+    public async Task<OperationResult> AddRangeAsync(IEnumerable<T> entities,
                                                 CancellationToken cancellationToken = default)
     {
         try
         {
             Entities.AddRange(entities);
             await dbContext.SaveChangesAsync(cancellationToken);
-            return ResultBase.Success();
+            return OperationResult.Success();
         }
         catch (Exception ex)
         {
-            return ResultBase.Failure(ex.Message);
+            return OperationResult.Failure(ex.Message);
         }
     }
 
-    public ResultBase<IEnumerable<T>> FindAll(Func<T, bool> predicate)
+    public OperationResult<IEnumerable<T>> FindAll(Func<T, bool> predicate)
     {
         try
         {
             var result = Table.Where(predicate);
-            return ResultBase<IEnumerable<T>>.Success(result);
+            return OperationResult<IEnumerable<T>>.Success(result);
         }
         catch (Exception ex)
         {
-            return ResultBase<IEnumerable<T>>.Failure(ex.Message);
+            return OperationResult<IEnumerable<T>>.Failure(ex.Message);
         }
     }
 
-    public ResultBase<IEnumerable<T>> FindAll(ISpecification<T> specification)
+    public OperationResult<IEnumerable<T>> FindAll(ISpecification<T> specification)
     {
         try
         {
             var result = specification.EvaluateQuery(Table);
             if (!result.Any())
-                return ResultBase<IEnumerable<T>>.Failure("No entities found.");
+                return OperationResult<IEnumerable<T>>.Failure("No entities found.");
 
-            return ResultBase<IEnumerable<T>>.Success(result);
+            return OperationResult<IEnumerable<T>>.Success(result);
         }
         catch (Exception ex)
         {
-            return ResultBase<IEnumerable<T>>.Failure(ex.Message);
+            return OperationResult<IEnumerable<T>>.Failure(ex.Message);
         }
     }
 
-    public async Task<ResultBase<T>> FindFirstAsync(Expression<Func<T, bool>> predicate,
+    public async Task<OperationResult<T>> FindFirstAsync(Expression<Func<T, bool>> predicate,
                                                     CancellationToken cancellationToken = default)
     {
         try
@@ -78,44 +78,44 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
             var result = await Table.FirstOrDefaultAsync(predicate, cancellationToken);
             if (result == null)
             {
-                return ResultBase<T>.Failure("Entity not found.");
+                return OperationResult<T>.Failure("Entity not found.");
             }
 
-            return ResultBase<T>.Success(result);
+            return OperationResult<T>.Success(result);
         }
         catch (Exception ex)
         {
-            return ResultBase<T>.Failure(ex.Message);
+            return OperationResult<T>.Failure(ex.Message);
         }
     }
 
-    public async Task<ResultBase<T>> RemoveAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<OperationResult<T>> RemoveAsync(T entity, CancellationToken cancellationToken = default)
     {
         try
         {
             Entities.Remove(entity);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return ResultBase<T>.Success(entity);
+            return OperationResult<T>.Success(entity);
         }
         catch (Exception ex)
         {
-            return ResultBase<T>.Failure(ex.Message);
+            return OperationResult<T>.Failure(ex.Message);
         }
     }
 
-    public async Task<ResultBase<T>> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<OperationResult<T>> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         try
         {
             Entities.Update(entity);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return ResultBase<T>.Success(entity);
+            return OperationResult<T>.Success(entity);
         }
         catch (Exception ex)
         {
-            return ResultBase<T>.Failure(ex.Message);
+            return OperationResult<T>.Failure(ex.Message);
         }
     }
 }

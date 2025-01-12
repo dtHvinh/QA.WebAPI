@@ -5,6 +5,7 @@ namespace WebAPI.Repositories.Base;
 
 public interface IUserRepository
 {
-    Task<ResultBase<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken);
-    Task<ResultBase<AppUser>> FindByEmail(string email, CancellationToken cancellationToken);
+    Task<OperationResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken);
+    Task<OperationResult<AppUser>> FindByEmail(string email, CancellationToken cancellationToken = default);
+    Task<OperationResult<AppUser>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

@@ -4,7 +4,7 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Filters.Validation;
 
-public class FluentValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
+public class FluentValidation<T>(IValidator<T> validator) : IEndpointFilter
 {
     private readonly IValidator<T> _validator = validator;
 
@@ -16,7 +16,7 @@ public class FluentValidationFilter<T>(IValidator<T> validator) : IEndpointFilte
 
         if (!result.IsValid)
         {
-            return TypedResultsExtensions.ValidationProblem(result.Errors);
+            return ProblemResultExtensions.ValidationProblem(result.Errors);
         }
 
         return await next(context);

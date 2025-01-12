@@ -9,6 +9,7 @@ public class QuestionComment : IEntityWithTime<Guid>, ISoftDeleteEntity
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    [Column(TypeName = "nvarchar(2000)")]
     public required string Content { get; set; }
     public bool IsDeleted { get; set; }
 
