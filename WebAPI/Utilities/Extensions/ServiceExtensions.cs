@@ -7,6 +7,7 @@ using System.Text;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Utilities.Auto;
+using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
@@ -111,6 +112,7 @@ public static class ServiceExtensions
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
+        services.AddTransient<AuthentcationContext>();
 
         services.AddSingleton(new ImageProvider(
             Configuration["ImageProvider:DefaultProfileImage"]
@@ -130,7 +132,10 @@ public static class ServiceExtensions
                 policy: PolicyProvider.Get(PolicyProvider.RequireNameIdClaim))
             .AddPolicy(
                 name: PolicyProvider.RequireAdminRole,
-                policy: PolicyProvider.Get(PolicyProvider.RequireAdminRole));
+                policy: PolicyProvider.Get(PolicyProvider.RequireAdminRole))
+            .AddPolicy(
+                name: PolicyProvider.RequireNameIdClaimAndRole,
+                policy: PolicyProvider.Get(PolicyProvider.RequireNameIdClaimAndRole));
 
         return services;
     }

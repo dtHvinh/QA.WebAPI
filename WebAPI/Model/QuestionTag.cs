@@ -6,7 +6,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [PrimaryKey(nameof(QuestionId), nameof(TagId))]
-public class QuestionTag : IKeylessEntity
+public class QuestionTag : IKeylessEntityWithTime
 {
     [Key, Column(Order = 0), ForeignKey(nameof(Question))]
     public Guid QuestionId { get; set; }

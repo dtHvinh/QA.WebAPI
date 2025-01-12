@@ -1,13 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
+[Index(nameof(Name), IsUnique = true)]
 public class Tag : IEntity<Guid>
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 
     [Column(TypeName = "nvarchar(50)")]
     public required string Name { get; set; }

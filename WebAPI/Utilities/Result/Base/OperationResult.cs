@@ -1,26 +1,26 @@
 ﻿namespace WebAPI.Utilities.Result.Base;
 
-public class ResultBase
+public class OperationResult
 {
     public bool IsSuccess { get; protected set; }
     public string Message { get; protected set; } = string.Empty;
 
-    protected ResultBase() { }
+    protected OperationResult() { }
 
-    protected ResultBase(bool isSuccess, string message)
+    protected OperationResult(bool isSuccess, string message)
     {
         IsSuccess = isSuccess;
         Message = message;
     }
 
-    public static ResultBase Success(string message = "")
+    public static OperationResult Success(string message = "")
         => new(true, message);
 
-    public static ResultBase Failure(string message)
+    public static OperationResult Failure(string message)
         => new(false, message);
 }
 
-public class OperationResult<T> : ResultBase
+public class OperationResult<T> : OperationResult
 {
     public T? Value { get; private set; }
 

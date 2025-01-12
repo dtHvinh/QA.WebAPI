@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(IsClosed), nameof(IsHide), nameof(IsDeleted))]
-public class Question : IEntity<Guid>, ISoftDeleteEntity
+public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -13,7 +13,7 @@ public class Question : IEntity<Guid>, ISoftDeleteEntity
 
 
     [ForeignKey(nameof(Author))]
-    public Guid AuthorId { get; set; }
+    public required Guid AuthorId { get; set; }
     public AppUser Author { get; set; } = default!;
 
     [Column(TypeName = "nvarchar(150)")]

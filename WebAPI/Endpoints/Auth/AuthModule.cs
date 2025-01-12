@@ -6,12 +6,13 @@ using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
+using WebAPI.Utilities.Extensions;
+using static WebAPI.Utilities.Constants;
 using E = WebAPI.Utilities.Constants.Endpoints;
-using EG = WebAPI.Utilities.Constants.EndpointGroup;
 
 namespace WebAPI.Endpoints.Auth;
 
-public class AuthModule : IModule
+public sealed class AuthModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
@@ -29,7 +30,7 @@ public class AuthModule : IModule
     private static void MapRegister(RouteGroupBuilder group)
     {
         group.MapPost(E.Register,
-                      async Task<Results<Ok<AuthResponseDto>, BadRequest<string>>> (
+                      async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> (
                                         [FromBody] RegisterDto dto,
                                         [FromServices] IMediator mediator,
                                         CancellationToken cancellationToken) =>
@@ -40,7 +41,7 @@ public class AuthModule : IModule
 
             if (!result.IsSuccess)
             {
-                return TypedResults.BadRequest(result.Message);
+                return ProblemResultExtensions.BadRequest(result.Message);
             }
 
             return TypedResults.Ok(result.Value);
@@ -52,7 +53,7 @@ public class AuthModule : IModule
     private static void MapLogin(RouteGroupBuilder group)
     {
         group.MapPost(E.Login,
-            async Task<Results<Ok<AuthResponseDto>, BadRequest<string>>> ([FromBody] LoginDto dto,
+            async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> ([FromBody] LoginDto dto,
                                                                           [FromServices] IMediator mediator,
                                                                           CancellationToken cancellationToken) =>
         {
@@ -62,7 +63,7 @@ public class AuthModule : IModule
 
             if (!result.IsSuccess)
             {
-                return TypedResults.BadRequest(result.Message);
+                return ProblemResultExtensions.BadRequest(result.Message);
             }
 
             return TypedResults.Ok(result.Value);

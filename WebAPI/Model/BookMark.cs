@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(UserId), nameof(CreatedAt), IsDescending = [false, true])]
-public class BookMark : IEntity<Guid>
+public class BookMark : IEntityWithTime<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }

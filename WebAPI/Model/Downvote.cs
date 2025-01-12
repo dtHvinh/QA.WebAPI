@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(DownvotedEntityId))]
-public class Downvote : IEntity<Guid>
+public class Downvote : IEntityWithTime<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }

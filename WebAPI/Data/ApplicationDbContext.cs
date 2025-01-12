@@ -27,11 +27,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
 
-    private IEnumerable<Type> GetEntities()
+    private static IEnumerable<Type> GetEntities()
     {
         return typeof(ApplicationDbContext).Assembly.GetTypes()
             .Where(type => type.IsClass && type.GetInterfaces()
-                .Any(i => i == typeof(IKeylessEntity) || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
+                .Any(i => i == typeof(IKeylessEntityWithTime)
+                || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityWithTime<>))
+                || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
     }
 }
 

@@ -3,7 +3,7 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class QuestionReport : IEntity<Guid>
+public class QuestionReport : IEntityWithTime<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }

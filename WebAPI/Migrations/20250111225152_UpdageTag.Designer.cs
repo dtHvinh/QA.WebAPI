@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250111225152_UpdageTag")]
+    partial class UpdageTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,7 +190,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AnswerReport", b =>
@@ -221,7 +224,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("ReporterId");
 
-                    b.ToTable("AnswerReport", (string)null);
+                    b.ToTable("AnswerReport");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
@@ -346,7 +349,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("UserId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark", (string)null);
+                    b.ToTable("BookMark");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Downvote", b =>
@@ -381,7 +384,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Downvote", (string)null);
+                    b.ToTable("Downvote");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Question", b =>
@@ -441,7 +444,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("IsClosed", "IsHide", "IsDeleted");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionComment", b =>
@@ -475,7 +478,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("QuestionComment", (string)null);
+                    b.ToTable("QuestionComment");
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionReport", b =>
@@ -509,7 +512,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("ReporterId");
 
-                    b.ToTable("QuestionReport", (string)null);
+                    b.ToTable("QuestionReport");
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionTag", b =>
@@ -532,7 +535,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("QuestionTag", (string)null);
+                    b.ToTable("QuestionTag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
@@ -559,7 +562,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Tag", (string)null);
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Upvote", b =>
@@ -594,7 +597,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Upvote", (string)null);
+                    b.ToTable("Upvote");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
