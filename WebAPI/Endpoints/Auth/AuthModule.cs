@@ -7,6 +7,7 @@ using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Response;
 using static WebAPI.Utilities.Constants;
 using E = WebAPI.Utilities.Constants.Endpoints;
 
@@ -30,7 +31,7 @@ public sealed class AuthModule : IModule
     private static void MapRegister(RouteGroupBuilder group)
     {
         group.MapPost(E.Register,
-                      async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> (
+                      async Task<Results<Ok<AuthResponse>, ProblemHttpResult>> (
                                         [FromBody] RegisterDto dto,
                                         [FromServices] IMediator mediator,
                                         CancellationToken cancellationToken) =>
@@ -53,7 +54,7 @@ public sealed class AuthModule : IModule
     private static void MapLogin(RouteGroupBuilder group)
     {
         group.MapPost(E.Login,
-            async Task<Results<Ok<AuthResponseDto>, ProblemHttpResult>> (
+            async Task<Results<Ok<AuthResponse>, ProblemHttpResult>> (
                 [FromBody] LoginDto dto,
                 [FromServices] IMediator mediator,
                 CancellationToken cancellationToken) =>

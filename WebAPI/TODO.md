@@ -2,4 +2,4 @@ Implement user is banned check
 
 Impl Refresh Token
 
-Add Bloom Filter 
+Add Bloom Filter for email dup validation

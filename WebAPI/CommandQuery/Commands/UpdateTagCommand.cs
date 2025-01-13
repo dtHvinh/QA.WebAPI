@@ -5,7 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public class CreateUserCommand(RegisterDto dto) : ICommand<OperationResult<AuthResponse>>
-{
-    public RegisterDto User { get; } = dto;
-}
+public record UpdateTagCommand(UpdateTagDto Tag) : ICommand<OperationResult<UpdateTagResponse>>;

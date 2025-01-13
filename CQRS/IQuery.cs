@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace CQRS;
+namespace WebAPI.CQRS;
 
 public interface IQuery : IRequest;
 

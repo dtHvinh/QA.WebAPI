@@ -1,8 +1,7 @@
 ﻿using WebAPI.CQRS;
-using WebAPI.Dto;
 using WebAPI.Utilities.Response;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateTagCommand(CreateTagDto Tag) : ICommand<OperationResult<CreateTagResponse>>;
+public record DeleteTagCommand(Guid Id) : ICommand<OperationResult<DeleteTagResponse>>;

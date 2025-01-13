@@ -1,5 +1,5 @@
-﻿using CQRS;
-using WebAPI.CommandQuery.Commands;
+﻿using WebAPI.CommandQuery.Commands;
+using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Response;
@@ -16,13 +16,12 @@ public class CreateTagHandler(ITagRepository tagRepository) : ICommandHandler<Cr
     {
         var newTag = request.Tag.ToTag();
 
-        var createTag = await _tagRepository.AddTagAsync(newTag, cancellationToken);
+        var createTag = await _tagRepository.CreateTagAsync(newTag, cancellationToken);
         if (!createTag.IsSuccess)
         {
             return OperationResult<CreateTagResponse>.Failure(createTag.Message);
         }
 
-        return OperationResult<CreateTagResponse>.Success(
-            CreateTagResponse.Create(newTag.Name, newTag.Description));
+        return OperationResult<CreateTagResponse>.Success(newTag.ToCreateTagResponse());
     }
 }

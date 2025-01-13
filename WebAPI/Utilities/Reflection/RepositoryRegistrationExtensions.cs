@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
-using WebAPI.Utilities.Attributes;
+using WebAPI.Attributes;
 
-namespace WebAPI.Utilities.Auto;
+namespace WebAPI.Utilities.Reflection;
 
 public static class RepositoryRegistrationExtensions
 {
     public static IServiceCollection RegisterRepositories(this IServiceCollection services)
     {
-        var types = Assembly.GetAssembly(typeof(RepositoryImplAttribute))?
+        var types = Assembly.GetExecutingAssembly()?
               .GetTypes()
               .Where(x => x.GetCustomAttributes<RepositoryImplAttribute>().Any())
               .ToList()!;

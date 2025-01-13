@@ -33,6 +33,7 @@ public static class Constants
 
     public static class RedisKeyGen
     {
-        public static string ForEmailDuplicate(string email) => $"email:{email}";
+        public static string UserEmail(string email) => $"email:{email}";
+        public static string AppUserKey(Guid id) => $"appuser:#{id}";
     }
 }

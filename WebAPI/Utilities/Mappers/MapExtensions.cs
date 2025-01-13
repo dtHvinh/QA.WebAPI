@@ -1,5 +1,6 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
+using WebAPI.Utilities.Response;
 
 namespace WebAPI.Utilities.Mappers;
 
@@ -22,9 +23,9 @@ public static class MapExtensions
 
 public static class AppUserMap
 {
-    public static AuthResponseDto ToLoginResponseDto(this AppUser user, string accessToken, string refreshToken)
+    public static AuthResponse ToLoginResponseDto(this AppUser user, string accessToken, string refreshToken)
     {
-        return new AuthResponseDto(accessToken, refreshToken, user.UserName!, user.ProfilePicture);
+        return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture);
     }
 }
 
@@ -51,5 +52,25 @@ public static class TagMap
             Name = dto.Name,
             Description = dto.Description
         };
+    }
+
+    public static Tag ToTag(this UpdateTagDto dto)
+    {
+        return new Tag
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            Description = dto.Description
+        };
+    }
+
+    public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)
+    {
+        return new DeleteTagResponse(obj.Name, obj.Description);
+    }
+
+    public static CreateTagResponse ToCreateTagResponse(this Tag obj)
+    {
+        return new CreateTagResponse(obj.Id, obj.Name, obj.Description);
     }
 }

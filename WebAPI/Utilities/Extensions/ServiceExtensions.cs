@@ -11,6 +11,7 @@ using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
+using WebAPI.Utilities.Reflection;
 using WebAPI.Utilities.Services;
 
 namespace WebAPI.Utilities.Extensions;
@@ -77,30 +78,6 @@ public static class ServiceExtensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                         ClockSkew = TimeSpan.Zero
                     };
-
-                    // Handling connection validation from SignalR hub
-                    //options.Events = new()
-                    //{
-                    //    OnMessageReceived = context =>
-                    //    {
-                    //        try
-                    //        {
-                    //            var accessToken = context.Request.Query["access_token"];
-
-                    //            var path = context.HttpContext.Request.Path;
-                    //            if (!string.IsNullOrEmpty(accessToken) &&
-                    //                path.StartsWithSegments(AppConstants.Hub.Notification))
-                    //            {
-                    //                context.Token = accessToken;
-                    //            }
-                    //            return Task.CompletedTask;
-                    //        }
-                    //        catch
-                    //        {
-                    //            throw new InvalidOperationException("No \'access_token\' query found");
-                    //        }
-                    //    }
-                    //};
                 });
 
         return services;
@@ -109,6 +86,7 @@ public static class ServiceExtensions
     public static IServiceCollection ConfigureDependencies(this IServiceCollection services)
     {
         services.RegisterRepositories();
+        services.AutoRegisterAllServices();
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
@@ -145,8 +123,9 @@ public static class ServiceExtensions
         services.Configure<JwtOptions>(
             Configuration.GetSection("JwtOptions"));
 
-        services.Configure<ApplicationProperties>(
-            Configuration.GetSection("ApplicationProperties"));
+        services.Configure<ApplicationProperties>(Configuration.GetSection("ApplicationProperties"));
+
+        services.Configure<CacheOptions>(Configuration.GetSection("CacheOptions"));
 
         return services;
     }

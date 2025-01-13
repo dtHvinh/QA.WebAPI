@@ -35,6 +35,41 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityWithTime<>))
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
     }
+
+    public static async Task Init(WebApplication app, bool run)
+    {
+        if (!run)
+            return;
+
+        //using var scope = app.Services.CreateScope();
+        //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+        //await roleManager.CreateAsync(new IdentityRole<Guid>(WebAPI.Utilities.Constants.Roles.Admin));
+        //await roleManager.CreateAsync(new IdentityRole<Guid>(WebAPI.Utilities.Constants.Roles.User));
+
+        //var tagRepository = scope.ServiceProvider.GetRequiredService<WebAPI.Repositories.Base.ITagRepository>();
+
+        //await tagRepository.CreateTagsAsync(Enum.GetNames<Tags>().Select(e => new Tag
+        //{
+        //    Name = e,
+        //    Description = e
+        //}).ToList());
+
+        //var user = new AppUser()
+        //{
+        //    Email = "admin@email.com",
+        //    UserName = "admin@email.com",
+        //    Reputation = 99999999,
+        //    ProfilePicture = "avc"
+        //};
+        //await userManager.CreateAsync(user, "0123456789");
+        //await userManager.AddClaimsAsync(user,
+        //[
+        //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //    new Claim(ClaimTypes.Role, Roles.Admin),
+        //]);
+        //await userManager.AddToRoleAsync(user, Roles.Admin);
+    }
 }
 
 

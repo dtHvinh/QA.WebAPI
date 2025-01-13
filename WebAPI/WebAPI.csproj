@@ -21,7 +21,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CQRS\CQRS.csproj" />
+	  <ProjectReference Include="..\Attribute\WebAPI.Attributes.csproj" />
+	  <ProjectReference Include="..\CQRS\WebAPI.CQRS.csproj" />
 	</ItemGroup>
 
 </Project>

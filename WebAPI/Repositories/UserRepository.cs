@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Distributed;
 using System.Security.Claims;
+using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Attributes;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
@@ -15,12 +15,12 @@ namespace WebAPI.Repositories;
 public class UserRepository(ApplicationDbContext dbContext,
                             UserManager<AppUser> userManager,
                             ImageProvider imageProvider,
-                            IDistributedCache cache)
+                            ICacheService cache)
     : RepositoryBase<AppUser>(dbContext), IUserRepository
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly ImageProvider _imgProv = imageProvider;
-    private readonly IDistributedCache _cache = cache;
+    private readonly ICacheService _cache = cache;
 
     public async Task<OperationResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
     {
@@ -50,7 +50,7 @@ public class UserRepository(ApplicationDbContext dbContext,
             ]);
 
             // Cache the user's email for fast look up
-            await _cache.SetStringAsync(RedisKeyGen.ForEmailDuplicate(user.Email!), "", cancellationToken);
+            await _cache.SetUsedEmail(user.Email!);
 
             return OperationResult<AppUser>.Success(user);
         }

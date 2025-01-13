@@ -1,16 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using WebAPI.Filters.Requirement.Base;
-using WebAPI.Repositories;
+using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 
 namespace WebAPI.Filters.Requirement;
 
-public class CreateTagReputationRequirement(UserRepository userRepository,
+public class CreateTagReputationRequirementFilter(IUserRepository userRepository,
                                     AuthenticationContext authContext,
+                                    ICacheService cache,
                                     IOptions<ApplicationProperties> options)
-    : ReputationRequirement(userRepository,
+    : ReputationRequirementFilter(userRepository,
                             authContext,
-                            options.Value.ActionRequirements.CreateTagReputationRequirement)
+                            cache,
+                            options.Value.ActionRequirements.CreateTag)
 {
 }

@@ -1,17 +1,19 @@
 ﻿namespace WebAPI.Utilities.Options;
 
-public sealed class ApplicationProperties
+public class ApplicationProperties
 {
     public required ActionRequirements ActionRequirements { get; set; }
     public required ReputationAcquirePerAction ReputationAcquirePerAction { get; set; }
 }
 
-public sealed class ActionRequirements
+public class ActionRequirements
 {
-    public int CreateTagReputationRequirement { get; set; }
+    public int CreateTag { get; set; }
+    public int UpdateTag { get; set; }
+    public int DeleteTag { get; set; }
 }
 
-public sealed class ReputationAcquirePerAction
+public class ReputationAcquirePerAction
 {
     public int CreateTag { get; set; }
     public int CreateQuestion { get; set; }

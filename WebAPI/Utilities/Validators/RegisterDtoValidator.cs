@@ -12,7 +12,7 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
     {
         RuleFor(e => e.Email).EmailAddress().MustAsync(async (email, canceleation) =>
         {
-            return await cache.GetAsync(RedisKeyGen.ForEmailDuplicate(email), canceleation) is null;
+            return await cache.GetAsync(RedisKeyGen.UserEmail(email), canceleation) is null;
         }).WithMessage("Email has been used!!!");
 
         ruleProvider.GetPasswordRule(RuleFor(e => e.Password));

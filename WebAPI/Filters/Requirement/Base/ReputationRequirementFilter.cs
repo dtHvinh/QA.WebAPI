@@ -1,28 +1,38 @@
-﻿using WebAPI.Repositories;
+﻿using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 
 namespace WebAPI.Filters.Requirement.Base;
 
-public class ReputationRequirement(UserRepository userRepository,
+public class ReputationRequirementFilter(IUserRepository userRepository,
                                    AuthenticationContext authContext,
+                                   ICacheService cache,
                                    int minRequirement) : IEndpointFilter
 {
-    private readonly UserRepository _userRepository = userRepository;
+    private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly ICacheService _cache = cache;
     private readonly int _minRequirement = minRequirement;
 
     public async ValueTask<object?> InvokeAsync(
         EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        var findUser = await _userRepository.FindByIdAsync(_authContext.UserId);
+        var user = await _cache.GetAppUserAsync(_authContext.UserId);
 
-        if (!findUser.IsSuccess)
+        if (user is null)
         {
-            return ProblemResultExtensions.BadRequest("User not found");
-        }
+            var findUser = await _userRepository.FindByIdAsync(_authContext.UserId);
 
-        var user = findUser.Value!;
+            if (!findUser.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest("User not found");
+            }
+
+            user = findUser.Value!;
+
+            await _cache.UpdateAppUserAsync(user);
+        }
 
         if (user.Reputation < _minRequirement)
         {
