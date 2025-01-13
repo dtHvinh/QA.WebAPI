@@ -1,15 +1,15 @@
 ﻿using WebAPI.Model;
-using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories.Base;
 
-public interface ITagRepository
+public interface ITagRepository : IRepositoryBase<Tag>
 {
-    Task<OperationResult<Tag>> CreateTagAsync(Tag tag, CancellationToken cancellationToken = default);
-    Task<OperationResult> CreateTagsAsync(List<Tag> tags, CancellationToken cancellationToken = default);
-    Task<OperationResult> AddQuestionToTagsAsync(Question question, List<Guid> tagIds, CancellationToken cancellationToken = default);
-    Task<OperationResult<List<Tag>>> FindTagsByNames(List<string> names, CancellationToken cancellationToken = default);
-    Task<OperationResult<Tag>> UpdateTagAsync(Tag tag, CancellationToken cancellation = default);
-    Task<OperationResult<Tag>> DeleteTagAsync(Guid id, CancellationToken cancellationToken);
-    Task<OperationResult<List<Guid>>> FindTagsIdByNames(List<string> names, CancellationToken cancellationToken = default);
+    void AddQuestionToTags(Question question, List<Guid> tagIds);
+    void CreateTag(Tag tag);
+    void CreateTags(List<Tag> tags);
+    void DeleteTag(Guid id);
+    void DeleteTag(Tag tag);
+    Task<List<Tag>> FindTagsByNames(List<string> tagNames, CancellationToken cancellationToken = default);
+    Task<List<Guid>> FindTagsIdByNames(List<string> tagNames, CancellationToken cancellationToken = default);
+    void UpdateTag(Tag tag, CancellationToken cancellation = default);
 }

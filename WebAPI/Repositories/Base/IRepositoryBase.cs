@@ -6,11 +6,12 @@ namespace WebAPI.Repositories.Base;
 
 public interface IRepositoryBase<T> where T : class
 {
-    Task<OperationResult<T>> AddAsync(T entity, CancellationToken cancellationToken = default);
-    Task<OperationResult> AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
-    Task<OperationResult<T>> FindFirstAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
-    OperationResult<IEnumerable<T>> FindAll(Func<T, bool> predicate);
-    OperationResult<IEnumerable<T>> FindAll(ISpecification<T> specification);
-    Task<OperationResult<T>> UpdateAsync(T entity, CancellationToken cancellationToken = default);
-    Task<OperationResult<T>> RemoveAsync(T entity, CancellationToken cancellationToken = default);
+    void Add(T entity);
+    void AddRange(IEnumerable<T> entities);
+    IEnumerable<T> FindAll(Func<T, bool> predicate);
+    IEnumerable<T> FindAll(ISpecification<T> specification);
+    Task<T?> FindFirstAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    void Remove(T entity);
+    void Update(T entity);
+    Task<OperationResult> SaveChangeAsync(CancellationToken cancellationToken);
 }

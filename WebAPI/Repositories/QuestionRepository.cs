@@ -2,7 +2,6 @@
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories;
 
@@ -10,9 +9,5 @@ namespace WebAPI.Repositories;
 public class QuestionRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Question>(dbContext), IQuestionRepository
 {
-    public async Task<OperationResult<Question>> AddQuestionAsync(Question question,
-                                                                  CancellationToken cancellationToken)
-    {
-        return await AddAsync(question, cancellationToken);
-    }
+
 }

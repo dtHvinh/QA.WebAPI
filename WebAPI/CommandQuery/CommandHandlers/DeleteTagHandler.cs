@@ -1,7 +1,6 @@
 ﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Response;
 using WebAPI.Utilities.Result.Base;
 
@@ -14,12 +13,15 @@ public class DeleteTagHandler(ITagRepository tagRepository)
 
     public async Task<OperationResult<DeleteTagResponse>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
     {
-        var delTag = await _tagRepository.DeleteTagAsync(request.Id, cancellationToken);
+        _tagRepository.DeleteTag(request.Id);
+
+        var delTag = await _tagRepository.SaveChangeAsync(cancellationToken);
+
         if (!delTag.IsSuccess)
         {
             return OperationResult<DeleteTagResponse>.Failure(delTag.Message);
         }
 
-        return OperationResult<DeleteTagResponse>.Success(delTag.Value!.ToDeleteTagResponse());
+        return OperationResult<DeleteTagResponse>.Success(new(request.Id));
     }
 }

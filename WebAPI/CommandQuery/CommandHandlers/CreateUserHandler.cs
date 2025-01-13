@@ -9,7 +9,7 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateUserHandler(IUserRepository userRepository,
-                                      JwtTokenProvider tokenProvider)
+                               JwtTokenProvider tokenProvider)
     : ICommandHandler<CreateUserCommand, OperationResult<AuthResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;

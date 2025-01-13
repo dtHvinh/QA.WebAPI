@@ -21,27 +21,21 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
         var question = request.Question.ToQuestion(_authentcationContext.UserId);
+        _questionRepository.Add(question);
 
-        var addQuestionResult = await _questionRepository.AddQuestionAsync(question, cancellationToken);
-        if (!addQuestionResult.IsSuccess)
+        var tagIds = request.Question.Tags.Select(e => e.Id).ToList();
+        _tagRepository.AddQuestionToTags(question, tagIds);
+
+        var opResult = await _questionRepository.SaveChangeAsync(cancellationToken);
+        if (!opResult.IsSuccess)
         {
-            return OperationResult<CreateQuestionResponse>.Failure(addQuestionResult.Message);
+            return OperationResult<CreateQuestionResponse>.Failure(opResult.Message);
         }
 
-        var tagIds = request.Question.TagObjects.Select(e => e.Id).ToList();
-
-        var addTagToQuestionReult = await _tagRepository.AddQuestionToTagsAsync(
-            question, tagIds, cancellationToken);
-
-        if (!addTagToQuestionReult.IsSuccess)
-        {
-            return OperationResult<CreateQuestionResponse>.Failure(addTagToQuestionReult.Message);
-        }
-
-        var response = new CreateQuestionResponse(Id: addQuestionResult.Value!.Id,
-                                                  Title: addQuestionResult.Value.Title,
-                                                  Content: addQuestionResult.Value.Content,
-                                                  TagObjects: request.Question.TagObjects);
+        var response = new CreateQuestionResponse(Id: question.Id,
+                                                  Title: question.Title,
+                                                  Content: question.Content,
+                                                  TagObjects: request.Question.Tags);
 
         return OperationResult<CreateQuestionResponse>.Success(response);
     }

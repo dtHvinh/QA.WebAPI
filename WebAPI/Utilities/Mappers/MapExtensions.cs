@@ -66,7 +66,7 @@ public static class TagMap
 
     public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)
     {
-        return new DeleteTagResponse(obj.Name, obj.Description);
+        return new DeleteTagResponse(obj.Id);
     }
 
     public static CreateTagResponse ToCreateTagResponse(this Tag obj)

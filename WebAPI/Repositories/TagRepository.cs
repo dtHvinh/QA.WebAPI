@@ -3,7 +3,6 @@ using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories;
 
@@ -13,22 +12,19 @@ public class TagRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public async Task<OperationResult> CreateTagsAsync(
-        List<Tag> tags, CancellationToken cancellationToken = default)
+    public void CreateTags(List<Tag> tags)
     {
         tags.ForEach(SetNormalizedTagName);
-        var result = await AddRangeAsync(tags, cancellationToken);
-        return result;
+        AddRange(tags);
     }
 
-    public async Task<OperationResult<Tag>> CreateTagAsync(Tag tag, CancellationToken cancellationToken = default)
+    public void CreateTag(Tag tag)
     {
         SetNormalizedTagName(tag);
-        var result = await AddAsync(tag, cancellationToken);
-        return result;
+        Add(tag);
     }
 
-    public async Task<OperationResult> AddQuestionToTagsAsync(Question question, List<Guid> tagIds, CancellationToken cancellationToken = default)
+    public void AddQuestionToTags(Question question, List<Guid> tagIds)
     {
         var questionId = question.Id;
 
@@ -38,53 +34,42 @@ public class TagRepository(ApplicationDbContext dbContext)
               QuestionId = questionId,
               TagId = e
           }));
-
-        await SaveChangeAsync();
-
-        return OperationResult.Success();
     }
 
-    public async Task<OperationResult<List<Tag>>> FindTagsByNames(
+    public async Task<List<Tag>> FindTagsByNames(
         List<string> tagNames, CancellationToken cancellationToken = default)
     {
         var tagsToFind = tagNames.Select(e => e.ToUpperInvariant());
 
-        var result = await Entities.Where(
-            x => tagsToFind.Contains(x.NormalizedName)).ToListAsync(cancellationToken);
-
-        return OperationResult<List<Tag>>.Success(result);
+        return await Entities.Where(
+             x => tagsToFind.Contains(x.NormalizedName)).ToListAsync(cancellationToken);
     }
 
-    public async Task<OperationResult<List<Guid>>> FindTagsIdByNames(
+    public async Task<List<Guid>> FindTagsIdByNames(
         List<string> tagNames, CancellationToken cancellationToken = default)
     {
         var tagsToFind = tagNames.Select(e => e.ToUpperInvariant());
 
-        var result = await Entities.Where(
+        return await Entities.Where(
             x => tagsToFind.Contains(x.NormalizedName)).Select(e => e.Id).ToListAsync(cancellationToken);
-
-        return OperationResult<List<Guid>>.Success(result);
     }
 
-    public async Task<OperationResult<Tag>> UpdateTagAsync(Tag tag, CancellationToken cancellation = default)
+    public void UpdateTag(Tag tag, CancellationToken cancellation = default)
     {
         SetNormalizedTagName(tag);
-        var result = await UpdateAsync(tag, cancellation);
-        return result;
+        Update(tag);
     }
 
-    public async Task<OperationResult<Tag>> DeleteTagAsync(Guid id, CancellationToken cancellationToken)
+    public void DeleteTag(Guid id)
     {
-        var findResult = await FindFirstAsync(e => e.Id.Equals(id), cancellationToken: cancellationToken);
-        if (!findResult.IsSuccess)
-        {
-            return findResult;
-        }
+        var tag = Table.FirstOrDefault(x => x.Id == id);
+        if (tag != null)
+            Entities.Remove(tag);
+    }
 
-        var tagToDel = findResult.Value!;
-        await RemoveAsync(tagToDel, cancellationToken);
-
-        return findResult;
+    public void DeleteTag(Tag tag)
+    {
+        Entities.Remove(tag);
     }
 
     private static void SetNormalizedTagName(Tag tag) => tag.NormalizedName = tag.Name.ToUpperInvariant();

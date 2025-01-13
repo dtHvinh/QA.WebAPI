@@ -16,7 +16,9 @@ public class CreateTagHandler(ITagRepository tagRepository) : ICommandHandler<Cr
     {
         var newTag = request.Tag.ToTag();
 
-        var createTag = await _tagRepository.CreateTagAsync(newTag, cancellationToken);
+        _tagRepository.CreateTag(newTag);
+
+        var createTag = await _tagRepository.SaveChangeAsync(cancellationToken);
         if (!createTag.IsSuccess)
         {
             return OperationResult<CreateTagResponse>.Failure(createTag.Message);

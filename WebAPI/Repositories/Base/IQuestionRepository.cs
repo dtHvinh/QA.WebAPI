@@ -1,9 +1,7 @@
 ﻿using WebAPI.Model;
-using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories.Base;
 
-public interface IQuestionRepository
+public interface IQuestionRepository : IRepositoryBase<Question>
 {
-    Task<OperationResult<Question>> AddQuestionAsync(Question question, CancellationToken cancellationToken);
 }
