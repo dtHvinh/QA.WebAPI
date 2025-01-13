@@ -13,8 +13,8 @@ public class QuestionTag : IKeylessEntityWithTime
     [Key, Column(Order = 1), ForeignKey(nameof(Tag))]
     public Guid TagId { get; set; }
 
-    public required Question Question { get; set; }
-    public required Tag Tag { get; set; }
+    public Question? Question { get; set; }
+    public Tag? Tag { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

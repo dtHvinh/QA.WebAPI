@@ -11,6 +11,8 @@ namespace WebAPI.Repositories;
 public class TagRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Tag>(dbContext), ITagRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public async Task<OperationResult> CreateTagsAsync(
         List<Tag> tags, CancellationToken cancellationToken = default)
     {
@@ -26,11 +28,20 @@ public class TagRepository(ApplicationDbContext dbContext)
         return result;
     }
 
-    public async Task<OperationResult> AddTagsToQuestionAsync(
-        Question question, List<Tag> tags, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> AddQuestionToTagsAsync(Question question, List<Guid> tagIds, CancellationToken cancellationToken = default)
     {
-        var result = await AddRangeAsync(tags, cancellationToken);
-        return result;
+        var questionId = question.Id;
+
+        _dbContext.Set<QuestionTag>().AddRange(
+          tagIds.Select(e => new QuestionTag
+          {
+              QuestionId = questionId,
+              TagId = e
+          }));
+
+        await SaveChangeAsync();
+
+        return OperationResult.Success();
     }
 
     public async Task<OperationResult<List<Tag>>> FindTagsByNames(
@@ -42,6 +53,17 @@ public class TagRepository(ApplicationDbContext dbContext)
             x => tagsToFind.Contains(x.NormalizedName)).ToListAsync(cancellationToken);
 
         return OperationResult<List<Tag>>.Success(result);
+    }
+
+    public async Task<OperationResult<List<Guid>>> FindTagsIdByNames(
+        List<string> tagNames, CancellationToken cancellationToken = default)
+    {
+        var tagsToFind = tagNames.Select(e => e.ToUpperInvariant());
+
+        var result = await Entities.Where(
+            x => tagsToFind.Contains(x.NormalizedName)).Select(e => e.Id).ToListAsync(cancellationToken);
+
+        return OperationResult<List<Guid>>.Success(result);
     }
 
     public async Task<OperationResult<Tag>> UpdateTagAsync(Tag tag, CancellationToken cancellation = default)

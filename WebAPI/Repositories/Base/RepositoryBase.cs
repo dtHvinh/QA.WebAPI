@@ -17,7 +17,6 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
         try
         {
             var e = Entities.Add(entity).Entity;
-            await dbContext.SaveChangesAsync(cancellationToken);
             return OperationResult<T>.Success(e);
         }
         catch (Exception ex)
@@ -116,6 +115,19 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
         catch (Exception ex)
         {
             return OperationResult<T>.Failure(ex.Message);
+        }
+    }
+
+    public async Task<OperationResult> SaveChangeAsync()
+    {
+        try
+        {
+            await dbContext.SaveChangesAsync();
+            return OperationResult.Success();
+        }
+        catch (Exception ex)
+        {
+            return OperationResult.Failure(ex.Message);
         }
     }
 }

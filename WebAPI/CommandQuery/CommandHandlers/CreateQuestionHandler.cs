@@ -28,15 +28,11 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
             return OperationResult<CreateQuestionResponse>.Failure(addQuestionResult.Message);
         }
 
-        var findTag = await _tagRepository.FindTagsByNames(request.Question.Tags, cancellationToken);
-        if (!findTag.IsSuccess)
-        {
-            return OperationResult<CreateQuestionResponse>.Failure(findTag.Message);
-        }
+        var tagIds = request.Question.TagObjects.Select(e => e.Id).ToList();
 
-        var tags = findTag.Value!;
-        var addTagToQuestionReult = await _tagRepository.AddTagsToQuestionAsync(
-            question, tags, cancellationToken);
+        var addTagToQuestionReult = await _tagRepository.AddQuestionToTagsAsync(
+            question, tagIds, cancellationToken);
+
         if (!addTagToQuestionReult.IsSuccess)
         {
             return OperationResult<CreateQuestionResponse>.Failure(addTagToQuestionReult.Message);
@@ -45,7 +41,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         var response = new CreateQuestionResponse(Id: addQuestionResult.Value!.Id,
                                                   Title: addQuestionResult.Value.Title,
                                                   Content: addQuestionResult.Value.Content,
-                                                  Tags: request.Question.Tags);
+                                                  TagObjects: request.Question.TagObjects);
 
         return OperationResult<CreateQuestionResponse>.Success(response);
     }
