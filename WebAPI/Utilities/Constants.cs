@@ -28,6 +28,9 @@ public static class Constants
         public const string ENDPOINT_NOARG = "No argument found at this endpoint";
         public const string VALIDATION_REQ_FIRSTARG = "First argument must be a request object";
 
+        public const string QUESTION_ID_NOTFOUND = "Question with id {0} not found";
+        public const string QUESTION_DELETE_UNAUTHORIZED = "Do not has ownership to delete this question";
+
         public const string PasswordWrong = "Password is wrong";
     }
 

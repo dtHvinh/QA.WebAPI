@@ -18,7 +18,7 @@ public class UpdateTagHandler(ITagRepository tagRepository) : ICommandHandler<Up
 
         _tagRepository.Update(newTag);
 
-        var result = await _tagRepository.SaveChangeAsync(cancellationToken);
+        var result = await _tagRepository.SaveChangesAsync(cancellationToken);
 
         return !result.IsSuccess
             ? OperationResult<UpdateTagResponse>.Failure(result.Message)

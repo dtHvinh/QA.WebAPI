@@ -15,7 +15,7 @@ public class DeleteTagHandler(ITagRepository tagRepository)
     {
         _tagRepository.DeleteTag(request.Id);
 
-        var delTag = await _tagRepository.SaveChangeAsync(cancellationToken);
+        var delTag = await _tagRepository.SaveChangesAsync(cancellationToken);
 
         if (!delTag.IsSuccess)
         {

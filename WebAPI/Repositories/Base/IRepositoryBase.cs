@@ -13,5 +13,5 @@ public interface IRepositoryBase<T> where T : class
     Task<T?> FindFirstAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     void Remove(T entity);
     void Update(T entity);
-    Task<OperationResult> SaveChangeAsync(CancellationToken cancellationToken);
+    Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken);
 }

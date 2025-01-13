@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
+using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Response;
@@ -31,6 +32,26 @@ public sealed class QuestionModule : IModule
             }
 
             return TypedResults.Ok(result.Value);
-        });
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
+
+        group.MapDelete("/{id:guid}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
+            Guid id,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var cmd = new DeleteQuestionCommand(id);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+             .RequireAuthorization();
     }
 }

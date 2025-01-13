@@ -12,7 +12,7 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
     protected DbSet<T> Entities => dbContext.Set<T>();
     protected IQueryable<T> Table => Entities;
 
-    public async Task<OperationResult> SaveChangeAsync(CancellationToken cancellationToken)
+    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken)
     {
         try
         {
