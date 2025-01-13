@@ -15,7 +15,6 @@ public class ActionRequirements
 
 public class ReputationAcquirePerAction
 {
-    public int CreateTag { get; set; }
     public int CreateQuestion { get; set; }
     public int AnswerQuestion { get; set; }
     public int UpvoteQuestion { get; set; }

@@ -67,6 +67,8 @@ public class TagModule : IModule
                         ? TypedResults.Ok(result.Value)
                         : ProblemResultExtensions.BadRequest(result.Message);
         })
-            .RequireAuthorization(PolicyProvider.RequireAdminRole);
+            .RequireAuthorization(PolicyProvider.RequireAdminRole)
+            .AddEndpointFilter<DeleteTagReputationRequirementFilter>();
+
     }
 }

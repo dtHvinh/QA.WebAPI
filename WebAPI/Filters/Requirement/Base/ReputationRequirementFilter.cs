@@ -22,14 +22,11 @@ public class ReputationRequirementFilter(IUserRepository userRepository,
 
         if (user is null)
         {
-            var findUser = await _userRepository.FindByIdAsync(_authContext.UserId);
-
-            if (!findUser.IsSuccess)
+            user = await _userRepository.FindUserByIdAsync(_authContext.UserId);
+            if (user is null)
             {
-                return ProblemResultExtensions.BadRequest("User not found");
+                return ProblemResultExtensions.NotFound("User not found");
             }
-
-            user = findUser.Value!;
 
             await _cache.UpdateAppUserAsync(user);
         }

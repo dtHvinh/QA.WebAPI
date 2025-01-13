@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebAPI.Attributes;
 using WebAPI.Data;
@@ -60,25 +61,29 @@ public class UserRepository(ApplicationDbContext dbContext,
         }
     }
 
-    public async Task<OperationResult<AppUser>> FindByEmail(string email,
-                                                            CancellationToken cancellationToken = default)
+    public async Task<AppUser?> FindByEmail(string email, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByEmailAsync(email);
-
-        if (user is null)
-            return OperationResult<AppUser>.Failure(string.Format(EM.EMAIL_NOTFOUND, email));
-
-        return OperationResult<AppUser>.Success(user);
+        return user;
     }
 
-    public async Task<OperationResult<AppUser>> FindByIdAsync(Guid id,
-                                                              CancellationToken cancellationToken = default)
+    public async Task<AppUser?> FindUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByIdAsync(id.ToString());
+        return user;
+    }
 
+    public async Task ChangeReputationAsync(Guid id, int amount, CancellationToken cancellationToken = default)
+    {
+        var user = await Entities.FirstAsync(e => e.Id.Equals(id), cancellationToken);
         if (user is null)
-            return OperationResult<AppUser>.Failure("User not found");
+        {
+            return;
+        }
 
-        return OperationResult<AppUser>.Success(user);
+        user.Reputation += amount;
+        await _userManager.UpdateAsync(user);
     }
 }
