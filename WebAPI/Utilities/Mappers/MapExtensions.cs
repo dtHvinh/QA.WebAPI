@@ -41,6 +41,18 @@ public static class QuestionMap
             AuthorId = authorId
         };
     }
+
+    public static Question ToQuestion(this UpdateQuestionDto dto, Guid authorId)
+    {
+        return new Question
+        {
+            Id = dto.Id,
+            Title = dto.Title,
+            Content = dto.Content,
+            Slug = dto.Title.GenerateSlug(),
+            AuthorId = authorId,
+        };
+    }
 }
 
 public static class TagMap

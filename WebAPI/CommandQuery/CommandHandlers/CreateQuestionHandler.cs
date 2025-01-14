@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using WebAPI.CommandQuery.Commands;
+﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
-using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Response;
 using WebAPI.Utilities.Result.Base;
 
@@ -12,16 +10,12 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                    IQuestionRepository questionRepository,
-                                   ITagRepository tagRepository,
-                                   IUserRepository userRepository,
-                                   IOptions<ApplicationProperties> options)
+                                   ITagRepository tagRepository)
     : ICommandHandler<CreateQuestionCommand, OperationResult<CreateQuestionResponse>>
 {
-    private readonly AuthenticationContext _authentcationContext = authentcationContext;
-    private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ITagRepository _tagRepository = tagRepository;
-    private readonly IUserRepository _userRepository = userRepository;
-    private readonly ApplicationProperties _properties = options.Value;
+    private readonly IQuestionRepository _questionRepository = questionRepository;
+    private readonly AuthenticationContext _authentcationContext = authentcationContext;
 
     public async Task<OperationResult<CreateQuestionResponse>> Handle(
         CreateQuestionCommand request, CancellationToken cancellationToken)
@@ -33,11 +27,6 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         // Add tags to question
         var tagIds = request.Question.Tags.Select(e => e.Id).ToList();
         _tagRepository.AddQuestionToTags(question, tagIds);
-
-        // Increase reputation
-        await _userRepository.ChangeReputationAsync(
-            _authentcationContext.UserId,
-            _properties.ReputationAcquirePerAction.CreateQuestion, cancellationToken);
 
         var opResult = await _questionRepository.SaveChangesAsync(cancellationToken);
         if (!opResult.IsSuccess)

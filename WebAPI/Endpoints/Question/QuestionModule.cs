@@ -53,5 +53,21 @@ public sealed class QuestionModule : IModule
             return TypedResults.Ok(result.Value);
         })
              .RequireAuthorization();
+
+        group.MapPut("/", async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> (
+            [FromBody] UpdateQuestionDto dto,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var cmd = new UpdateQuestionCommand(dto);
+            var result = await mediator.Send(cmd, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
     }
 }
