@@ -28,12 +28,21 @@ public class TagRepository(ApplicationDbContext dbContext)
     {
         var questionId = question.Id;
         if (tagIds != null)
+        {
             _dbContext.Set<QuestionTag>().AddRange(
-              tagIds.Select(e => new QuestionTag
-              {
-                  QuestionId = questionId,
-                  TagId = e
-              }));
+                tagIds.Select(e => new QuestionTag
+                {
+                    QuestionId = questionId,
+                    TagId = e
+                }));
+
+            var tags = Entities.Where(e => tagIds.Contains(e.Id)).ToList();
+            foreach (var tag in tags)
+            {
+                tag.QuestionsCount++;
+            }
+            Entities.UpdateRange(tags);
+        }
     }
 
     public async Task<List<Tag>> FindTagsByNames(
@@ -57,7 +66,7 @@ public class TagRepository(ApplicationDbContext dbContext)
     public void UpdateTag(Tag tag, CancellationToken cancellation = default)
     {
         SetNormalizedTagName(tag);
-        Update(tag);
+        Entities.Update(tag);
     }
 
     public void DeleteTag(Guid id)

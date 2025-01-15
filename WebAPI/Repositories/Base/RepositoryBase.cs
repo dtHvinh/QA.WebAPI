@@ -60,4 +60,14 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase
     {
         Entities.Update(entity);
     }
+
+    public void UpdateRange(T[] entities)
+    {
+        Entities.UpdateRange(entities);
+    }
+
+    public void UpdateRange(IEnumerable<T> entities)
+    {
+        Entities.UpdateRange(entities);
+    }
 }

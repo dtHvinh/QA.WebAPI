@@ -28,6 +28,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         var tagIds = request.Question.Tags.Select(e => e.Id).ToList();
         _tagRepository.AddQuestionToTags(question, tagIds);
 
+        // Process result
         var opResult = await _questionRepository.SaveChangesAsync(cancellationToken);
         if (!opResult.IsSuccess)
         {
