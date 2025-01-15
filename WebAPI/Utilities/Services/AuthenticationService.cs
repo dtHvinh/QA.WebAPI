@@ -2,7 +2,7 @@
 using WebAPI.Model;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Provider;
-using WebAPI.Utilities.Response;
+using WebAPI.Utilities.Response.AuthResponses;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 

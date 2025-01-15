@@ -28,7 +28,7 @@ public class ReputationRequirementFilter(IUserRepository userRepository,
                 return ProblemResultExtensions.NotFound("User not found");
             }
 
-            await _cache.UpdateAppUserAsync(user);
+            await _cache.SetAppUserAsync(user);
         }
 
         if (user.Reputation < _minRequirement)

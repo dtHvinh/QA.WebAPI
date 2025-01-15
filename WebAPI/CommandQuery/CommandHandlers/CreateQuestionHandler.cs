@@ -3,7 +3,7 @@ using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
-using WebAPI.Utilities.Response;
+using WebAPI.Utilities.Response.QuestionResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -21,7 +21,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
         // Add question 
-        var question = request.Question.ToQuestion(_authentcationContext.UserId);
+        var question = request.Question.ToQuestion(_authentcationContext.UserId, request.DraftMode);
         _questionRepository.Add(question);
 
         // Add tags to question

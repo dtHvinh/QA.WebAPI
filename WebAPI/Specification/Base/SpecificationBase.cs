@@ -3,37 +3,82 @@ using System.Linq.Expressions;
 
 namespace WebAPI.Specification.Base;
 
-public class SpecificationBase<T>(Expression<Func<T, bool>>? criteria,
-                                  Expression<Func<T, object>>? include,
-                                  Expression<Func<T, object>>? orderBy,
-                                  Expression<Func<T, object>>? orderByDesc) : ISpecification<T> where T : class
+public class SpecificationBase<T> : ISpecification<T> where T : class
 {
-    private readonly Expression<Func<T, bool>>? _criteria = criteria;
-    private readonly Expression<Func<T, object>>? _include = include;
-    private readonly Expression<Func<T, object>>? _orderBy = orderBy;
-    private readonly Expression<Func<T, object>>? _orderByDesc = orderByDesc;
+    public Expression<Func<T, bool>>? Criteria { get; private set; }
+    public Expression<Func<T, object>>? OrderBy { get; private set; }
+    public Expression<Func<T, object>>? OrderByDesc { get; private set; }
+    public Expression<Func<T, object>>? Include { get; private set; }
 
-    public IQueryable<T> EvaluateQuery(IQueryable<T> query)
+    public SpecificationBase()
     {
-        if (_criteria != null)
+
+    }
+
+    public SpecificationBase(Expression<Func<T, bool>>? criteria,
+                             Expression<Func<T, object>>? include,
+                             Expression<Func<T, object>>? orderBy,
+                             Expression<Func<T, object>>? orderByDesc)
+    {
+        Criteria = criteria;
+        Include = include;
+        OrderBy = orderBy;
+        OrderByDesc = orderByDesc;
+    }
+
+    public SpecificationBase<T> AddCriteria(Expression<Func<T, bool>> criteria)
+    {
+        Criteria = criteria;
+        return this;
+    }
+
+    public SpecificationBase<T> AddInclude(Expression<Func<T, object>> selector)
+    {
+        Include = selector;
+        return this;
+    }
+
+    public SpecificationBase<T> AddOrderBy(Expression<Func<T, object>> selector)
+    {
+        OrderBy = selector;
+        return this;
+    }
+
+    public SpecificationBase<T> AddOrderByDesc(Expression<Func<T, object>> selector)
+    {
+        OrderByDesc = selector;
+        return this;
+    }
+
+    public virtual IQueryable<T> EvaluateQuery(IQueryable<T> query)
+    {
+        if (Criteria != null)
         {
-            query = query.Where(_criteria);
+            query = query.Where(Criteria);
         }
 
-        if (_include != null)
+        if (Include != null)
         {
-            query = query.Include(_include);
+            query = query.Include(Include);
         }
 
-        if (_orderBy != null)
+        if (OrderBy != null)
         {
-            query = query.OrderBy(_orderBy);
+            query = query.OrderBy(OrderBy);
         }
-        else if (_orderByDesc != null)
+        else if (OrderByDesc != null)
         {
-            query = query.OrderByDescending(_orderByDesc);
+            query = query.OrderByDescending(OrderByDesc);
         }
 
         return query;
+    }
+}
+
+public static class SpecificationExtensions
+{
+    public static IQueryable<T> EvaluateQuery<T>(this IQueryable<T> query, ISpecification<T> specification)
+    {
+        return specification.EvaluateQuery(query);
     }
 }

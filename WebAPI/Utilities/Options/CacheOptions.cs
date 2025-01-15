@@ -3,6 +3,7 @@
 public class CacheOptions
 {
     public CacheOptionDetails AppUser { get; set; }
+    public CacheOptionDetails Question { get; set; }
 }
 
 public record struct CacheOptionDetails

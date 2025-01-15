@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Utilities.Response;
+﻿namespace WebAPI.Utilities.Response.TagResponses;
 
 public record UpdateTagResponse(string Name, string Description)
 {

@@ -38,5 +38,6 @@ public static class Constants
     {
         public static string UserEmail(string email) => $"email:{email}";
         public static string AppUserKey(Guid id) => $"appuser:#{id}";
+        public static string Question(Guid id) => $"question:#{id}";
     }
 }

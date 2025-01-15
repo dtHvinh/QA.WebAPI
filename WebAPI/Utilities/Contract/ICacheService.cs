@@ -8,5 +8,7 @@ public interface ICacheService
     Task<bool> IsEmailUsed(string email);
     Task RemoveAppUserAsync(Guid id);
     Task SetUsedEmail(string email);
-    Task UpdateAppUserAsync(AppUser user);
+    Task SetAppUserAsync(AppUser user);
+    Task SetQuestionAsync(Question question);
+    Task<Question?> GetQuestionAsync(Guid id);
 }

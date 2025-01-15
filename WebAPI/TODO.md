@@ -4,7 +4,7 @@ Question bounty
 
 Implement user is banned check
 
-Impl Refresh Token (Add col to AppUser)
+Impl Refresh Token (Add col to AppUser, Change Expr min back to 15)
 
 FInd soft delete entity by check IsDeleted ("IsBanned")
 

@@ -172,6 +172,9 @@ namespace WebAPI.Migrations
                     b.Property<int>("Downvote")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -412,10 +415,10 @@ namespace WebAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDuplicate")
+                    b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsHide")
+                    b.Property<bool>("IsDuplicate")
                         .HasColumnType("bit");
 
                     b.Property<string>("Slug")
@@ -439,7 +442,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("IsClosed", "IsHide", "IsDeleted");
+                    b.HasIndex("IsDraft", "IsClosed", "IsDeleted");
 
                     b.ToTable("Question");
                 });

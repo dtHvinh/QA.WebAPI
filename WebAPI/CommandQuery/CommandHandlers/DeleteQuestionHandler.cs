@@ -2,7 +2,7 @@
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Response;
+using WebAPI.Utilities.Response.QuestionResponses;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 

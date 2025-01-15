@@ -22,4 +22,6 @@ public class Answer : IEntityWithTime<Guid>
     public required string Content { get; set; }
     public int Upvote { get; set; }
     public int Downvote { get; set; }
+
+    public bool IsAccepted { get; set; } = false;
 }

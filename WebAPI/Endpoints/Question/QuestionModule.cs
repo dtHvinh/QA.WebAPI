@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
+using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Response;
+using WebAPI.Utilities.Response.QuestionResponses;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Endpoints.Question;
@@ -17,12 +18,31 @@ public sealed class QuestionModule : IModule
     {
         var group = endpoints.MapGroup(EG.Question);
 
+        group.MapGet("/view/{id:guid}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
+            Guid id,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new GetSingleAvailableQuestionQuery(id);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
         group.MapPost("/", async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] CreateQuestionDto dto,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken) =>
+            [FromQuery] bool draft = false,
+            CancellationToken cancellationToken = default) =>
         {
-            var cmd = new CreateQuestionCommand(dto);
+            var cmd = new CreateQuestionCommand(dto, draft);
 
             var result = await mediator.Send(cmd, cancellationToken);
 
@@ -36,10 +56,11 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
 
+
         group.MapDelete("/{id:guid}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
             Guid id,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken) =>
+            CancellationToken cancellationToken = default) =>
         {
             var cmd = new DeleteQuestionCommand(id);
 
@@ -57,7 +78,7 @@ public sealed class QuestionModule : IModule
         group.MapPut("/", async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] UpdateQuestionDto dto,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken) =>
+            CancellationToken cancellationToken = default) =>
         {
             var cmd = new UpdateQuestionCommand(dto);
             var result = await mediator.Send(cmd, cancellationToken);

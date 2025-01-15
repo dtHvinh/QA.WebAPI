@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Utilities.Auto;
@@ -90,6 +92,13 @@ public static class ServiceExtensions
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
+        services.AddSingleton(e =>
+        {
+            return new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+            };
+        });
         services.AddTransient<AuthenticationContext>();
 
         services.AddSingleton(new ImageProvider(

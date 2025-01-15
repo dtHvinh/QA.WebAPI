@@ -8,10 +8,13 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.Utilities.Services;
 
 [Implement(typeof(ICacheService), ServiceLifetime.Singleton)]
-public class CacheService(IDistributedCache cache, ICacheOptionProvider cacheOptionProvider) : ICacheService
+public class CacheService(IDistributedCache cache,
+                          ICacheOptionProvider cacheOptionProvider,
+                          JsonSerializerOptions options) : ICacheService
 {
     private readonly IDistributedCache cache = cache;
     private readonly ICacheOptionProvider _cacheOptionProvider = cacheOptionProvider;
+    private readonly JsonSerializerOptions _options = options;
 
     public async Task<AppUser?> GetAppUserAsync(Guid id)
     {
@@ -24,20 +27,39 @@ public class CacheService(IDistributedCache cache, ICacheOptionProvider cacheOpt
         return JsonSerializer.Deserialize<AppUser>(user);
     }
 
-    public async Task UpdateAppUserAsync(AppUser user)
+    public async Task<Question?> GetQuestionAsync(Guid id)
     {
-        var options = _cacheOptionProvider.GetOptions(nameof(AppUser));
-        await cache.SetStringAsync(RedisKeyGen.AppUserKey(user.Id), JsonSerializer.Serialize(user), options);
+        var question = await cache.GetStringAsync(RedisKeyGen.Question(id));
+        if (question is null)
+        {
+            return null;
+        }
+
+        return JsonSerializer.Deserialize<Question>(question, _options);
     }
 
-    public async Task RemoveAppUserAsync(Guid id)
+    public async Task SetAppUserAsync(AppUser user)
     {
-        await cache.RemoveAsync(RedisKeyGen.AppUserKey(id));
+        var cacheOptions = _cacheOptionProvider.GetOptions(nameof(AppUser));
+        await cache.SetStringAsync(
+            RedisKeyGen.AppUserKey(user.Id), JsonSerializer.Serialize(user), cacheOptions);
     }
 
     public async Task SetUsedEmail(string email)
     {
         await cache.SetStringAsync(RedisKeyGen.UserEmail(email), "", _cacheOptionProvider.GetDefault());
+    }
+
+    public async Task SetQuestionAsync(Question question)
+    {
+        var cacheOptions = _cacheOptionProvider.GetOptions(nameof(Question));
+        var str = JsonSerializer.Serialize(question, _options);
+        await cache.SetStringAsync(RedisKeyGen.Question(question.Id), str, cacheOptions);
+    }
+
+    public async Task RemoveAppUserAsync(Guid id)
+    {
+        await cache.RemoveAsync(RedisKeyGen.AppUserKey(id));
     }
 
     public async Task<bool> IsEmailUsed(string email)

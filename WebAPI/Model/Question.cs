@@ -4,7 +4,7 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-[Index(nameof(IsClosed), nameof(IsHide), nameof(IsDeleted))]
+[Index(nameof(IsDraft), nameof(IsClosed), nameof(IsDeleted))]
 public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
 {
     public Guid Id { get; set; }
@@ -25,10 +25,10 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
     public int Upvote { get; set; }
     public int Downvote { get; set; }
 
-    public bool IsDuplicate { get; set; } // When user or admin mark as duplicate
-    public bool IsClosed { get; set; } // Disable new answer
-    public bool IsHide { get; set; } // When user save current state of the Question
-    public bool IsDeleted { get; set; }
+    public bool IsDuplicate { get; set; } = false; // When user or admin mark as duplicate
+    public bool IsClosed { get; set; } = false; // Disable new answer
+    public bool IsDraft { get; set; } = false;// When user save current state of the Question
+    public bool IsDeleted { get; set; } = false;
 
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }

@@ -7,7 +7,7 @@ using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Response;
+using WebAPI.Utilities.Response.AuthResponses;
 using static WebAPI.Utilities.Constants;
 using E = WebAPI.Utilities.Constants.Endpoints;
 

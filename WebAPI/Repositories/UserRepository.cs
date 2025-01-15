@@ -65,6 +65,9 @@ public class UserRepository(ApplicationDbContext dbContext,
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByEmailAsync(email);
+        if (user == null || user.IsDeleted || user.IsBanned)
+            return null;
+
         return user;
     }
 
@@ -72,6 +75,9 @@ public class UserRepository(ApplicationDbContext dbContext,
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByIdAsync(id.ToString());
+        if (user == null || user.IsDeleted || user.IsBanned)
+            return null;
+
         return user;
     }
 
