@@ -30,6 +30,14 @@ public static class QuestionMap
         };
     }
 
+    public static Question Update(this Question current, UpdateQuestionDto other)
+    {
+        current.Title = other.Title;
+        current.Content = other.Content;
+
+        return current;
+    }
+
     public static GetQuestionResponse ToGetQuestionResponse(this Question obj)
     {
         return new GetQuestionResponse()

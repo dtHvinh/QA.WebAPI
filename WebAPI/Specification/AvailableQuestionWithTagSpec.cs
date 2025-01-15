@@ -15,9 +15,9 @@ public class AvailableQuestionWithTagSpec : SpecificationBase<Question>
     public override IQueryable<Question> EvaluateQuery(IQueryable<Question> query)
     {
         return base.EvaluateQuery(query)
-                   .Include(e => e.Answers)
                    .Include(e => e.Author)
-                   .Include(e => e.Comments)
+                   .Include(e => e.Answers.OrderByDescending(e => e.CreatedAt).Take(10))
+                   .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt).Take(10))
                    .Include(e => e.QuestionTags)
                    .ThenInclude(e => e.Tag);
     }

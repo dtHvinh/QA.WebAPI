@@ -16,6 +16,7 @@ public class CreateQuestionValidator : AbstractValidator<CreateQuestionDto>
             .MaximumLength(2000).WithMessage("Content too long");
 
         RuleFor(e => e.Tags)
-            .NotEmpty().WithMessage("Tags are required.");
+            .NotEmpty().WithMessage("Tags are required.")
+            .Must(e => e.Count < 10).WithMessage("To much tag");
     }
 }

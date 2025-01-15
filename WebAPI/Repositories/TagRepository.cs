@@ -27,13 +27,13 @@ public class TagRepository(ApplicationDbContext dbContext)
     public void AddQuestionToTags(Question question, List<Guid> tagIds)
     {
         var questionId = question.Id;
-
-        _dbContext.Set<QuestionTag>().AddRange(
-          tagIds.Select(e => new QuestionTag
-          {
-              QuestionId = questionId,
-              TagId = e
-          }));
+        if (tagIds != null)
+            _dbContext.Set<QuestionTag>().AddRange(
+              tagIds.Select(e => new QuestionTag
+              {
+                  QuestionId = questionId,
+                  TagId = e
+              }));
     }
 
     public async Task<List<Tag>> FindTagsByNames(

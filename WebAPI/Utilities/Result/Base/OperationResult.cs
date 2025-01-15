@@ -1,5 +1,8 @@
-﻿namespace WebAPI.Utilities.Result.Base;
+﻿using System.Diagnostics;
 
+namespace WebAPI.Utilities.Result.Base;
+
+[DebuggerDisplay("IsSucceed={IsSuccess}")]
 public class OperationResult
 {
     public bool IsSuccess { get; protected set; }
