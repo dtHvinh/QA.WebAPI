@@ -5,5 +5,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record GetQuestionQuery(string Keyword, string Tag, PageArgs Args)
+public record SearchQuestionQuery(string Keyword, Guid TagId, PageArgs Args)
     : IQuery<OperationResult<PagedResponse<GetQuestionResponse>>>;

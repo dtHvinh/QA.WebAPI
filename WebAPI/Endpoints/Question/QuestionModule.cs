@@ -40,13 +40,13 @@ public sealed class QuestionModule : IModule
         group.MapGet("/search",
             async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
             [FromQuery] string keyword,
-            [FromQuery] string tag,
+            [FromQuery] Guid tagId,
             [FromQuery] int page,
             [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new GetQuestionQuery(keyword, tag, PageArgs.From(page, pageSize));
+            var cmd = new SearchQuestionQuery(keyword, tagId, PageArgs.From(page, pageSize));
 
             var result = await mediator.Send(cmd, cancellationToken);
 

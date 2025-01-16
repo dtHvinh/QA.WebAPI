@@ -5,6 +5,7 @@ using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
+using WebAPI.Utilities.Collections;
 using WebAPI.Utilities.Params;
 
 namespace WebAPI.Repositories;
@@ -13,6 +14,8 @@ namespace WebAPI.Repositories;
 public class QuestionRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Question>(dbContext), IQuestionRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     /// <inheritdoc/>
     public async Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -24,22 +27,38 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return result;
     }
 
-    public async Task<List<Question>> FindQuestionAsync(
+    public async Task<List<Question>> SearchQuestionAsync(
         QuestionSearchParams searchParams, CancellationToken cancellationToken)
     {
-        //var specification = new QuestionSearchSpecification(searchParams.Keyword, null, null);
+        var searchQuestionSpec = new SearchQuestionSpecification();
 
-        //Table.Include(e => e.Author)
-        //     .Include(e => e.QuestionTags)
-        //     .ThenInclude(e => e.Tag)
-        //     .Where(e => e.QuestionTags.Any(e => e.Tag!.Name.Equals(searchParams.Tag, StringComparison.InvariantCultureIgnoreCase)));
+        // Load questions of the tag
+        var tagQuestions = await _dbContext
+            .Set<Tag>()
+            .Where(e => e.Id.Equals(searchParams.TagId))
+            .Include(e => e.Questions)
+            .FirstAsync(cancellationToken);
 
-        throw new NotImplementedException();
+        // Evaluate the query
+        var questions = await tagQuestions.Questions
+            .Where(q =>
+            {
+                return
+                q.Title.Contains(searchParams.Keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                q.Content.Contains(searchParams.Keyword, StringComparison.InvariantCultureIgnoreCase);
+            })
+            .Skip(searchParams.Skip)
+            .Take(searchParams.Take)
+            .AsAsyncQueryable()
+            .EvaluateQuery(searchQuestionSpec)
+            .ToListAsync(cancellationToken);
+
+        return questions ?? [];
     }
 
     public async Task SetQuestionTag(Question question, List<Tag> tags)
     {
-        await dbContext.Entry(question).Collection(e => e.Tags).LoadAsync();
+        await _dbContext.Entry(question).Collection(e => e.Tags).LoadAsync();
         question.Tags = tags;
     }
 

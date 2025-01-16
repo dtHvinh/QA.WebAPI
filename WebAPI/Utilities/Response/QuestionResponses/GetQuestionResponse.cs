@@ -8,9 +8,9 @@ namespace WebAPI.Utilities.Response.QuestionResponses;
 public class GetQuestionResponse
 {
     public Guid Id { get; set; }
-    public string Title { get; set; }
-    public string Slug { get; set; }
-    public string Content { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
 
     public AuthorResponse? Author { get; set; } = default!;
 
@@ -23,7 +23,7 @@ public class GetQuestionResponse
     public int Upvote { get; set; }
     public int Downvote { get; set; }
 
-    public List<TagResponse> Tags { get; set; }
+    public ICollection<TagResponse> Tags { get; set; } = default!;
     public ICollection<AnswerResponse> Answers { get; set; } = default!;
     public ICollection<CommentResponse> Comments { get; set; } = default!;
 }
