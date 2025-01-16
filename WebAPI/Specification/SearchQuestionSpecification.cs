@@ -10,6 +10,13 @@ public class SearchQuestionSpecification : SpecificationBase<Question>
         AddCriteria(question => !question.IsDeleted &&
                                 !question.IsDraft);
 
-        AddOrderByDesc(e => new { e.Upvote, e.ViewCount, e.CreatedAt });
+        //AddOrderByDesc(e => new { e.Upvote, e.ViewCount, e.CreatedAt });
+    }
+
+    public override IQueryable<Question> EvaluateQuery(IQueryable<Question> query)
+    {
+        return base.EvaluateQuery(query)
+            .OrderByDescending(e => e.Upvote)
+            .ThenByDescending(e => e.ViewCount);
     }
 }

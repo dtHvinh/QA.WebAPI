@@ -16,6 +16,45 @@ public class QuestionRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
+    private static async Task<List<Question>> SearchQuestionWithKeyword(
+        ICollection<Question> tagQuestions,
+        string keyword,
+        int skip,
+        int take,
+        CancellationToken cancellationToken = default)
+    {
+        var questions = await tagQuestions
+            .Where(q =>
+            {
+                return
+                q.Title.Contains(keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                q.Content.Contains(keyword, StringComparison.InvariantCultureIgnoreCase);
+            })
+            .AsAsyncQueryable()
+            .EvaluateQuery(new SearchQuestionSpecification())
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        return questions ?? [];
+    }
+
+    private static async Task<List<Question>> SearchQuestionByTag(
+        ICollection<Question> tagQuestions,
+        int skip,
+        int take,
+        CancellationToken cancellationToken = default)
+    {
+        var questions = await tagQuestions
+            .AsAsyncQueryable()
+            .EvaluateQuery(new SearchQuestionSpecification())
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        return questions ?? [];
+    }
+
     /// <inheritdoc/>
     public async Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -30,8 +69,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     public async Task<List<Question>> SearchQuestionAsync(
         QuestionSearchParams searchParams, CancellationToken cancellationToken)
     {
-        var searchQuestionSpec = new SearchQuestionSpecification();
-
         // Load questions of the tag
         var tagQuestions = await _dbContext
             .Set<Tag>()
@@ -40,20 +77,17 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             .FirstAsync(cancellationToken);
 
         // Evaluate the query
-        var questions = await tagQuestions.Questions
-            .Where(q =>
-            {
-                return
-                q.Title.Contains(searchParams.Keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                q.Content.Contains(searchParams.Keyword, StringComparison.InvariantCultureIgnoreCase);
-            })
-            .Skip(searchParams.Skip)
-            .Take(searchParams.Take)
-            .AsAsyncQueryable()
-            .EvaluateQuery(searchQuestionSpec)
-            .ToListAsync(cancellationToken);
-
-        return questions ?? [];
+        return
+            string.IsNullOrEmpty(searchParams.Keyword)
+            ? await SearchQuestionByTag(tagQuestions.Questions,
+                                        searchParams.Skip,
+                                        searchParams.Take,
+                                        cancellationToken)
+            : await SearchQuestionWithKeyword(tagQuestions.Questions,
+                                              searchParams.Keyword,
+                                              searchParams.Skip,
+                                              searchParams.Take,
+                                              cancellationToken);
     }
 
     public async Task SetQuestionTag(Question question, List<Tag> tags)
