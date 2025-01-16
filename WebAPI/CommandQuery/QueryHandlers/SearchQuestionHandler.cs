@@ -14,7 +14,8 @@ public class SearchQuestionHandler(IQuestionRepository questionRepository)
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
 
-    public async Task<OperationResult<PagedResponse<GetQuestionResponse>>> Handle(SearchQuestionQuery request, CancellationToken cancellationToken)
+    public async Task<OperationResult<PagedResponse<GetQuestionResponse>>> Handle(
+        SearchQuestionQuery request, CancellationToken cancellationToken)
     {
         var skip = (request.Args.Page - 1) * request.Args.PageSize;
         var searchParams = QuestionSearchParams.From(
@@ -31,6 +32,5 @@ public class SearchQuestionHandler(IQuestionRepository questionRepository)
             questions.Select(e => e.ToGetQuestionResponse()), hasNext, request.Args.Page, request.Args.PageSize);
 
         return OperationResult<PagedResponse<GetQuestionResponse>>.Success(response);
-
     }
 }

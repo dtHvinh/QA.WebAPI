@@ -23,6 +23,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Attribute\WebAPI.Attributes.csproj" />
 	  <ProjectReference Include="..\CQRS\WebAPI.CQRS.csproj" />
+	  <ProjectReference Include="..\WebAPI.Libraries\WebAPI.Libraries.csproj" />
 	</ItemGroup>
 
 </Project>

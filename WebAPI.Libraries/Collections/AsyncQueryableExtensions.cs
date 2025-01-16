@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace WebAPI.Utilities.Collections;
+namespace WebAPI.Libraries.Collections;
 #pragma warning disable S2953
 #pragma warning disable CS1998 // Nothing to await
 #pragma warning disable CS8603 
