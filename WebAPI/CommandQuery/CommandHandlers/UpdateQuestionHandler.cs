@@ -23,8 +23,10 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             return OperationResult<UpdateQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Question.Id));
 
-        _tagRepository.AddQuestionToTags(existQuestion, request.Question.AdditionalTags);
-        existQuestion.Update(request.Question);
+        var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
+
+        existQuestion.FromUpdateObject(request.Question);
+        await _questionRepository.SetQuestionTag(existQuestion, tags);
 
         _questionRepository.Update(existQuestion);
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);

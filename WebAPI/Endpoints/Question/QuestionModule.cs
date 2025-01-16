@@ -5,6 +5,7 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
+using WebAPI.Pagination;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Response.QuestionResponses;
@@ -23,7 +24,7 @@ public sealed class QuestionModule : IModule
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new GetSingleAvailableQuestionQuery(id);
+            var cmd = new GetSingleQuestionQuery(id);
 
             var result = await mediator.Send(cmd, cancellationToken);
 
@@ -35,6 +36,29 @@ public sealed class QuestionModule : IModule
             return TypedResults.Ok(result.Value);
         })
             .RequireAuthorization();
+
+        group.MapGet("/search",
+            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+            [FromQuery] string keyword,
+            [FromQuery] string tag,
+            [FromQuery] int page,
+            [FromQuery] int pageSize,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new GetQuestionQuery(keyword, tag, PageArgs.From(page, pageSize));
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
 
         group.MapPost("/", async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] CreateQuestionDto dto,

@@ -1,21 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using WebAPI.Utilities.Contract;
+﻿namespace WebAPI.Model;
 
-namespace WebAPI.Model;
-
-[PrimaryKey(nameof(QuestionId), nameof(TagId))]
-public class QuestionTag : IKeylessEntityWithTime
+public class QuestionTag
 {
-    [Key, Column(Order = 0), ForeignKey(nameof(Question))]
     public Guid QuestionId { get; set; }
-    [Key, Column(Order = 1), ForeignKey(nameof(Tag))]
+    public Question Question { get; set; } = default!;
     public Guid TagId { get; set; }
-
-    public Question? Question { get; set; }
-    public Tag? Tag { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public Tag Tag { get; set; } = default!;
 }

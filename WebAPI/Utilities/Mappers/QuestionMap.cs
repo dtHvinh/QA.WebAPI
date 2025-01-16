@@ -30,7 +30,7 @@ public static class QuestionMap
         };
     }
 
-    public static Question Update(this Question current, UpdateQuestionDto other)
+    public static Question FromUpdateObject(this Question current, UpdateQuestionDto other)
     {
         current.Title = other.Title;
         current.Content = other.Content;
@@ -40,7 +40,7 @@ public static class QuestionMap
 
     public static GetQuestionResponse ToGetQuestionResponse(this Question obj)
     {
-        return new GetQuestionResponse()
+        var response = new GetQuestionResponse()
         {
             Id = obj.Id,
             Title = obj.Title,
@@ -54,9 +54,17 @@ public static class QuestionMap
             AnswerCount = obj.AnswerCount,
             Upvote = obj.Upvote,
             Downvote = obj.Downvote,
-            Tags = obj.QuestionTags.Select(x => x.Tag.ToTagResonse()).ToList(),
-            Answers = obj.Answers.Select(x => x.ToAnswerResponse()).ToList(),
-            Comments = obj.Comments.Select(x => x.ToCommentResponse()).ToList()
         };
+
+        if (obj.Tags != null)
+            response.Tags = obj.Tags.Select(x => x.ToTagResonse()).ToList();
+
+        if (obj.Answers != null)
+            response.Answers = obj.Answers.Select(x => x.ToAnswerResponse()).ToList();
+
+        if (obj.Comments != null)
+            response.Comments = obj.Comments.Select(x => x.ToCommentResponse()).ToList();
+
+        return response;
     }
 }

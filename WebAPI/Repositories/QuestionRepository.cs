@@ -5,6 +5,7 @@ using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
+using WebAPI.Utilities.Params;
 
 namespace WebAPI.Repositories;
 
@@ -15,7 +16,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     /// <inheritdoc/>
     public async Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var specification = new AvailableQuestionWithTagSpec();
+        var specification = new QuestionFullDetailSpecification();
         var result = await Table.Where(e => e.Id == id)
                     .EvaluateQuery(specification)
                     .FirstOrDefaultAsync(cancellationToken);
@@ -23,14 +24,23 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return result;
     }
 
-    public async Task<Question?> FindQuestionBySlug(string slug, CancellationToken cancellationToken)
+    public async Task<List<Question>> FindQuestionAsync(
+        QuestionSearchParams searchParams, CancellationToken cancellationToken)
     {
-        var specification = new AvailableQuestionWithTagSpec();
-        var result = await Table.Where(e => e.Slug == slug)
-                    .EvaluateQuery(specification)
-                    .FirstOrDefaultAsync(cancellationToken);
+        //var specification = new QuestionSearchSpecification(searchParams.Keyword, null, null);
 
-        return result;
+        //Table.Include(e => e.Author)
+        //     .Include(e => e.QuestionTags)
+        //     .ThenInclude(e => e.Tag)
+        //     .Where(e => e.QuestionTags.Any(e => e.Tag!.Name.Equals(searchParams.Tag, StringComparison.InvariantCultureIgnoreCase)));
+
+        throw new NotImplementedException();
+    }
+
+    public async Task SetQuestionTag(Question question, List<Tag> tags)
+    {
+        await dbContext.Entry(question).Collection(e => e.Tags).LoadAsync();
+        question.Tags = tags;
     }
 
     public void MarkAsView(Guid questionId)

@@ -12,8 +12,8 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250112004801_UpdateEntity2")]
-    partial class UpdateEntity2
+    [Migration("20250116012423_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,21 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("QuestionTag", b =>
+                {
+                    b.Property<Guid>("QuestionsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("QuestionsId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("QuestionTag");
+                });
+
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -174,6 +189,9 @@ namespace WebAPI.Migrations
 
                     b.Property<int>("Downvote")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
@@ -415,10 +433,10 @@ namespace WebAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDuplicate")
+                    b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsHide")
+                    b.Property<bool>("IsDuplicate")
                         .HasColumnType("bit");
 
                     b.Property<string>("Slug")
@@ -442,7 +460,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("IsClosed", "IsHide", "IsDeleted");
+                    b.HasIndex("IsDraft", "IsClosed", "IsDeleted");
 
                     b.ToTable("Question");
                 });
@@ -515,29 +533,6 @@ namespace WebAPI.Migrations
                     b.ToTable("QuestionReport");
                 });
 
-            modelBuilder.Entity("WebAPI.Model.QuestionTag", b =>
-                {
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(0);
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("QuestionId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("QuestionTag");
-                });
-
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -552,12 +547,16 @@ namespace WebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("QuestionsCount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("NormalizedName")
                         .IsUnique();
 
                     b.ToTable("Tag");
@@ -645,6 +644,21 @@ namespace WebAPI.Migrations
                     b.HasOne("WebAPI.Model.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuestionTag", b =>
+                {
+                    b.HasOne("WebAPI.Model.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAPI.Model.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -770,25 +784,6 @@ namespace WebAPI.Migrations
                     b.Navigation("Reporter");
                 });
 
-            modelBuilder.Entity("WebAPI.Model.QuestionTag", b =>
-                {
-                    b.HasOne("WebAPI.Model.Question", "Question")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebAPI.Model.Tag", "Tag")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("WebAPI.Model.Upvote", b =>
                 {
                     b.HasOne("WebAPI.Model.Question", null)
@@ -825,16 +820,9 @@ namespace WebAPI.Migrations
 
                     b.Navigation("Downvotes");
 
-                    b.Navigation("QuestionTags");
-
                     b.Navigation("Reports");
 
                     b.Navigation("Upvotes");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.Tag", b =>
-                {
-                    b.Navigation("QuestionTags");
                 });
 #pragma warning restore 612, 618
         }

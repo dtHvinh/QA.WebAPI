@@ -38,5 +38,5 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
     public ICollection<Downvote> Downvotes { get; set; } = default!;
     public ICollection<QuestionReport> Reports { get; set; } = default!;
     public ICollection<QuestionComment> Comments { get; set; } = default!;
-    public ICollection<QuestionTag> QuestionTags { get; set; } = default!;
+    public ICollection<Tag> Tags { get; set; } = default!;
 }

@@ -20,13 +20,13 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
     public async Task<OperationResult<CreateQuestionResponse>> Handle(
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
-        // Add question 
+        // Add question
         var question = request.Question.ToQuestion(_authentcationContext.UserId, request.DraftMode);
-        _questionRepository.Add(question);
 
-        // Add tags to question
-        var tagIds = request.Question.Tags.Select(e => e.Id).ToList();
-        _tagRepository.AddQuestionToTags(question, tagIds);
+        var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
+        question.Tags = tags;
+
+        _questionRepository.Add(question);
 
         // Process result
         var opResult = await _questionRepository.SaveChangesAsync(cancellationToken);
@@ -38,7 +38,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         var response = new CreateQuestionResponse(Id: question.Id,
                                                   Title: question.Title,
                                                   Content: question.Content,
-                                                  TagObjects: request.Question.Tags);
+                                                  Tags: request.Question.Tags);
 
         return OperationResult<CreateQuestionResponse>.Success(response);
     }

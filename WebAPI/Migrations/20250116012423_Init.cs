@@ -2,8 +2,6 @@
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace WebAPI.Migrations
 {
     /// <inheritdoc />
@@ -31,14 +29,14 @@ namespace WebAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(50)", nullable: true),
                     Reputation = table.Column<int>(type: "int", nullable: false),
                     IsBanned = table.Column<bool>(type: "bit", nullable: false),
                     DateJoined = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastActive = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePicture = table.Column<string>(type: "nvarchar(255)", nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -65,9 +63,10 @@ namespace WebAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    NormalizedName = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", nullable: false),
+                    QuestionsCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,7 +156,7 @@ namespace WebAPI.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,14 +187,14 @@ namespace WebAPI.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(150)", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(250)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(2000)", nullable: false),
                     Upvote = table.Column<int>(type: "int", nullable: false),
                     Downvote = table.Column<int>(type: "int", nullable: false),
                     IsDuplicate = table.Column<bool>(type: "bit", nullable: false),
                     IsClosed = table.Column<bool>(type: "bit", nullable: false),
-                    IsHide = table.Column<bool>(type: "bit", nullable: false),
+                    IsDraft = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     AnswerCount = table.Column<int>(type: "int", nullable: false)
@@ -220,9 +219,10 @@ namespace WebAPI.Migrations
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(2000)", nullable: false),
                     Upvote = table.Column<int>(type: "int", nullable: false),
-                    Downvote = table.Column<int>(type: "int", nullable: false)
+                    Downvote = table.Column<int>(type: "int", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -235,6 +235,33 @@ namespace WebAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Answer_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookMark",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookMark", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BookMark_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookMark_Question_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Question",
                         principalColumn: "Id",
@@ -276,7 +303,7 @@ namespace WebAPI.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(2000)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -306,7 +333,7 @@ namespace WebAPI.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Kind = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(150)", nullable: false),
                     ReporterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -331,23 +358,21 @@ namespace WebAPI.Migrations
                 name: "QuestionTag",
                 columns: table => new
                 {
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    QuestionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionId, x.TagId });
+                    table.PrimaryKey("PK_QuestionTag", x => new { x.QuestionsId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_QuestionTag_Question_QuestionId",
-                        column: x => x.QuestionId,
+                        name: "FK_QuestionTag_Question_QuestionsId",
+                        column: x => x.QuestionsId,
                         principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QuestionTag_Tag_TagId",
-                        column: x => x.TagId,
+                        name: "FK_QuestionTag_Tag_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tag",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
@@ -389,7 +414,7 @@ namespace WebAPI.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Kind = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(250)", nullable: false),
                     ReporterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -408,15 +433,6 @@ namespace WebAPI.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { new Guid("0afd157f-972e-455a-8d2b-f9801272765b"), null, "User", null },
-                    { new Guid("ca05cbbc-a00f-4f0c-92a8-0968d19045ea"), null, "Admin", null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -484,6 +500,17 @@ namespace WebAPI.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BookMark_QuestionId",
+                table: "BookMark",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BookMark_UserId_CreatedAt",
+                table: "BookMark",
+                columns: new[] { "UserId", "CreatedAt" },
+                descending: new[] { false, true });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Downvote_DownvotedEntityId",
                 table: "Downvote",
                 column: "DownvotedEntityId");
@@ -504,9 +531,9 @@ namespace WebAPI.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Question_IsClosed_IsHide_IsDeleted",
+                name: "IX_Question_IsDraft_IsClosed_IsDeleted",
                 table: "Question",
-                columns: new[] { "IsClosed", "IsHide", "IsDeleted" });
+                columns: new[] { "IsDraft", "IsClosed", "IsDeleted" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuestionComment_AuthorId",
@@ -529,9 +556,15 @@ namespace WebAPI.Migrations
                 column: "ReporterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestionTag_TagId",
+                name: "IX_QuestionTag_TagsId",
                 table: "QuestionTag",
-                column: "TagId");
+                column: "TagsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_NormalizedName",
+                table: "Tag",
+                column: "NormalizedName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Upvote_QuestionId",
@@ -569,6 +602,9 @@ namespace WebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BookMark");
 
             migrationBuilder.DropTable(
                 name: "Downvote");

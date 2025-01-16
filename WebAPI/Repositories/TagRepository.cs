@@ -10,8 +10,6 @@ namespace WebAPI.Repositories;
 public class TagRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Tag>(dbContext), ITagRepository
 {
-    private readonly ApplicationDbContext _dbContext = dbContext;
-
     public void CreateTags(List<Tag> tags)
     {
         tags.ForEach(SetNormalizedTagName);
@@ -24,25 +22,9 @@ public class TagRepository(ApplicationDbContext dbContext)
         Add(tag);
     }
 
-    public void AddQuestionToTags(Question question, List<Guid> tagIds)
+    public async Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default)
     {
-        var questionId = question.Id;
-        if (tagIds != null)
-        {
-            _dbContext.Set<QuestionTag>().AddRange(
-                tagIds.Select(e => new QuestionTag
-                {
-                    QuestionId = questionId,
-                    TagId = e
-                }));
-
-            var tags = Entities.Where(e => tagIds.Contains(e.Id)).ToList();
-            foreach (var tag in tags)
-            {
-                tag.QuestionsCount++;
-            }
-            Entities.UpdateRange(tags);
-        }
+        return await Entities.Where(x => ids.Contains(x.Id)).ToListAsync(cancellationToken);
     }
 
     public async Task<List<Tag>> FindTagsByNames(

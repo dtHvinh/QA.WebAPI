@@ -15,9 +15,8 @@ public class Tag : IEntity<Guid>
     public string NormalizedName { get; set; } = default!;
     [Column(TypeName = "nvarchar(1000)")]
     public string Description { get; set; } = default!;
-    public int QuestionsCount { get; set; }
 
-    public ICollection<QuestionTag> QuestionTags { get; set; } = default!;
+    public ICollection<Question> Questions { get; set; } = default!;
 }
 
 public enum Tags

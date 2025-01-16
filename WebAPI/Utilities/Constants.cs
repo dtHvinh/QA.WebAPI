@@ -32,6 +32,7 @@ public static class Constants
         public const string QUESTION_DELETE_UNAUTHORIZED = "Do not has ownership to delete this question";
 
         public const string PasswordWrong = "Password is wrong";
+        public const string TAG_ID_NOTFOUND = "Tag not found";
     }
 
     public static class RedisKeyGen

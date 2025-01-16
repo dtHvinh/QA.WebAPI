@@ -27,6 +27,10 @@ public static class TagMap
 
     public static TagResponse ToTagResonse(this Tag obj)
     {
+        if (obj == null)
+        {
+            return null;
+        }
         return new TagResponse(obj.Id, obj.Name);
     }
 

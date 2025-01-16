@@ -9,15 +9,15 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetSingleAvailableQuestionHandler(IQuestionRepository questionRepository,
+public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
                                                ICacheService cacheService)
-    : IQueryHandler<GetSingleAvailableQuestionQuery, OperationResult<GetQuestionResponse>>
+    : IQueryHandler<GetSingleQuestionQuery, OperationResult<GetQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<OperationResult<GetQuestionResponse>> Handle(
-        GetSingleAvailableQuestionQuery request, CancellationToken cancellationToken)
+        GetSingleQuestionQuery request, CancellationToken cancellationToken)
     {
         var question = await _cacheService.GetQuestionAsync(request.Id);
         question ??= await _questionRepository.FindAvailableQuestionByIdAsync(request.Id, cancellationToken);

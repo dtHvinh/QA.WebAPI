@@ -46,8 +46,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         using var scope = app.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-        await roleManager.CreateAsync(new IdentityRole<Guid>(WebAPI.Utilities.Constants.Roles.Admin));
-        await roleManager.CreateAsync(new IdentityRole<Guid>(WebAPI.Utilities.Constants.Roles.User));
+        await roleManager.CreateAsync(new IdentityRole<Guid>(Constants.Roles.Admin));
+        await roleManager.CreateAsync(new IdentityRole<Guid>(Constants.Roles.User));
 
         var tagRepository = scope.ServiceProvider.GetRequiredService<WebAPI.Repositories.Base.ITagRepository>();
 
