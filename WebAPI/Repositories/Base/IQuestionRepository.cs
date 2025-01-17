@@ -3,7 +3,7 @@ using WebAPI.Utilities.Params;
 
 namespace WebAPI.Repositories.Base;
 
-public interface IQuestionRepository : IRepositoryBase<Question>
+public interface IQuestionRepository : IRepository<Question>
 {
     Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<Question>> SearchQuestionAsync(QuestionSearchParams searchParams, CancellationToken cancellationToken);

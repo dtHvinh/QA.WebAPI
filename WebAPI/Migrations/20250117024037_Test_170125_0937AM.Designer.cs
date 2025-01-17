@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117024037_Test_170125_0937AM")]
+    partial class Test_170125_0937AM
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,7 +168,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag", (string)null);
+                    b.ToTable("QuestionTag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
@@ -205,7 +208,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
@@ -330,7 +333,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("UserId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark", (string)null);
+                    b.ToTable("BookMark");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Downvote", b =>
@@ -357,7 +360,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Downvote", (string)null);
+                    b.ToTable("Downvote");
 
                     b.HasDiscriminator<string>("DownvoteType").HasValue("Downvote");
 
@@ -421,7 +424,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("IsDraft", "IsClosed", "IsDeleted");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionComment", b =>
@@ -455,7 +458,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("QuestionComment", (string)null);
+                    b.ToTable("QuestionComment");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Report", b =>
@@ -464,7 +467,7 @@ namespace WebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AnswerId")
+                    b.Property<Guid>("AnswerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -474,7 +477,7 @@ namespace WebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<Guid?>("QuestionId")
+                    b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReportType")
@@ -490,7 +493,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Report", (string)null);
+                    b.ToTable("Report");
 
                     b.HasDiscriminator<string>("ReportType").HasValue("Report");
 
@@ -520,7 +523,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("NormalizedName")
                         .IsUnique();
 
-                    b.ToTable("Tag", (string)null);
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Upvote", b =>
@@ -547,7 +550,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Upvote", (string)null);
+                    b.ToTable("Upvote");
 
                     b.HasDiscriminator<string>("UpvoteType").HasValue("Upvote");
 
@@ -802,11 +805,15 @@ namespace WebAPI.Migrations
                 {
                     b.HasOne("WebAPI.Model.Answer", "Answer")
                         .WithMany("Reports")
-                        .HasForeignKey("AnswerId");
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebAPI.Model.Question", "Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebAPI.Model.AppUser", "Reporter")
                         .WithMany()
@@ -825,11 +832,15 @@ namespace WebAPI.Migrations
                 {
                     b.HasOne("WebAPI.Model.Answer", "Answer")
                         .WithMany()
-                        .HasForeignKey("AnswerId");
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebAPI.Model.Question", "Question")
                         .WithMany("Reports")
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebAPI.Model.AppUser", "Reporter")
                         .WithMany()

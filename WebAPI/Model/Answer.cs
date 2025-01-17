@@ -24,4 +24,8 @@ public class Answer : IEntityWithTime<Guid>
     public int Downvote { get; set; }
 
     public bool IsAccepted { get; set; } = false;
+
+    public ICollection<AnswerReport> Reports { get; set; } = default!;
+    public ICollection<AnswerUpvote> Upvotes { get; set; } = default!;
+    public ICollection<AnswerDownvote> Downvotes { get; set; } = default!;
 }

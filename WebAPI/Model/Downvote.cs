@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-[Index(nameof(DownvotedEntityId))]
 public class Downvote : IEntityWithTime<Guid>
 {
     public Guid Id { get; set; }
@@ -15,12 +13,10 @@ public class Downvote : IEntityWithTime<Guid>
     public Guid UserId { get; set; }
     public AppUser? User { get; set; }
 
-    public DownvoteType DownvoteType { get; set; }
-
-    public Guid DownvotedEntityId { get; set; }
+    public string? DownvoteType { get; set; }
 }
 
-public enum DownvoteType
+public enum DownvoteTypes
 {
     Answer,
     Question

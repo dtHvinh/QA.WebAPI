@@ -4,7 +4,7 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories.Base;
 
-public interface IRepositoryBase<T> where T : class
+public interface IRepository<T> where T : class
 {
     void Add(T entity);
     void AddRange(IEnumerable<T> entities);
@@ -14,6 +14,6 @@ public interface IRepositoryBase<T> where T : class
     void Remove(T entity);
     void Update(T entity);
     void UpdateRange(T[] entities);
-    Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken);
     void UpdateRange(IEnumerable<T> entities);
+    Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

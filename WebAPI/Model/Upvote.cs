@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-[Index(nameof(UpvotedEntityId))]
 public class Upvote : IEntityWithTime<Guid>
 {
     public Guid Id { get; set; }
@@ -15,12 +13,10 @@ public class Upvote : IEntityWithTime<Guid>
     public Guid UserId { get; set; }
     public AppUser? User { get; set; }
 
-    public UpvoteType UpvoteType { get; set; }
-
-    public Guid UpvotedEntityId { get; set; }
+    public string? UpvoteType { get; set; }
 }
 
-public enum UpvoteType
+public enum UpvoteTypes
 {
     Answer,
     Question

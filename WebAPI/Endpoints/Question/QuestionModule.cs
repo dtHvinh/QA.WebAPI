@@ -19,6 +19,7 @@ public sealed class QuestionModule : IModule
     {
         var group = endpoints.MapGroup(EG.Question);
 
+        #region GET
         group.MapGet("/view/{id:guid}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
             Guid id,
             [FromServices] IMediator mediator,
@@ -59,6 +60,9 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization();
 
+        #endregion GET
+
+        #region POST
 
         group.MapPost("/", async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] CreateQuestionDto dto,
@@ -80,6 +84,9 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
 
+        #endregion POST
+
+        #region DELETE
 
         group.MapDelete("/{id:guid}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
             Guid id,
@@ -99,6 +106,10 @@ public sealed class QuestionModule : IModule
         })
              .RequireAuthorization();
 
+        #endregion DELETE
+
+        #region PUT
+
         group.MapPut("/", async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] UpdateQuestionDto dto,
             [FromServices] IMediator mediator,
@@ -114,5 +125,7 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
+
+        #endregion PUT
     }
 }

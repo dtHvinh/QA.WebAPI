@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116130302_UpdateDatabase")]
+    partial class UpdateDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,7 +168,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag", (string)null);
+                    b.ToTable("QuestionTag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
@@ -205,7 +208,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
@@ -330,7 +333,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("UserId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark", (string)null);
+                    b.ToTable("BookMark");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Downvote", b =>
@@ -342,10 +345,14 @@ namespace WebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DownvoteType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                    b.Property<int>("DownvoteType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("DownvotedEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -355,13 +362,13 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DownvotedEntityId");
+
+                    b.HasIndex("QuestionId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Downvote", (string)null);
-
-                    b.HasDiscriminator<string>("DownvoteType").HasValue("Downvote");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Downvote");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Question", b =>
@@ -421,7 +428,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("IsDraft", "IsClosed", "IsDeleted");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionComment", b =>
@@ -455,7 +462,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("QuestionComment", (string)null);
+                    b.ToTable("QuestionComment");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Report", b =>
@@ -477,11 +484,6 @@ namespace WebAPI.Migrations
                     b.Property<Guid?>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ReportType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
                     b.Property<Guid>("ReporterId")
                         .HasColumnType("uniqueidentifier");
 
@@ -490,11 +492,13 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Report", (string)null);
+                    b.HasIndex("AnswerId");
 
-                    b.HasDiscriminator<string>("ReportType").HasValue("Report");
+                    b.HasIndex("QuestionId");
 
-                    b.UseTphMappingStrategy();
+                    b.HasIndex("ReporterId");
+
+                    b.ToTable("Report");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
@@ -520,7 +524,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("NormalizedName")
                         .IsUnique();
 
-                    b.ToTable("Tag", (string)null);
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Upvote", b =>
@@ -532,100 +536,30 @@ namespace WebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpvoteType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                    b.Property<int>("UpvoteType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UpvotedEntityId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("UpvotedEntityId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Upvote", (string)null);
-
-                    b.HasDiscriminator<string>("UpvoteType").HasValue("Upvote");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerDownvote", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Downvote");
-
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasDiscriminator().HasValue("Answer");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionDownvote", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Downvote");
-
-                    b.Property<Guid?>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasDiscriminator().HasValue("Question");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerReport", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Report");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("ReporterId");
-
-                    b.HasDiscriminator().HasValue("Answer");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionReport", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Report");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("ReporterId");
-
-                    b.HasDiscriminator().HasValue("Question");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerUpvote", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Upvote");
-
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasDiscriminator().HasValue("Answer");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionUpvote", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Upvote");
-
-                    b.Property<Guid?>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasDiscriminator().HasValue("Question");
+                    b.ToTable("Upvote");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -734,6 +668,10 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Model.Downvote", b =>
                 {
+                    b.HasOne("WebAPI.Model.Question", null)
+                        .WithMany("Downvotes")
+                        .HasForeignKey("QuestionId");
+
                     b.HasOne("WebAPI.Model.AppUser", "User")
                         .WithMany("Downvotes")
                         .HasForeignKey("UserId")
@@ -773,8 +711,31 @@ namespace WebAPI.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("WebAPI.Model.Report", b =>
+                {
+                    b.HasOne("WebAPI.Model.Answer", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("AnswerId");
+
+                    b.HasOne("WebAPI.Model.Question", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("QuestionId");
+
+                    b.HasOne("WebAPI.Model.AppUser", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reporter");
+                });
+
             modelBuilder.Entity("WebAPI.Model.Upvote", b =>
                 {
+                    b.HasOne("WebAPI.Model.Question", null)
+                        .WithMany("Upvotes")
+                        .HasForeignKey("QuestionId");
+
                     b.HasOne("WebAPI.Model.AppUser", "User")
                         .WithMany("Upvotes")
                         .HasForeignKey("UserId")
@@ -784,87 +745,9 @@ namespace WebAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAPI.Model.AnswerDownvote", b =>
-                {
-                    b.HasOne("WebAPI.Model.Answer", null)
-                        .WithMany("Downvotes")
-                        .HasForeignKey("AnswerId");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionDownvote", b =>
-                {
-                    b.HasOne("WebAPI.Model.Question", null)
-                        .WithMany("Downvotes")
-                        .HasForeignKey("QuestionId");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerReport", b =>
-                {
-                    b.HasOne("WebAPI.Model.Answer", "Answer")
-                        .WithMany("Reports")
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("WebAPI.Model.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId");
-
-                    b.HasOne("WebAPI.Model.AppUser", "Reporter")
-                        .WithMany()
-                        .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Reporter");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionReport", b =>
-                {
-                    b.HasOne("WebAPI.Model.Answer", "Answer")
-                        .WithMany()
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("WebAPI.Model.Question", "Question")
-                        .WithMany("Reports")
-                        .HasForeignKey("QuestionId");
-
-                    b.HasOne("WebAPI.Model.AppUser", "Reporter")
-                        .WithMany()
-                        .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Reporter");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerUpvote", b =>
-                {
-                    b.HasOne("WebAPI.Model.Answer", null)
-                        .WithMany("Upvotes")
-                        .HasForeignKey("AnswerId");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionUpvote", b =>
-                {
-                    b.HasOne("WebAPI.Model.Question", null)
-                        .WithMany("Upvotes")
-                        .HasForeignKey("QuestionId");
-                });
-
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
                 {
-                    b.Navigation("Downvotes");
-
                     b.Navigation("Reports");
-
-                    b.Navigation("Upvotes");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>

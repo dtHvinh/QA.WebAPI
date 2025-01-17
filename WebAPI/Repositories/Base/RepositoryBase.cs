@@ -7,12 +7,12 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories.Base;
 
-public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepositoryBase<T> where T : class
+public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepository<T> where T : class
 {
     protected DbSet<T> Entities => dbContext.Set<T>();
     protected IQueryable<T> Table => Entities;
 
-    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken)
+    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         try
         {

@@ -20,6 +20,22 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             builder.Entity(entity);
         }
+
+        builder
+            .Entity<Report>().HasDiscriminator(e => e.ReportType)
+            .HasValue<QuestionReport>(nameof(ReportTypes.Question))
+            .HasValue<AnswerReport>(nameof(ReportTypes.Answer));
+
+
+        builder
+            .Entity<Upvote>().HasDiscriminator(e => e.UpvoteType)
+            .HasValue<QuestionUpvote>(nameof(UpvoteTypes.Question))
+            .HasValue<AnswerUpvote>(nameof(UpvoteTypes.Answer));
+
+        builder
+            .Entity<Downvote>().HasDiscriminator(e => e.DownvoteType)
+            .HasValue<QuestionDownvote>(nameof(DownvoteTypes.Question))
+            .HasValue<AnswerDownvote>(nameof(DownvoteTypes.Answer));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

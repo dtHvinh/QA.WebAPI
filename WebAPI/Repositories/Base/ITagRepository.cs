@@ -2,7 +2,7 @@
 
 namespace WebAPI.Repositories.Base;
 
-public interface ITagRepository : IRepositoryBase<Tag>
+public interface ITagRepository : IRepository<Tag>
 {
     void CreateTag(Tag tag);
     void CreateTags(List<Tag> tags);
