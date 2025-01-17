@@ -3,7 +3,7 @@ using WebAPI.Dto;
 
 namespace WebAPI.Utilities.Validators;
 
-public class CreateReportValidator : AbstractValidator<CreateQuestionReportDto>
+public class CreateReportValidator : AbstractValidator<CreateReportDto>
 {
     public CreateReportValidator()
     {
@@ -11,7 +11,7 @@ public class CreateReportValidator : AbstractValidator<CreateQuestionReportDto>
             .NotEmpty().WithMessage("Description is required.")
             .MaximumLength(100).WithMessage("Description is too long");
 
-        RuleFor(e => e.QuestionId)
+        RuleFor(e => e.TargetId)
             .NotEmpty().WithMessage("TargetId is required.");
     }
 }

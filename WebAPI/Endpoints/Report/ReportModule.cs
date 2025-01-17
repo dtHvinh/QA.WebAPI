@@ -19,7 +19,7 @@ public class ReportModule : IModule
 
         group.MapPost("/question",
             async Task<Results<Ok<CreateReportResponse>, ProblemHttpResult>> (
-                [FromBody] CreateQuestionReportDto dto,
+                [FromBody] CreateReportDto dto,
                 [FromServices] IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
@@ -32,6 +32,23 @@ public class ReportModule : IModule
                 : ProblemResultExtensions.BadRequest(result.Message);
         })
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateQuestionReportDto>>();
+            .AddEndpointFilter<FluentValidation<CreateReportDto>>();
+
+        group.MapPost("/answer",
+            async Task<Results<Ok<CreateReportResponse>, ProblemHttpResult>> (
+                [FromBody] CreateReportDto dto,
+                [FromServices] IMediator mediator,
+                CancellationToken cancellationToken) =>
+            {
+                var command = new CreateAnswerReportCommand(dto);
+
+                var result = await mediator.Send(command, cancellationToken);
+
+                return result.IsSuccess
+                            ? TypedResults.Ok(result.Value)
+                            : ProblemResultExtensions.BadRequest(result.Message);
+            })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateReportDto>>();
     }
 }

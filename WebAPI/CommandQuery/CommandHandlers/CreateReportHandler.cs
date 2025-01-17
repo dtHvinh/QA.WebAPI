@@ -9,7 +9,8 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateReportHandler(IReportRepository reportRepository, AuthenticationContext authContext)
-    : ICommandHandler<CreateQuestionReportCommand, OperationResult<CreateReportResponse>>
+    : ICommandHandler<CreateQuestionReportCommand, OperationResult<CreateReportResponse>>,
+        ICommandHandler<CreateAnswerReportCommand, OperationResult<CreateReportResponse>>
 {
     private readonly IReportRepository _reportRepository = reportRepository;
     private readonly AuthenticationContext _authContext = authContext;
@@ -19,6 +20,20 @@ public class CreateReportHandler(IReportRepository reportRepository, Authenticat
         var report = request.Report.ToQuestionReport(_authContext.UserId);
 
         _reportRepository.AddQuestionReport(report);
+
+        var op = await _reportRepository.SaveChangesAsync(cancellationToken);
+
+        return !op.IsSuccess
+            ? OperationResult<CreateReportResponse>.Failure("Failed to create report")
+            : OperationResult<CreateReportResponse>.Success(
+                new CreateReportResponse("Report created successfully"));
+    }
+
+    public async Task<OperationResult<CreateReportResponse>> Handle(CreateAnswerReportCommand request, CancellationToken cancellationToken)
+    {
+        var report = request.Report.ToAnswerReport(_authContext.UserId);
+
+        _reportRepository.AddAnswerReport(report);
 
         var op = await _reportRepository.SaveChangesAsync(cancellationToken);
 

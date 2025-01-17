@@ -16,4 +16,10 @@ public class ReportRepository(ApplicationDbContext dbContext)
         var table = _dbContext.Set<QuestionReport>();
         table.Add(report);
     }
+
+    public void AddAnswerReport(AnswerReport report)
+    {
+        var table = _dbContext.Set<AnswerReport>();
+        table.Add(report);
+    }
 }
