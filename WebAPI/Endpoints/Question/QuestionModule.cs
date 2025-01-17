@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
+using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
+using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Response.CommentResponses;
 using WebAPI.Utilities.Response.QuestionResponses;
 using static WebAPI.Utilities.Constants;
 
@@ -83,6 +86,28 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
+
+        group.MapPost("/{questionId:guid}/comment",
+            async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
+            [FromBody] CreateCommentDto dto,
+            Guid questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new CreateCommentCommand(dto, CommentTypes.Question, questionId);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
+            .AddEndpointFilter<QuestionCommentReputationRequirement>();
 
         #endregion POST
 

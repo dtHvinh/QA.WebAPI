@@ -12,11 +12,11 @@ public class ActionRequirements
     public int UpdateTag { get; set; }
     public int DeleteTag { get; set; }
     public int CloseQuestion { get; set; }
+    public int CommentToQuestion { get; set; }
 }
 
 public class ReputationAcquirePerAction
 {
-    public int QuestionCreated { get; set; }
     public int QuestionUpvoted { get; set; }
     public int QuestionDownvoted { get; set; }
     public int AnswerQuestion { get; set; }

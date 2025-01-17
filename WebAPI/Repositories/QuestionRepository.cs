@@ -73,7 +73,13 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         var tagQuestions = await _dbContext
             .Set<Tag>()
             .Where(e => e.Id.Equals(searchParams.TagId))
+            .AsSplitQuery()
             .Include(e => e.Questions)
+            .ThenInclude(e => e.Tags)
+            .Include(e => e.Questions)
+            .ThenInclude(e => e.Comments
+                               .OrderByDescending(o => o.CreatedAt)
+                               .Take(10))
             .FirstAsync(cancellationToken);
 
         // Evaluate the query

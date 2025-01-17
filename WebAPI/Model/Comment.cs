@@ -11,10 +11,16 @@ public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity
     public string? CommentType { get; set; }
 
     [Column(TypeName = "nvarchar(2000)")]
-    public required string Content { get; set; }
+    public string Content { get; set; } = default!;
     public bool IsDeleted { get; set; }
 
     [ForeignKey(nameof(Author))]
     public Guid AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
+}
+
+public enum CommentTypes
+{
+    Question,
+    Answer
 }
