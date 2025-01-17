@@ -10,6 +10,7 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Response.AsnwerResponses;
 using WebAPI.Utilities.Response.CommentResponses;
 using WebAPI.Utilities.Response.QuestionResponses;
 using static WebAPI.Utilities.Constants;
@@ -109,6 +110,28 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
             .AddEndpointFilter<QuestionCommentReputationRequirement>();
 
+        group.MapPost("/{questionId:guid}/answer",
+            async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
+            [FromBody] CreateAnswerDto dto,
+            Guid questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+            {
+                var cmd = new CreateAnswerCommand(dto, questionId);
+
+                var result = await mediator.Send(cmd, cancellationToken);
+
+                if (!result.IsSuccess)
+                {
+                    return ProblemResultExtensions.BadRequest(result.Message);
+                }
+
+                return TypedResults.Ok(result.Value);
+            })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
+            .AddEndpointFilter<AnswerReputationRequirement>();
+
         #endregion POST
 
         #region DELETE
@@ -150,6 +173,29 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
+
+        group.MapPut("/{questionId:guid}/answer/{answerId:guid}",
+            async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
+            [FromBody] UpdateAnswerDto dto,
+            Guid questionId,
+            Guid answerId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new UpdateAnswerCommand(dto, answerId);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<UpdateAnswerDto>>()
+            .AddEndpointFilter<AnswerReputationRequirement>();
 
         #endregion PUT
     }

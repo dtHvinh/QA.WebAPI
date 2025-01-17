@@ -2,6 +2,8 @@
 
 public static class Constants
 {
+    public const int StringContentMaxChar = 20000;
+
     public static class Roles
     {
         public const string Admin = "Admin";

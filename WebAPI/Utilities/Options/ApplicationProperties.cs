@@ -13,6 +13,7 @@ public class ActionRequirements
     public int DeleteTag { get; set; }
     public int CloseQuestion { get; set; }
     public int CommentToQuestion { get; set; }
+    public int AnswerQuestion { get; set; }
 }
 
 public class ReputationAcquirePerAction

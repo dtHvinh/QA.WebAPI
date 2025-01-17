@@ -20,7 +20,7 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
     public required string Title { get; set; }
     [Column(TypeName = "nvarchar(250)")]
     public required string Slug { get; set; }
-    [Column(TypeName = "nvarchar(2000)")]
+    [Column(TypeName = "nvarchar(max)")]
     public required string Content { get; set; }
     public int Upvote { get; set; }
     public int Downvote { get; set; }

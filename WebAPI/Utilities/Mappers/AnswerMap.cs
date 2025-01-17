@@ -1,4 +1,5 @@
-﻿using WebAPI.Model;
+﻿using WebAPI.Dto;
+using WebAPI.Model;
 using WebAPI.Utilities.Response.AsnwerResponses;
 
 namespace WebAPI.Utilities.Mappers;
@@ -17,6 +18,17 @@ public static class AnswerMap
             CreatedAt = answer.CreatedAt,
             UpdatedAt = answer.UpdatedAt,
             Author = answer.Author.ToAuthorResponse(),
+        };
+    }
+
+
+    public static Answer ToAnswer(this CreateAnswerDto dto, Guid authorId, Guid questionId)
+    {
+        return new Answer
+        {
+            Content = dto.Content,
+            AuthorId = authorId,
+            QuestionId = questionId,
         };
     }
 }
