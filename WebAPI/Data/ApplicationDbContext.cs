@@ -36,6 +36,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .Entity<Downvote>().HasDiscriminator(e => e.DownvoteType)
             .HasValue<QuestionDownvote>(nameof(DownvoteTypes.Question))
             .HasValue<AnswerDownvote>(nameof(DownvoteTypes.Answer));
+
+        builder
+            .Entity<Comment>().HasDiscriminator(e => e.CommentType)
+            .HasValue<QuestionComment>(nameof(Question))
+            .HasValue<AnswerComment>(nameof(Answer));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

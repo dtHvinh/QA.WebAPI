@@ -5,7 +5,7 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class CommentMap
 {
-    public static CommentResponse ToCommentResponse(this QuestionComment comment)
+    public static CommentResponse ToCommentResponse(this Comment comment)
     {
         return new CommentResponse()
         {

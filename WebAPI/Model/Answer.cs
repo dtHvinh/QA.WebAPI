@@ -28,4 +28,5 @@ public class Answer : IEntityWithTime<Guid>
     public ICollection<AnswerReport> Reports { get; set; } = default!;
     public ICollection<AnswerUpvote> Upvotes { get; set; } = default!;
     public ICollection<AnswerDownvote> Downvotes { get; set; } = default!;
+    public ICollection<AnswerComment> Comments { get; set; } = default!;
 }
