@@ -9,7 +9,7 @@ public static class ReportMap
     {
         return new QuestionReport
         {
-            ReporterId = reporterId,
+            AuthorId = reporterId,
             QuestionId = dto.TargetId,
             Description = dto.Description
         };
@@ -19,7 +19,7 @@ public static class ReportMap
     {
         return new AnswerReport
         {
-            ReporterId = reporterId,
+            AuthorId = reporterId,
             AnswerId = dto.TargetId,
             Description = dto.Description
         };

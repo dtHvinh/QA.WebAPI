@@ -3,15 +3,15 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class Upvote : IEntityWithTime<Guid>
+public class Upvote : IEntityWithTime<Guid>, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    [ForeignKey(nameof(User))]
-    public Guid UserId { get; set; }
-    public AppUser? User { get; set; }
+    [ForeignKey(nameof(Author))]
+    public Guid AuthorId { get; set; }
+    public AppUser? Author { get; set; }
 
     public string? UpvoteType { get; set; }
 }

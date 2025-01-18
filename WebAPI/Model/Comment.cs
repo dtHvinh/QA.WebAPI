@@ -3,7 +3,7 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity
+public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }

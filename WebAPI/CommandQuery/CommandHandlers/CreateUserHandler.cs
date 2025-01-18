@@ -10,12 +10,12 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateUserHandler(IUserRepository userRepository,
                                JwtTokenProvider tokenProvider)
-    : ICommandHandler<CreateUserCommand, OperationResult<AuthResponse>>
+    : ICommandHandler<CreateUserCommand, GenericResult<AuthResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<OperationResult<AuthResponse>> Handle(
+    public async Task<GenericResult<AuthResponse>> Handle(
         CreateUserCommand request, CancellationToken cancellationToken)
     {
         var newUser = request.User.ToAppUser();
@@ -24,7 +24,7 @@ public class CreateUserHandler(IUserRepository userRepository,
 
         if (!result.IsSuccess)
         {
-            return OperationResult<AuthResponse>
+            return GenericResult<AuthResponse>
                 .Failure(result.Message);
         }
 
@@ -33,7 +33,7 @@ public class CreateUserHandler(IUserRepository userRepository,
         var jwtToken = await _tokenProvider.CreateTokenAsync(newUser);
         var refreshToken = _tokenProvider.CreateRefreshToken();
 
-        return OperationResult<AuthResponse>
+        return GenericResult<AuthResponse>
             .Success(newUser.ToLoginResponseDto(jwtToken, refreshToken));
     }
 }

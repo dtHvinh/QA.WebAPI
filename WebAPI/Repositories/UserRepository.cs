@@ -23,7 +23,7 @@ public class UserRepository(ApplicationDbContext dbContext,
     private readonly ImageProvider _imgProv = imageProvider;
     private readonly ICacheService _cache = cache;
 
-    public async Task<OperationResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
+    public async Task<GenericResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
     {
         try
         {
@@ -36,7 +36,7 @@ public class UserRepository(ApplicationDbContext dbContext,
 
             if (!result.Succeeded)
             {
-                return OperationResult<AppUser>.Failure(
+                return GenericResult<AppUser>.Failure(
                     string.Join(',', result.Errors.Select(e => e.Description)));
             }
 
@@ -53,11 +53,11 @@ public class UserRepository(ApplicationDbContext dbContext,
             // Cache the user's email for fast look up
             await _cache.SetUsedEmail(user.Email!);
 
-            return OperationResult<AppUser>.Success(user);
+            return GenericResult<AppUser>.Success(user);
         }
         catch (Exception ex)
         {
-            return OperationResult<AppUser>.Failure(ex.Message);
+            return GenericResult<AppUser>.Failure(ex.Message);
         }
     }
 

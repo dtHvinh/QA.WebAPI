@@ -14,7 +14,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
-    public async Task<OperationResult<AuthResponse>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<GenericResult<AuthResponse>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -24,7 +24,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
         if (user is null)
         {
             var errorMessage = string.Format(EM.EMAIL_NOTFOUND, email);
-            return OperationResult<AuthResponse>.Failure(errorMessage);
+            return GenericResult<AuthResponse>.Failure(errorMessage);
         }
 
         // Check password
@@ -33,7 +33,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
         {
             await _userManager.AccessFailedAsync(user);
 
-            return OperationResult<AuthResponse>.Failure("Password is wrong");
+            return GenericResult<AuthResponse>.Failure("Password is wrong");
         }
 
         var at = await _tokenProvider.CreateTokenAsync(user);
@@ -41,6 +41,6 @@ public class AuthenticationService(UserManager<AppUser> userManager,
 
         var authResponse = new AuthResponse(at, rt, user.UserName!, user.ProfilePicture);
 
-        return OperationResult<AuthResponse>.Success(authResponse);
+        return GenericResult<AuthResponse>.Success(authResponse);
     }
 }

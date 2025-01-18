@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(QuestionId))]
-public class Answer : IEntityWithTime<Guid>
+public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }

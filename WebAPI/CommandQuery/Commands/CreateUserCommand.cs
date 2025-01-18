@@ -5,7 +5,7 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public class CreateUserCommand(RegisterDto dto) : ICommand<OperationResult<AuthResponse>>
+public class CreateUserCommand(RegisterDto dto) : ICommand<GenericResult<AuthResponse>>
 {
     public RegisterDto User { get; } = dto;
 }

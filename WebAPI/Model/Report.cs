@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class Report : IEntityWithTime<Guid>
+[Index(nameof(AuthorId))]
+public class Report : IEntityWithTime<Guid>, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -13,9 +15,9 @@ public class Report : IEntityWithTime<Guid>
     public string Description { get; set; } = default!;
     public string? ReportType { get; set; }
 
-    [ForeignKey(nameof(Reporter))]
-    public Guid ReporterId { get; set; }
-    public AppUser? Reporter { get; set; } = default!;
+    [ForeignKey(nameof(Author))]
+    public Guid AuthorId { get; set; }
+    public AppUser? Author { get; set; } = default!;
 }
 
 public enum QuestionReportKind

@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(IsDraft), nameof(IsClosed), nameof(IsDeleted))]
-public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
+public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -14,7 +14,7 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity
 
     [ForeignKey(nameof(Author))]
     public required Guid AuthorId { get; set; }
-    public AppUser Author { get; set; } = default!;
+    public AppUser? Author { get; set; } = default!;
 
     [Column(TypeName = "nvarchar(150)")]
     public required string Title { get; set; }

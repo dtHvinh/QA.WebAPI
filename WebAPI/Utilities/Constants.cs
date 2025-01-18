@@ -17,6 +17,7 @@ public static class Constants
         public const string Question = _prefix + "/question";
         public const string Tag = _prefix + "/tag";
         public const string Report = _prefix + "/report";
+        public const string Answer = _prefix + "/answer";
     }
 
     public static class Endpoints

@@ -7,11 +7,11 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class UpdateTagHandler(ITagRepository tagRepository) : ICommandHandler<UpdateTagCommand, OperationResult<UpdateTagResponse>>
+public class UpdateTagHandler(ITagRepository tagRepository) : ICommandHandler<UpdateTagCommand, GenericResult<UpdateTagResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
 
-    public async Task<OperationResult<UpdateTagResponse>> Handle(
+    public async Task<GenericResult<UpdateTagResponse>> Handle(
         UpdateTagCommand request, CancellationToken cancellationToken)
     {
         var newTag = request.Tag.ToTag();
@@ -21,8 +21,8 @@ public class UpdateTagHandler(ITagRepository tagRepository) : ICommandHandler<Up
         var result = await _tagRepository.SaveChangesAsync(cancellationToken);
 
         return !result.IsSuccess
-            ? OperationResult<UpdateTagResponse>.Failure(result.Message)
-            : OperationResult<UpdateTagResponse>.Success(
+            ? GenericResult<UpdateTagResponse>.Failure(result.Message)
+            : GenericResult<UpdateTagResponse>.Success(
                 UpdateTagResponse.Create(newTag.Name, newTag.Description));
     }
 }

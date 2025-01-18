@@ -9,12 +9,12 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateAnswerHandler(IAnswerRepository answerRepository, AuthenticationContext authContext)
-    : ICommandHandler<CreateAnswerCommand, OperationResult<AnswerResponse>>
+    : ICommandHandler<CreateAnswerCommand, GenericResult<AnswerResponse>>
 {
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly AuthenticationContext _authContext = authContext;
 
-    public async Task<OperationResult<AnswerResponse>> Handle(
+    public async Task<GenericResult<AnswerResponse>> Handle(
         CreateAnswerCommand request, CancellationToken cancellationToken)
     {
         var newAnswer = request.Answer.ToAnswer(_authContext.UserId, request.QuestionId);
@@ -23,7 +23,7 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository, Authenticat
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? OperationResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse())
-            : OperationResult<AnswerResponse>.Failure(result.Message);
+            ? GenericResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse())
+            : GenericResult<AnswerResponse>.Failure(result.Message);
     }
 }

@@ -9,13 +9,13 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateReportHandler(IReportRepository reportRepository, AuthenticationContext authContext)
-    : ICommandHandler<CreateQuestionReportCommand, OperationResult<CreateReportResponse>>,
-        ICommandHandler<CreateAnswerReportCommand, OperationResult<CreateReportResponse>>
+    : ICommandHandler<CreateQuestionReportCommand, GenericResult<CreateReportResponse>>,
+        ICommandHandler<CreateAnswerReportCommand, GenericResult<CreateReportResponse>>
 {
     private readonly IReportRepository _reportRepository = reportRepository;
     private readonly AuthenticationContext _authContext = authContext;
 
-    public async Task<OperationResult<CreateReportResponse>> Handle(CreateQuestionReportCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<CreateReportResponse>> Handle(CreateQuestionReportCommand request, CancellationToken cancellationToken)
     {
         var report = request.Report.ToQuestionReport(_authContext.UserId);
 
@@ -24,12 +24,12 @@ public class CreateReportHandler(IReportRepository reportRepository, Authenticat
         var op = await _reportRepository.SaveChangesAsync(cancellationToken);
 
         return !op.IsSuccess
-            ? OperationResult<CreateReportResponse>.Failure("Failed to create report")
-            : OperationResult<CreateReportResponse>.Success(
+            ? GenericResult<CreateReportResponse>.Failure("Failed to create report")
+            : GenericResult<CreateReportResponse>.Success(
                 new CreateReportResponse("Report created successfully"));
     }
 
-    public async Task<OperationResult<CreateReportResponse>> Handle(CreateAnswerReportCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<CreateReportResponse>> Handle(CreateAnswerReportCommand request, CancellationToken cancellationToken)
     {
         var report = request.Report.ToAnswerReport(_authContext.UserId);
 
@@ -38,8 +38,8 @@ public class CreateReportHandler(IReportRepository reportRepository, Authenticat
         var op = await _reportRepository.SaveChangesAsync(cancellationToken);
 
         return !op.IsSuccess
-            ? OperationResult<CreateReportResponse>.Failure("Failed to create report")
-            : OperationResult<CreateReportResponse>.Success(
+            ? GenericResult<CreateReportResponse>.Failure("Failed to create report")
+            : GenericResult<CreateReportResponse>.Success(
                 new CreateReportResponse("Report created successfully"));
     }
 }

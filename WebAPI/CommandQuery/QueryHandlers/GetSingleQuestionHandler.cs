@@ -11,12 +11,12 @@ namespace WebAPI.CommandQuery.QueryHandlers;
 
 public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
                                                ICacheService cacheService)
-    : IQueryHandler<GetSingleQuestionQuery, OperationResult<GetQuestionResponse>>
+    : IQueryHandler<GetSingleQuestionQuery, GenericResult<GetQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ICacheService _cacheService = cacheService;
 
-    public async Task<OperationResult<GetQuestionResponse>> Handle(
+    public async Task<GenericResult<GetQuestionResponse>> Handle(
         GetSingleQuestionQuery request, CancellationToken cancellationToken)
     {
         var question = await _cacheService.GetQuestionAsync(request.Id);
@@ -25,7 +25,7 @@ public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
         if (question == null)
         {
             var errMsg = string.Format(EM.QUESTION_ID_NOTFOUND, request.Id);
-            return OperationResult<GetQuestionResponse>.Failure(errMsg);
+            return GenericResult<GetQuestionResponse>.Failure(errMsg);
         }
 
         await _cacheService.SetQuestionAsync(question);
@@ -33,6 +33,6 @@ public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
         _questionRepository.MarkAsView(question.Id);
         await _questionRepository.SaveChangesAsync(cancellationToken);
 
-        return OperationResult<GetQuestionResponse>.Success(question.ToGetQuestionResponse());
+        return GenericResult<GetQuestionResponse>.Success(question.ToGetQuestionResponse());
     }
 }

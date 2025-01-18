@@ -11,13 +11,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                    IQuestionRepository questionRepository,
                                    ITagRepository tagRepository)
-    : ICommandHandler<CreateQuestionCommand, OperationResult<CreateQuestionResponse>>
+    : ICommandHandler<CreateQuestionCommand, GenericResult<CreateQuestionResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authentcationContext = authentcationContext;
 
-    public async Task<OperationResult<CreateQuestionResponse>> Handle(
+    public async Task<GenericResult<CreateQuestionResponse>> Handle(
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
         // Add question
@@ -32,7 +32,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         var opResult = await _questionRepository.SaveChangesAsync(cancellationToken);
         if (!opResult.IsSuccess)
         {
-            return OperationResult<CreateQuestionResponse>.Failure(opResult.Message);
+            return GenericResult<CreateQuestionResponse>.Failure(opResult.Message);
         }
 
         var response = new CreateQuestionResponse(Id: question.Id,
@@ -40,6 +40,6 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                                   Content: question.Content,
                                                   Tags: request.Question.Tags);
 
-        return OperationResult<CreateQuestionResponse>.Success(response);
+        return GenericResult<CreateQuestionResponse>.Success(response);
     }
 }

@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record LoginQuery(LoginDto Dto) : IQuery<OperationResult<AuthResponse>>;
+public record LoginQuery(LoginDto Dto) : IQuery<GenericResult<AuthResponse>>;

@@ -6,4 +6,4 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.Commands;
 
 public record UpdateAnswerCommand(UpdateAnswerDto Answer, Guid AnswerId)
-    : ICommand<OperationResult<AnswerResponse>>;
+    : ICommand<GenericResult<AnswerResponse>>;

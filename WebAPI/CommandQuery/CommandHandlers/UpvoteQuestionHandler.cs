@@ -8,12 +8,12 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpvoteQuestionHandler(IQuestionRepository questionRepository,
                                    IUpvoteRepository upvoteRepository)
-    : ICommandHandler<UpvoteQuestionCommand, OperationResult<GenericResponse>>
+    : ICommandHandler<UpvoteQuestionCommand, GenericResult<GenericResponse>>
 {
     private readonly IQuestionRepository questionRepository = questionRepository;
     private readonly IUpvoteRepository _upvoteRepository = upvoteRepository;
 
-    public Task<OperationResult<GenericResponse>> Handle(UpvoteQuestionCommand request, CancellationToken cancellationToken)
+    public Task<GenericResult<GenericResponse>> Handle(UpvoteQuestionCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

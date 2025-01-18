@@ -7,11 +7,11 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class DeleteTagHandler(ITagRepository tagRepository)
-    : ICommandHandler<DeleteTagCommand, OperationResult<DeleteTagResponse>>
+    : ICommandHandler<DeleteTagCommand, GenericResult<DeleteTagResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
 
-    public async Task<OperationResult<DeleteTagResponse>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<DeleteTagResponse>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
     {
         _tagRepository.DeleteTag(request.Id);
 
@@ -19,9 +19,9 @@ public class DeleteTagHandler(ITagRepository tagRepository)
 
         if (!delTag.IsSuccess)
         {
-            return OperationResult<DeleteTagResponse>.Failure(delTag.Message);
+            return GenericResult<DeleteTagResponse>.Failure(delTag.Message);
         }
 
-        return OperationResult<DeleteTagResponse>.Success(new(request.Id));
+        return GenericResult<DeleteTagResponse>.Success(new(request.Id));
     }
 }

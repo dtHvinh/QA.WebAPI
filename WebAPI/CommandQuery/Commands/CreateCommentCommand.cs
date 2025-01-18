@@ -7,4 +7,4 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.Commands;
 
 public record CreateCommentCommand(CreateCommentDto Comment, CommentTypes CommentType, Guid ObjectId)
-    : ICommand<OperationResult<CommentResponse>>;
+    : ICommand<GenericResult<CommentResponse>>;

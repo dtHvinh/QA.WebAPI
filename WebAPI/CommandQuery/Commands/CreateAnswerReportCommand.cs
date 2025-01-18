@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateAnswerReportCommand(CreateReportDto Report) : ICommand<OperationResult<CreateReportResponse>>;
+public record CreateAnswerReportCommand(CreateReportDto Report) : ICommand<GenericResult<CreateReportResponse>>;

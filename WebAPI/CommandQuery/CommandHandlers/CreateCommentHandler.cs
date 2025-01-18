@@ -9,12 +9,12 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateCommentHandler(ICommentRepository commentRepository, AuthenticationContext authContext)
-    : ICommandHandler<CreateCommentCommand, OperationResult<CommentResponse>>
+    : ICommandHandler<CreateCommentCommand, GenericResult<CommentResponse>>
 {
     private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly AuthenticationContext _authContext = authContext;
 
-    public async Task<OperationResult<CommentResponse>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<CommentResponse>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
         var newComment = request.Comment.ToComment(request.CommentType, _authContext.UserId, request.ObjectId);
         _commentRepository.Add(newComment);
@@ -22,7 +22,7 @@ public class CreateCommentHandler(ICommentRepository commentRepository, Authenti
         var res = await _commentRepository.SaveChangesAsync(cancellationToken);
 
         return res.IsSuccess
-            ? OperationResult<CommentResponse>.Success(newComment.ToCommentResponse())
-            : OperationResult<CommentResponse>.Failure(res.Message);
+            ? GenericResult<CommentResponse>.Success(newComment.ToCommentResponse())
+            : GenericResult<CommentResponse>.Failure(res.Message);
     }
 }

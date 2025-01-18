@@ -21,7 +21,7 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepository<T> 
         }
         catch (Exception ex)
         {
-            return OperationResult.Failure(ex.Message);
+            return OperationResult.Failure(ex.InnerException?.Message ?? ex.Message);
         }
     }
 

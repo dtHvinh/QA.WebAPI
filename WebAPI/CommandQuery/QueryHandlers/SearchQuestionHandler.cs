@@ -10,11 +10,11 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.QueryHandlers;
 
 public class SearchQuestionHandler(IQuestionRepository questionRepository)
-    : IQueryHandler<SearchQuestionQuery, OperationResult<PagedResponse<GetQuestionResponse>>>
+    : IQueryHandler<SearchQuestionQuery, GenericResult<PagedResponse<GetQuestionResponse>>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
 
-    public async Task<OperationResult<PagedResponse<GetQuestionResponse>>> Handle(
+    public async Task<GenericResult<PagedResponse<GetQuestionResponse>>> Handle(
         SearchQuestionQuery request, CancellationToken cancellationToken)
     {
         var skip = (request.Args.Page - 1) * request.Args.PageSize;
@@ -31,6 +31,6 @@ public class SearchQuestionHandler(IQuestionRepository questionRepository)
         var response = new PagedResponse<GetQuestionResponse>(
             questions.Select(e => e.ToGetQuestionResponse()), hasNext, request.Args.Page, request.Args.PageSize);
 
-        return OperationResult<PagedResponse<GetQuestionResponse>>.Success(response);
+        return GenericResult<PagedResponse<GetQuestionResponse>>.Success(response);
     }
 }

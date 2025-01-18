@@ -6,4 +6,4 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.Commands;
 
 public record UpdateQuestionCommand(UpdateQuestionDto Question)
-    : ICommand<OperationResult<UpdateQuestionResponse>>;
+    : ICommand<GenericResult<UpdateQuestionResponse>>;
