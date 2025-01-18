@@ -15,6 +15,6 @@ public class AnswerReputationRequirement(IUserRepository userRepository,
         userRepository,
         authContext,
         cache,
-        options.Value.ActionRequirements.AnswerQuestion)
+        options.Value.ReputationRequirePerAction.AnswerQuestion)
 {
 }

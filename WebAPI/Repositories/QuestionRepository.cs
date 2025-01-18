@@ -66,6 +66,14 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return result;
     }
 
+    public async Task<Question?> FindQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await Table.Where(e => e.Id == id)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+        return result;
+    }
+
     public async Task<List<Question>> SearchQuestionAsync(
         QuestionSearchParams searchParams, CancellationToken cancellationToken)
     {
@@ -100,6 +108,18 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     {
         await _dbContext.Entry(question).Collection(e => e.Tags).LoadAsync();
         question.Tags = tags;
+    }
+
+    public void UpdateQuestion(Question question)
+    {
+        question.UpdatedAt = DateTime.UtcNow;
+        Entities.Update(question);
+    }
+
+    public void UpvoteUpdate(Question question, int value)
+    {
+        question.Upvote += value;
+        Entities.Update(question);
     }
 
     public void MarkAsView(Guid questionId)

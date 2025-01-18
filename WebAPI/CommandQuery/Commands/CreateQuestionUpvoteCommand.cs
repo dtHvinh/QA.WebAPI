@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record struct UpvoteQuestionCommand(Guid QuestionId) : ICommand<GenericResult<GenericResponse>>;
+public record CreateQuestionUpvoteCommand(Guid QuestionId) : ICommand<GenericResult<GenericResponse>>;

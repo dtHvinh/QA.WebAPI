@@ -28,7 +28,7 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         existQuestion.FromUpdateObject(request.Question);
         await _questionRepository.SetQuestionTag(existQuestion, tags);
 
-        _questionRepository.Update(existQuestion);
+        _questionRepository.UpdateQuestion(existQuestion);
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 
         return updateOp.IsSuccess

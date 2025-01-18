@@ -3,27 +3,27 @@
 namespace WebAPI.Utilities.Result.Base;
 
 [DebuggerDisplay("IsSucceed={IsSuccess}")]
-public class OperationResult
+public class GenericResult
 {
     public bool IsSuccess { get; protected set; }
     public string Message { get; protected set; } = string.Empty;
 
-    protected OperationResult() { }
+    protected GenericResult() { }
 
-    protected OperationResult(bool isSuccess, string message)
+    protected GenericResult(bool isSuccess, string message)
     {
         IsSuccess = isSuccess;
         Message = message;
     }
 
-    public static OperationResult Success(string message = "")
+    public static GenericResult Success(string message = "")
         => new(true, message);
 
-    public static OperationResult Failure(string message)
+    public static GenericResult Failure(string message)
         => new(false, message);
 }
 
-public class GenericResult<T> : OperationResult
+public class GenericResult<T> : GenericResult
 {
     public T? Value { get; private set; }
 

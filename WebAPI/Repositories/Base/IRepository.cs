@@ -15,5 +15,5 @@ public interface IRepository<T> where T : class
     void Update(T entity);
     void UpdateRange(T[] entities);
     void UpdateRange(IEnumerable<T> entities);
-    Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<GenericResult> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

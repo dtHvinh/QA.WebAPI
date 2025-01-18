@@ -13,4 +13,10 @@ public class AnswerRepository(ApplicationDbContext dbContext)
     {
         Entities.Add(answer);
     }
+
+    public void UpdateAnswer(Answer answer)
+    {
+        answer.UpdatedAt = DateTime.UtcNow;
+        Entities.Update(answer);
+    }
 }

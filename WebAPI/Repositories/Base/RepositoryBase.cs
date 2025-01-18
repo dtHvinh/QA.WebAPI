@@ -12,16 +12,16 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepository<T> 
     protected DbSet<T> Entities => dbContext.Set<T>();
     protected IQueryable<T> Table => Entities;
 
-    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public async Task<GenericResult> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             await dbContext.SaveChangesAsync(cancellationToken);
-            return OperationResult.Success();
+            return GenericResult.Success();
         }
         catch (Exception ex)
         {
-            return OperationResult.Failure(ex.InnerException?.Message ?? ex.Message);
+            return GenericResult.Failure(ex.InnerException?.Message ?? ex.Message);
         }
     }
 

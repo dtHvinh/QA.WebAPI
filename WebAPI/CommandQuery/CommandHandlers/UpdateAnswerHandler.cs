@@ -28,7 +28,7 @@ public class UpdateAnswerHandler(IAnswerRepository answerRepository,
         }
 
         answer.Content = request.Answer.NewContent;
-        _answerRepository.Update(answer);
+        _answerRepository.UpdateAnswer(answer);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
         return result.IsSuccess

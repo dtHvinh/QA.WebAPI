@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
+using WebAPI.CQRS;
 using WebAPI.Dto;
 using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
@@ -10,9 +11,11 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Response;
 using WebAPI.Utilities.Response.AsnwerResponses;
 using WebAPI.Utilities.Response.CommentResponses;
 using WebAPI.Utilities.Response.QuestionResponses;
+using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Endpoints.Question;
@@ -116,21 +119,44 @@ public sealed class QuestionModule : IModule
             Guid questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new CreateAnswerCommand(dto, questionId);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
             {
-                var cmd = new CreateAnswerCommand(dto, questionId);
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
 
-                var result = await mediator.Send(cmd, cancellationToken);
-
-                if (!result.IsSuccess)
-                {
-                    return ProblemResultExtensions.BadRequest(result.Message);
-                }
-
-                return TypedResults.Ok(result.Value);
-            })
+            return TypedResults.Ok(result.Value);
+        })
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
             .AddEndpointFilter<AnswerReputationRequirement>();
+
+        group.MapPost("/{questionId:guid}/{action:regex(upvote|downvote)}",
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            Guid questionId,
+            string action,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            ICommand<GenericResult<GenericResponse>> cmd = action is "upvote"
+                ? new CreateQuestionUpvoteCommand(questionId)
+                : throw new NotImplementedException();
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
 
         #endregion POST
 

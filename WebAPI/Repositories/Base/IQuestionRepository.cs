@@ -9,4 +9,11 @@ public interface IQuestionRepository : IRepository<Question>
     Task<List<Question>> SearchQuestionAsync(QuestionSearchParams searchParams, CancellationToken cancellationToken);
     void MarkAsView(Guid questionId);
     Task SetQuestionTag(Question question, List<Tag> tags);
+    Task<Question?> FindQuestionByIdAsync(Guid id, CancellationToken cancellationToken);
+    void UpvoteUpdate(Question question, int value);
+    /// <summary>
+    /// Update question also update the <see cref="Question.UpdatedAt"/> field.
+    /// </summary>
+    /// <param name="question"></param>
+    void UpdateQuestion(Question question);
 }

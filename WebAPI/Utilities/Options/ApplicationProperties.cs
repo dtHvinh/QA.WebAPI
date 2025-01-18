@@ -2,11 +2,11 @@
 
 public class ApplicationProperties
 {
-    public required ActionRequirements ActionRequirements { get; set; }
+    public required ReputationRequirePerAction ReputationRequirePerAction { get; set; }
     public required ReputationAcquirePerAction ReputationAcquirePerAction { get; set; }
 }
 
-public class ActionRequirements
+public class ReputationRequirePerAction
 {
     public int CreateTag { get; set; }
     public int UpdateTag { get; set; }
@@ -14,6 +14,7 @@ public class ActionRequirements
     public int CloseQuestion { get; set; }
     public int CommentToQuestion { get; set; }
     public int AnswerQuestion { get; set; }
+    public int UpvoteAndDownvote { get; set; }
 }
 
 public class ReputationAcquirePerAction
