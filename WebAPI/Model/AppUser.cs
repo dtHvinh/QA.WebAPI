@@ -24,7 +24,6 @@ public class AppUser : IdentityUser<Guid>, ISoftDeleteEntity
 
     public ICollection<Question> Questions { get; set; } = default!;
     public ICollection<Answer> Answers { get; set; } = default!;
-    public ICollection<Downvote> Downvotes { get; set; } = default!;
-    public ICollection<Upvote> Upvotes { get; set; } = default!;
+    public ICollection<Vote> Votes { get; set; } = default!;
     public ICollection<BookMark> BookMarks { get; set; } = default!;
 }

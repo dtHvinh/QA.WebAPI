@@ -28,14 +28,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 
         builder
-            .Entity<Upvote>().HasDiscriminator(e => e.UpvoteType)
-            .HasValue<QuestionUpvote>(nameof(UpvoteTypes.Question))
-            .HasValue<AnswerUpvote>(nameof(UpvoteTypes.Answer));
-
-        builder
-            .Entity<Downvote>().HasDiscriminator(e => e.DownvoteType)
-            .HasValue<QuestionDownvote>(nameof(DownvoteTypes.Question))
-            .HasValue<AnswerDownvote>(nameof(DownvoteTypes.Answer));
+            .Entity<Vote>().HasDiscriminator(e => e.VoteType)
+            .HasValue<QuestionVote>(nameof(VoteTypes.Question))
+            .HasValue<AnswerVote>(nameof(VoteTypes.Answer));
 
         builder
             .Entity<Comment>().HasDiscriminator(e => e.CommentType)

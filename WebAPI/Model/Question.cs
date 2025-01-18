@@ -34,8 +34,7 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<G
     public int AnswerCount { get; set; }
 
     public ICollection<Answer> Answers { get; set; } = default!;
-    public ICollection<QuestionUpvote> Upvotes { get; set; } = default!;
-    public ICollection<QuestionDownvote> Downvotes { get; set; } = default!;
+    public ICollection<QuestionVote> Votes { get; set; } = default!;
     public ICollection<QuestionReport> Reports { get; set; } = default!;
     public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<Tag> Tags { get; set; } = default!;

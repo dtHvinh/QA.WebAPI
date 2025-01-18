@@ -8,7 +8,7 @@ namespace WebAPI.Model;
 public class Report : IEntityWithTime<Guid>, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     [Column(TypeName = "nvarchar(150)")]

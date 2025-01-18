@@ -6,7 +6,7 @@ namespace WebAPI.Model;
 public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     public string? CommentType { get; set; }
 

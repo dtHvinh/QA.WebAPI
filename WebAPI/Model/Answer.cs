@@ -8,7 +8,7 @@ namespace WebAPI.Model;
 public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     [ForeignKey(nameof(Question))]
@@ -26,7 +26,6 @@ public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>
     public bool IsAccepted { get; set; } = false;
 
     public ICollection<AnswerReport> Reports { get; set; } = default!;
-    public ICollection<AnswerUpvote> Upvotes { get; set; } = default!;
-    public ICollection<AnswerDownvote> Downvotes { get; set; } = default!;
+    public ICollection<AnswerVote> Votes { get; set; } = default!;
     public ICollection<AnswerComment> Comments { get; set; } = default!;
 }

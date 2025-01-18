@@ -7,6 +7,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
 using WebAPI.Utilities.Params;
+using static WebAPI.Utilities.Enums;
 
 namespace WebAPI.Repositories;
 
@@ -116,9 +117,32 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public void UpvoteUpdate(Question question, int value)
+    public void VoteChange(Question question, VoteUpdateTypes updateType, int value)
     {
-        question.Upvote += value;
+        switch (updateType)
+        {
+            case VoteUpdateTypes.CreateNew:
+                if (value == 1)
+                    question.Upvote += value;
+                else if (value == -1)
+                    question.Downvote -= value; // - plus - eq +
+
+                Entities.Update(question);
+                break;
+
+            case VoteUpdateTypes.ChangeVote:
+                question.Upvote += value;
+                question.Downvote -= value;
+                Entities.Update(question);
+                break;
+
+            case VoteUpdateTypes.NoChange:
+                break;
+
+            default:
+                throw new InvalidOperationException();
+        }
+
         Entities.Update(question);
     }
 
