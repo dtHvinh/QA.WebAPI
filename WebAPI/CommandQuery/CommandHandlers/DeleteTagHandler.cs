@@ -1,7 +1,7 @@
 ﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
-using WebAPI.Utilities.Response.TagResponses;
+using WebAPI.Response.TagResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;

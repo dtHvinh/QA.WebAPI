@@ -1,3 +1,3 @@
-﻿namespace WebAPI.Utilities.Response;
+﻿namespace WebAPI.Response;
 
 public record CreateReportResponse(string Message) : GenericResponse(Message);

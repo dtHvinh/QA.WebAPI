@@ -1,7 +1,7 @@
 ﻿using WebAPI.CQRS;
 using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Utilities.Response.CommentResponses;
+using WebAPI.Response.CommentResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;

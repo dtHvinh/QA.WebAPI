@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Repositories.Base;
+using WebAPI.Response;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Response;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;

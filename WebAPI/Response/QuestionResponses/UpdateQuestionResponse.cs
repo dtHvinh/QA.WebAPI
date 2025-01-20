@@ -1,4 +1,6 @@
-﻿namespace WebAPI.Utilities.Response.QuestionResponses;
+﻿using WebAPI.Response;
+
+namespace WebAPI.Response.QuestionResponses;
 
 public record UpdateQuestionResponse(string Message)
     : GenericResponse(Message);

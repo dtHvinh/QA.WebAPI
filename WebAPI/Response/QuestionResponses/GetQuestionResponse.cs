@@ -1,9 +1,9 @@
-﻿using WebAPI.Utilities.Response.AppUserResponses;
-using WebAPI.Utilities.Response.AsnwerResponses;
-using WebAPI.Utilities.Response.CommentResponses;
-using WebAPI.Utilities.Response.TagResponses;
+﻿using WebAPI.Response.AppUserResponses;
+using WebAPI.Response.AsnwerResponses;
+using WebAPI.Response.CommentResponses;
+using WebAPI.Response.TagResponses;
 
-namespace WebAPI.Utilities.Response.QuestionResponses;
+namespace WebAPI.Response.QuestionResponses;
 
 public class GetQuestionResponse
 {

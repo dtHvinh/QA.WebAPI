@@ -1,6 +1,6 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Utilities.Response.TagResponses;
+using WebAPI.Response.TagResponses;
 
 namespace WebAPI.Utilities.Mappers;
 

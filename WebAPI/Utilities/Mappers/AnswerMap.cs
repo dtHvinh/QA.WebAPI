@@ -1,6 +1,6 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Utilities.Response.AsnwerResponses;
+using WebAPI.Response.AsnwerResponses;
 
 namespace WebAPI.Utilities.Mappers;
 

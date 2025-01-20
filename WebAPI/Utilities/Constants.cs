@@ -18,6 +18,7 @@ public static class Constants
         public const string Tag = _prefix + "/tag";
         public const string Report = _prefix + "/report";
         public const string Answer = _prefix + "/answer";
+        public const string User = _prefix + "/user";
     }
 
     public static class Endpoints
@@ -28,7 +29,8 @@ public static class Constants
 
     public static class EM
     {
-        public const string EMAIL_NOTFOUND = "User with email {0} not found";
+        public const string USER_EMAIL_NOTFOUND = "User with email {0} not found";
+        public const string USER_ID_NOTFOUND = "User with id {0} not found";
         public const string ENDPOINT_NOARG = "No argument found at this endpoint";
         public const string VALIDATION_REQ_FIRSTARG = "First argument must be a request object";
 

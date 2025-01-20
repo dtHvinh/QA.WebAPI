@@ -1,7 +1,7 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Utilities.Response.AppUserResponses;
-using WebAPI.Utilities.Response.AuthResponses;
+using WebAPI.Response.AppUserResponses;
+using WebAPI.Response.AuthResponses;
 
 namespace WebAPI.Utilities.Mappers;
 
@@ -35,4 +35,17 @@ public static class AppUserMap
             };
     }
 
+    public static UserResponse ToUserResponse(this AppUser? obj)
+    {
+        return new UserResponse
+        {
+            ProfilePicture = obj!.ProfilePicture,
+            FirstName = obj.FirstName,
+            LastName = obj.LastName,
+            Reputation = obj.Reputation,
+            Bio = obj.Bio,
+            DateJoined = obj.DateJoined,
+            LastActive = obj.LastActive
+        };
+    }
 }

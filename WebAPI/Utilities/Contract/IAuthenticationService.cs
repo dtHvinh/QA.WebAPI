@@ -1,4 +1,4 @@
-﻿using WebAPI.Utilities.Response.AuthResponses;
+﻿using WebAPI.Response.AuthResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Utilities.Contract;

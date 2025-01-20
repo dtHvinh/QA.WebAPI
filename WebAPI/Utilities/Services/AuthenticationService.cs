@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebAPI.Model;
+using WebAPI.Response.AuthResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Provider;
-using WebAPI.Utilities.Response.AuthResponses;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
@@ -23,7 +23,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
 
         if (user is null)
         {
-            var errorMessage = string.Format(EM.EMAIL_NOTFOUND, email);
+            var errorMessage = string.Format(EM.USER_EMAIL_NOTFOUND, email);
             return GenericResult<AuthResponse>.Failure(errorMessage);
         }
 

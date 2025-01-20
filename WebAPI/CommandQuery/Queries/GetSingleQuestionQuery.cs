@@ -1,5 +1,5 @@
 ﻿using WebAPI.CQRS;
-using WebAPI.Utilities.Response.QuestionResponses;
+using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;

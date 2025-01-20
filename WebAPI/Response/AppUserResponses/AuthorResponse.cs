@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Utilities.Response.AppUserResponses;
+﻿namespace WebAPI.Response.AppUserResponses;
 
 public class AuthorResponse
 {

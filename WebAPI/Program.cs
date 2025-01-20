@@ -15,10 +15,23 @@ builder.Services.WithConfiguration(builder.Configuration)
                 .ConfigureAuthorization()
                 .ConfigureDependencies();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowOrigins",
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:7051");
+                          policy.AllowAnyHeader();
+                          policy.AllowAnyMethod();
+                      });
+});
+
 builder.Services.AddMediatR(
     configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
+
+app.UseCors("AllowOrigins");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

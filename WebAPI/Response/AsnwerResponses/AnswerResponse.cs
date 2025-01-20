@@ -1,6 +1,6 @@
-﻿using WebAPI.Utilities.Response.AppUserResponses;
+﻿using WebAPI.Response.AppUserResponses;
 
-namespace WebAPI.Utilities.Response.AsnwerResponses;
+namespace WebAPI.Response.AsnwerResponses;
 
 public class AnswerResponse
 {

@@ -1,6 +1,6 @@
 ﻿using WebAPI.CQRS;
 using WebAPI.Dto;
-using WebAPI.Utilities.Response.AsnwerResponses;
+using WebAPI.Response.AsnwerResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
+using WebAPI.Response;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Response;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Endpoints.Report;

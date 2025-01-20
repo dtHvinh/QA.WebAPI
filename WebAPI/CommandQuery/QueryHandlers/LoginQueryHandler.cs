@@ -1,7 +1,7 @@
 ﻿using WebAPI.CommandQuery.Queries;
 using WebAPI.CQRS;
+using WebAPI.Response.AuthResponses;
 using WebAPI.Utilities.Contract;
-using WebAPI.Utilities.Response.AuthResponses;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;

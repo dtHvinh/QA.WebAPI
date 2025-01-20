@@ -1,6 +1,6 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
-using WebAPI.Utilities.Response.CommentResponses;
+using WebAPI.Response.CommentResponses;
 
 namespace WebAPI.Utilities.Mappers;
 

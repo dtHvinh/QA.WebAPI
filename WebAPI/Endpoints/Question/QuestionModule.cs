@@ -8,12 +8,12 @@ using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Model;
 using WebAPI.Pagination;
+using WebAPI.Response;
+using WebAPI.Response.AsnwerResponses;
+using WebAPI.Response.CommentResponses;
+using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Response;
-using WebAPI.Utilities.Response.AsnwerResponses;
-using WebAPI.Utilities.Response.CommentResponses;
-using WebAPI.Utilities.Response.QuestionResponses;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Endpoints.Question;
@@ -133,7 +133,7 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
             .AddEndpointFilter<AnswerReputationRequirement>();
 
-        group.MapPost("/{questionId:guid}/{action:regex(upvote|downvote)}",
+        group.MapPost("/{questionId:guid}/{action:regex(^(upvote|downvote)$)}",
             async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
             Guid questionId,
             string action,

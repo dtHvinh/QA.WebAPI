@@ -5,9 +5,9 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
+using WebAPI.Response.AuthResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Response.AuthResponses;
 using static WebAPI.Utilities.Constants;
 using E = WebAPI.Utilities.Constants.Endpoints;
 
