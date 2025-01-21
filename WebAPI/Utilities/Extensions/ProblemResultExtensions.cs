@@ -8,7 +8,7 @@ public static class ProblemResultExtensions
     public static ProblemHttpResult ValidationProblem(List<ValidationFailure> failures)
     {
         return TypedResults.Problem(statusCode: StatusCodes.Status400BadRequest,
-                                    title: "Validation Error",
+                                    title: failures.FirstOrDefault()?.ErrorMessage ?? "Error",
                                     extensions: new Dictionary<string, object?>()
                                     {
                                         {"errors", failures.ToDictionary(e => e.PropertyName, e => e.ErrorMessage) }
@@ -18,7 +18,7 @@ public static class ProblemResultExtensions
     public static ProblemHttpResult BadRequest(string message)
     {
         return TypedResults.Problem(statusCode: StatusCodes.Status400BadRequest,
-                                    title: "Error",
+                                    title: message,
                                     extensions: new Dictionary<string, object?>()
                                     {
                                         {"errors", message }
@@ -28,7 +28,7 @@ public static class ProblemResultExtensions
     public static ProblemHttpResult NotFound(string message)
     {
         return TypedResults.Problem(statusCode: StatusCodes.Status404NotFound,
-                                    title: "Error",
+                                    title: message,
                                     extensions: new Dictionary<string, object?>()
                                     {
                                         {"errors", message }
@@ -38,7 +38,7 @@ public static class ProblemResultExtensions
     public static ProblemHttpResult Forbidden(string message)
     {
         return TypedResults.Problem(statusCode: StatusCodes.Status403Forbidden,
-                                    title: "Error",
+                                    title: message,
                                     extensions: new Dictionary<string, object?>()
                                     {
                                         {"errors", message }

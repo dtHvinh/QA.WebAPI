@@ -70,4 +70,9 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepository<T> 
     {
         Entities.UpdateRange(entities);
     }
+
+    public int CountAll()
+    {
+        return Entities.Count();
+    }
 }

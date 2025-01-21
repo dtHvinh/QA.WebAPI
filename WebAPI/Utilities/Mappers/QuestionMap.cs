@@ -50,12 +50,15 @@ public static class QuestionMap
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
             IsDraft = obj.IsDraft,
+
             ViewCount = obj.ViewCount,
             AnswerCount = obj.AnswerCount,
+            CommentCount = obj.CommentCount,
+
             Upvote = obj.Upvote,
             Downvote = obj.Downvote,
             CreatedAt = obj.CreatedAt,
-            UpdatedAt = obj.UpdatedAt
+            UpdatedAt = obj.UpdatedAt,
         };
 
         if (obj.Tags != null)
@@ -65,7 +68,7 @@ public static class QuestionMap
             response.Answers = obj.Answers.Select(x => x.ToAnswerResponse()).ToList();
 
         if (obj.Comments != null)
-            response.Comments = obj.Comments.Select(x => x.ToCommentResponse()).ToList();
+            response.Comments = obj.Comments.Select(e => e.ToCommentResponse().SetResourceRight(obj.Author?.Id)).ToList();
 
         return response;
     }

@@ -207,7 +207,9 @@ public sealed class QuestionModule : IModule
             CancellationToken cancellationToken = default) =>
         {
             var cmd = new UpdateQuestionCommand(dto);
+
             var result = await mediator.Send(cmd, cancellationToken);
+
             if (!result.IsSuccess)
             {
                 return ProblemResultExtensions.BadRequest(result.Message);

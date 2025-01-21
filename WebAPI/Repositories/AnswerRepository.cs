@@ -19,4 +19,9 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         answer.UpdatedAt = DateTime.UtcNow;
         Entities.Update(answer);
     }
+
+    public int CountQuestionAnswer(Guid questionId)
+    {
+        return Entities.Where(e => e.QuestionId.Equals(questionId)).Count();
+    }
 }

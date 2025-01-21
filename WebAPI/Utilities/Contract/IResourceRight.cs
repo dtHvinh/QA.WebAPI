@@ -5,7 +5,7 @@ public interface IResourceRight<TResource>
 {
     string ResourceRight { get; set; }
 
-    TResource SetResourceRight(Guid requuesterId);
+    TResource SetResourceRight(Guid? requesterId);
 }
 
 public enum ResourceRights

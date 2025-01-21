@@ -23,6 +23,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
 
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }
+    public int CommentCount { get; set; }
     public int Upvote { get; set; }
     public int Downvote { get; set; }
 
@@ -32,13 +33,13 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public ICollection<AnswerResponse> Answers { get; set; } = default!;
     public ICollection<CommentResponse> Comments { get; set; } = default!;
 
-    public GetQuestionResponse SetResourceRight(Guid requuesterId)
+    public GetQuestionResponse SetResourceRight(Guid? requesterId)
     {
-        if (Author is null)
+        if (Author is null || requesterId is null)
             ResourceRight = nameof(ResourceRights.Viewer);
         else
         {
-            ResourceRight = Author.Id == requuesterId ? nameof(ResourceRights.Owner)
+            ResourceRight = Author.Id == requesterId ? nameof(ResourceRights.Owner)
                 : nameof(ResourceRights.Viewer);
         }
 
