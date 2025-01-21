@@ -54,6 +54,8 @@ public static class QuestionMap
             AnswerCount = obj.AnswerCount,
             Upvote = obj.Upvote,
             Downvote = obj.Downvote,
+            CreatedAt = obj.CreatedAt,
+            UpdatedAt = obj.UpdatedAt
         };
 
         if (obj.Tags != null)

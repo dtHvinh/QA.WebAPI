@@ -8,6 +8,7 @@ public interface ITagRepository : IRepository<Tag>
     void CreateTags(List<Tag> tags);
     void DeleteTag(Guid id);
     void DeleteTag(Tag tag);
+    Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default);
     Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default);
     Task<List<Tag>> FindTagsByNames(List<string> tagNames, CancellationToken cancellationToken = default);
     Task<List<Guid>> FindTagsIdByNames(List<string> tagNames, CancellationToken cancellationToken = default);

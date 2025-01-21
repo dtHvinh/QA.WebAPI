@@ -1,0 +1,98 @@
+python,A high-level programming language commonly used for web development, data analysis, and scripting.
+javascript,A versatile programming language primarily used for creating interactive web pages.
+java,A widely-used programming language known for its portability and performance in building web and mobile applications.
+csharp,A modern, object-oriented programming language developed by Microsoft for building a variety of applications.
+php,A server-side scripting language designed for web development.
+html,The standard markup language for creating web pages and web applications.
+css,A stylesheet language used for describing the look and formatting of a document written in HTML.
+sql,A domain-specific language used in programming for managing and manipulating relational databases.
+reactjs,A JavaScript library for building user interfaces, maintained by Facebook.
+angular,A platform and framework for building single-page client applications using HTML and TypeScript, maintained by Google.
+nodejs,A JavaScript runtime built on Chrome's V8 engine for building scalable network applications.
+ruby,A dynamic, open-source programming language with a focus on simplicity and productivity.
+swift,A powerful programming language created by Apple for building iOS and macOS applications.
+kotlin,A statically-typed programming language for modern multiplatform applications, developed by JetBrains.
+typescript,A typed superset of JavaScript that compiles to plain JavaScript.
+r,A programming language and environment commonly used for statistical computing and graphics.
+go,A statically typed, compiled programming language designed at Google.
+docker,A platform for developing, shipping, and running applications in containers.
+kubernetes,An open-source system for automating the deployment, scaling, and management of containerized applications.
+vuejs,A progressive framework for building user interfaces.
+django,A high-level Python web framework that encourages rapid development and clean, pragmatic design.
+flask,A lightweight WSGI web application framework in Python.
+cplusplus,A general-purpose programming language with a bias towards systems programming and embedded, resource-constrained software.
+scala,A hybrid functional programming language that runs on the JVM.
+haskell,A statically typed, purely functional programming language.
+rust,A systems programming language focused on safety, speed, and concurrency.
+perl,A high-level, general-purpose, interpreted, dynamic programming language.
+matlab,A multi-paradigm programming language and numeric computing environment.
+vba,A programming language for developing applications for Windows and Office.
+json,A lightweight data-interchange format that is easy for humans to read and write, and easy for machines to parse and generate.
+xml,A markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.
+shell,A command-line interpreter that provides a user interface for access to an operating system's services.
+bash,A Unix shell and command language written by Brian Fox for the GNU Project.
+powershell,A task automation and configuration management framework from Microsoft.
+linux,A family of open-source Unix-like operating systems based on the Linux kernel.
+windows,An operating system developed by Microsoft.
+macos,An operating system developed by Apple for Macintosh computers.
+ios,An operating system created and developed by Apple Inc. exclusively for its hardware.
+android,A mobile operating system based on a modified version of the Linux kernel and other open-source software.
+sql-server,A relational database management system developed by Microsoft.
+mysql,An open-source relational database management system.
+postgresql,A powerful, open-source object-relational database system.
+mongodb,A source-available cross-platform document-oriented database program.
+firebase,A platform developed by Google for creating mobile and web applications.
+aws,A comprehensive and widely adopted cloud platform offered by Amazon Web Services.
+azure,A cloud computing service created by Microsoft.
+gcp,Google Cloud Platform is a suite of cloud computing services by Google.
+tensorflow,An open-source machine learning framework developed by Google.
+pytorch,An open-source machine learning library developed by Facebook.
+opencv,An open-source computer vision and machine learning software library.
+unity3d,A cross-platform game engine developed by Unity Technologies.
+unreal-engine,A game engine developed by Epic Games.
+blender,An open-source 3D creation suite.
+three.js,A JavaScript library that makes creating 3D graphics in the browser easy.
+spring,A comprehensive framework for building Java applications.
+laravel,A PHP framework for building web applications with an elegant syntax.
+rails,A web application framework written in Ruby.
+symfony,A PHP framework for web applications and a set of reusable PHP components.
+express,A minimal and flexible Node.js web application framework.
+nestjs,A progressive Node.js framework for building efficient and scalable server-side applications.
+flutter,A UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.
+xamarin,A Microsoft-owned framework for building native Android and iOS apps using C#.
+react-native,A framework for building native apps using React.
+ionic,A complete open-source SDK for hybrid mobile app development.
+cordova,A mobile application development framework.
+electron,A framework for building cross-platform desktop apps with JavaScript, HTML, and CSS.
+qt,A free and open-source widget toolkit for creating graphical user interfaces.
+wxwidgets,A C++ library for creating cross-platform applications.
+gtk,A toolkit for creating graphical user interfaces.
+tkinter,Python's de facto standard GUI package.
+pygame,A set of Python modules designed for writing video games.
+opengl,A cross-language, cross-platform API for rendering 2D and 3D vector graphics.
+vulkan,A low-overhead, cross-platform 3D graphics and compute API.
+directx,A collection of APIs for handling tasks related to multimedia, especially game programming and video, on Microsoft platforms.
+assembly,A low-level programming language for a computer, or other programmable device.
+c,A general-purpose programming language that has been around since the early 1970s.
+dart,A client-optimized language for fast apps on any platform.
+fsharp,A cross-platform, functional-first programming language.
+elixir,A dynamic, functional language designed for building scalable and maintainable applications.
+clojure,A modern, dynamic, and functional dialect of the Lisp programming language on the JVM.
+groovy,An object-oriented programming language for the Java platform.
+julia,A high-level, high-performance dynamic programming language for technical computing.
+fortran,A general-purpose, compiled imperative programming language that is especially suited to numeric computation and scientific computing.
+pascal,A procedural programming language designed for teaching programming as a systematic discipline.
+ada,A structured, statically typed, imperative, and object-oriented high-level computer programming language.
+cobol,A compiled English-like computer programming language designed for business use.
+prolog,A logic programming language associated with artificial intelligence and computational linguistics.
+lisp,A family of computer programming languages with a long history and a distinctive, fully parenthesized prefix notation.
+racket,A general-purpose, multi-paradigm programming language in the Lisp-Scheme family.
+scheme,A functional programming language and one of the two main dialects of Lisp.
+smalltalk,An object-oriented, dynamically typed, reflective programming language.
+erlang,A general-purpose, concurrent, functional programming language.
+lua,A powerful, efficient, lightweight, embeddable scripting language.
+actionscript,An object-oriented programming language originally developed by Macromedia Inc.
+coffeescript,A programming language that transcompiles to JavaScript.
+haxe,A high-level, cross-platform programming language and compiler.
+sml,A functional programming language.
+ocaml,A general-purpose programming language with an emphasis on expressiveness and safety.

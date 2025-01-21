@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Response.TagResponses;
 
-public record TagResponse(Guid Id, string Name);
+public record TagResponse(Guid Id, string Name, string Description);

@@ -19,7 +19,12 @@ public class TagRepository(ApplicationDbContext dbContext)
     public void CreateTag(Tag tag)
     {
         SetNormalizedTagName(tag);
-        Add(tag);
+        Entities.Add(tag);
+    }
+
+    public async Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await Entities.ToListAsync(cancellationToken);
     }
 
     public async Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
+using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
@@ -18,6 +19,20 @@ public class TagModule : IModule
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup(EG.Tag);
+
+        group.MapGet("/all",
+            async Task<Results<Ok<List<TagResponse>>, ProblemHttpResult>> (
+             [FromServices] IMediator mediator,
+             CancellationToken cancellationToken) =>
+            {
+                var command = new GetAllTagQuery();
+                var result = await mediator.Send(command, cancellationToken);
+
+                return result.IsSuccess
+                    ? TypedResults.Ok(result.Value)
+                    : ProblemResultExtensions.BadRequest(result.Message);
+            })
+            .RequireAuthorization();
 
         group.MapPost("/",
             async Task<Results<Ok<CreateTagResponse>, ProblemHttpResult>>

@@ -25,6 +25,27 @@ public sealed class QuestionModule : IModule
         var group = endpoints.MapGroup(EG.Question);
 
         #region GET
+
+        group.MapGet("/", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+            int pageIndex,
+            int pageSize,
+            string order,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), order);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
         group.MapGet("/view/{id:guid}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
             Guid id,
             [FromServices] IMediator mediator,

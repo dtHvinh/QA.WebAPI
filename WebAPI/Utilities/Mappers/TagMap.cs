@@ -31,7 +31,7 @@ public static class TagMap
         {
             return null;
         }
-        return new TagResponse(obj.Id, obj.Name);
+        return new TagResponse(obj.Id, obj.Name, obj.Description);
     }
 
     public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)

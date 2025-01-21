@@ -56,6 +56,21 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return questions ?? [];
     }
 
+    public async Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
+    {
+        var query = Table.Where(e => e.AuthorId == userId);
+
+        query = sortOrder switch
+        {
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
+            _ => throw new InvalidOperationException(),
+        };
+
+        return await query.Skip(skip).Take(take).Include(e => e.Tags).ToListAsync(cancellationToken);
+    }
+
     /// <inheritdoc/>
     public async Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
     {

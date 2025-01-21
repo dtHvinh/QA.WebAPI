@@ -17,4 +17,5 @@ public interface IQuestionRepository : IRepository<Question>
     /// <param name="question"></param>
     void UpdateQuestion(Question question);
     void VoteChange(Question question, Enums.VoteUpdateTypes updateType, int value);
+    Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
 }

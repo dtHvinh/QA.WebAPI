@@ -39,3 +39,10 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<G
     public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<Tag> Tags { get; set; } = default!;
 }
+
+public enum QuestionSortOrder
+{
+    Newest,
+    MostVoted,
+    MostViewed,
+}
