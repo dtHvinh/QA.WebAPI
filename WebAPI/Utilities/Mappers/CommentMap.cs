@@ -18,6 +18,12 @@ public static class CommentMap
         };
     }
 
+    public static Comment UpdateFrom(this Comment comment, UpdateCommentDto dto)
+    {
+        comment.Content = dto.Content;
+        return comment;
+    }
+
     public static Comment ToComment(this CreateCommentDto dto, CommentTypes type, Guid authorId, Guid targetId)
     {
         if (type == CommentTypes.Question)

@@ -21,4 +21,15 @@ public class CommentRepository(ApplicationDbContext dbContext)
         return _dbContext.Set<QuestionComment>().Where(e => e.QuestionId.Equals(questionId))
              .Count();
     }
+
+    public void UpdateComment(Comment comment)
+    {
+        comment.UpdatedAt = DateTime.UtcNow;
+        Entities.Update(comment);
+    }
+
+    public async Task<Comment?> GetCommentByIdAsync(Guid commentId)
+    {
+        return await Entities.FindAsync(commentId);
+    }
 }
