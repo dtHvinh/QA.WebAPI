@@ -2,6 +2,7 @@
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
+using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
@@ -9,11 +10,13 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateQuestionHandler(IQuestionRepository questionRepository,
-                                   ITagRepository tagRepository)
+                                   ITagRepository tagRepository,
+                                   AuthenticationContext authenticationContext)
     : ICommandHandler<UpdateQuestionCommand, GenericResult<UpdateQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ITagRepository _tagRepository = tagRepository;
+    private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<UpdateQuestionResponse>> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
     {
@@ -22,6 +25,9 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         if (existQuestion == null)
             return GenericResult<UpdateQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Question.Id));
+
+        if (!_authenticationContext.IsResourceOwnedByUser(existQuestion))
+            return GenericResult<UpdateQuestionResponse>.Failure("You have not authorized to perform this action");
 
         var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
 

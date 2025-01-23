@@ -68,7 +68,42 @@ public static class QuestionMap
             response.Answers = obj.Answers.Select(x => x.ToAnswerResponse()).ToList();
 
         if (obj.Comments != null)
-            response.Comments = obj.Comments.Select(e => e.ToCommentResponse().SetResourceRight(obj.Author?.Id)).ToList();
+            response.Comments = obj.Comments.Select(e => e.ToCommentResponse()).ToList();
+
+        return response;
+    }
+
+    public static GetQuestionResponse ToGetQuestionResponse(this Question obj, Guid requesterId)
+    {
+        var response = new GetQuestionResponse()
+        {
+            Id = obj.Id,
+            Title = obj.Title,
+            Slug = obj.Slug,
+            Content = obj.Content,
+            Author = obj.Author.ToAuthorResponse(),
+            IsDuplicate = obj.IsDuplicate,
+            IsClosed = obj.IsClosed,
+            IsDraft = obj.IsDraft,
+
+            ViewCount = obj.ViewCount,
+            AnswerCount = obj.AnswerCount,
+            CommentCount = obj.CommentCount,
+
+            Upvote = obj.Upvote,
+            Downvote = obj.Downvote,
+            CreatedAt = obj.CreatedAt,
+            UpdatedAt = obj.UpdatedAt,
+        };
+
+        if (obj.Tags != null)
+            response.Tags = obj.Tags.Select(x => x.ToTagResonse()).ToList();
+
+        if (obj.Answers != null)
+            response.Answers = obj.Answers.Select(x => x.ToAnswerResponse().SetResourceRight(requesterId)).ToList();
+
+        if (obj.Comments != null)
+            response.Comments = obj.Comments.Select(e => e.ToCommentResponse().SetResourceRight(requesterId)).ToList();
 
         return response;
     }

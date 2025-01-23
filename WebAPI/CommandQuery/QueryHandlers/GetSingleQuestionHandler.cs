@@ -46,7 +46,7 @@ public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
 
         return GenericResult<GetQuestionResponse>.Success(
             question
-            .ToGetQuestionResponse()
+            .ToGetQuestionResponse(_authenticationContext.UserId)
             .SetResourceRight(_authenticationContext.UserId));
     }
 }

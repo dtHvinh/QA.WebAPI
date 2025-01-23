@@ -7,6 +7,6 @@ public class UpdateAnswerValidator : AbstractValidator<UpdateAnswerDto>
 {
     public UpdateAnswerValidator()
     {
-        RuleFor(e => e.NewContent).NotEmpty().WithMessage("Can not empty");
+        RuleFor(e => e.Content).NotEmpty().WithMessage("Can not empty");
     }
 }

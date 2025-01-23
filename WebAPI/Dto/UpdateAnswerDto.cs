@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Dto;
 
-public record UpdateAnswerDto(string NewContent);
+public record UpdateAnswerDto(string Content);

@@ -11,3 +11,5 @@ FInd soft delete entity by check IsDeleted ("IsBanned")
 Add Bloom Filter for email dup validation
 
 Elastic search for question search
+
+chec question is cloase when add comment and answer

@@ -29,6 +29,7 @@ public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<G
     public bool IsClosed { get; set; } = false; // Disable new answer
     public bool IsDraft { get; set; } = false;// When user save current state of the Question
     public bool IsDeleted { get; set; } = false;
+    public bool IsSolved { get; set; } = false; // When author accept one of the answers
 
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }

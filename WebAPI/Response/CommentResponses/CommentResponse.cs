@@ -10,7 +10,7 @@ public class CommentResponse : IResourceRight<CommentResponse>
     public DateTime UpdatedAt { get; set; }
     public string? Content { get; set; }
     public AuthorResponse? Author { get; set; } = default!;
-    public string ResourceRight { get; set; } = nameof(ResourceRights.Owner);
+    public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
     public CommentResponse SetResourceRight(Guid? requesterId)
     {

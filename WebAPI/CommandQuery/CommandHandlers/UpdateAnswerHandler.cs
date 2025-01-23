@@ -27,7 +27,7 @@ public class UpdateAnswerHandler(IAnswerRepository answerRepository,
             return GenericResult<AnswerResponse>.Failure("You are not authorized to update this answer");
         }
 
-        answer.Content = request.Answer.NewContent;
+        answer.Content = request.Answer.Content;
         _answerRepository.UpdateAnswer(answer);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);

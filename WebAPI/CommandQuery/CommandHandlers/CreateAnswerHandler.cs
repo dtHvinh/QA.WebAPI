@@ -23,7 +23,7 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository, Authenticat
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? GenericResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse())
+            ? GenericResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse().SetResourceRight(_authContext.UserId))
             : GenericResult<AnswerResponse>.Failure(result.Message);
     }
 }

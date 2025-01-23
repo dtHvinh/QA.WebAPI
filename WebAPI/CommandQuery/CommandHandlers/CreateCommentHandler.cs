@@ -22,7 +22,8 @@ public class CreateCommentHandler(ICommentRepository commentRepository, Authenti
         var res = await _commentRepository.SaveChangesAsync(cancellationToken);
 
         return res.IsSuccess
-            ? GenericResult<CommentResponse>.Success(newComment.ToCommentResponse())
+            ? GenericResult<CommentResponse>.Success(
+                newComment.ToCommentResponse().SetResourceRight(_authContext.UserId))
             : GenericResult<CommentResponse>.Failure(res.Message);
     }
 }
