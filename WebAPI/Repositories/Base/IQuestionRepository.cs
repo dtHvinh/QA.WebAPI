@@ -21,4 +21,6 @@ public interface IQuestionRepository : IRepository<Question>
     void UpdateQuestion(Question question);
     void VoteChange(Question question, Enums.VoteUpdateTypes updateType, int value);
     Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
+    void TrySoftDeleteQuestion(Question question, out string? errorMessage);
+    void TryEditQuestion(Question question, out string? errMsg);
 }

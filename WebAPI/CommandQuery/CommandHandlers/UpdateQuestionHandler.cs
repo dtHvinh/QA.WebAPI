@@ -34,7 +34,11 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         existQuestion.FromUpdateObject(request.Question);
         await _questionRepository.SetQuestionTag(existQuestion, tags);
 
-        _questionRepository.UpdateQuestion(existQuestion);
+        _questionRepository.TryEditQuestion(existQuestion, out var errMsg);
+
+        if (errMsg is not null)
+            return GenericResult<UpdateQuestionResponse>.Failure(errMsg);
+
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 
         return updateOp.IsSuccess

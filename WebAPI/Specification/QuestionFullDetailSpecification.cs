@@ -41,11 +41,12 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
     {
         return base.EvaluateQuery(query)
                    .Include(e => e.Author)
-                   .Include(e => e.Answers.OrderByDescending(e => e.IsAccepted)
+                   .Include(e => e.Answers.Where(e => !e.IsDeleted)
+                                          .OrderByDescending(e => e.IsAccepted)
                                           .ThenByDescending(e => e.Upvote)
-                                          .Take(10))
+                                          .ThenByDescending(e => e.CreatedAt))
                    .ThenInclude(e => e.Author)
-                   .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt).Take(10))
+                   .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt))
                    .ThenInclude(e => e.Author)
                    .Include(e => e.Tags);
     }

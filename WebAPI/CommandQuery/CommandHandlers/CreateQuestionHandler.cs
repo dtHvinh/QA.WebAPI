@@ -37,6 +37,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
 
         var response = new CreateQuestionResponse(Id: question.Id,
                                                   Title: question.Title,
+                                                  Slug: question.Slug,
                                                   Content: question.Content,
                                                   Tags: request.Question.Tags);
 

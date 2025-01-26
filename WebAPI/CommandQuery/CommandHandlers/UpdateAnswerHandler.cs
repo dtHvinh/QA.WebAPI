@@ -28,7 +28,11 @@ public class UpdateAnswerHandler(IAnswerRepository answerRepository,
         }
 
         answer.Content = request.Answer.Content;
-        _answerRepository.UpdateAnswer(answer);
+
+        _answerRepository.TryEditAnswer(answer, out var errMsg);
+
+        if (errMsg is not null)
+            return GenericResult<AnswerResponse>.Failure(errMsg);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
         return result.IsSuccess

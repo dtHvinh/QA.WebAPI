@@ -3,6 +3,7 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
+using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
@@ -12,12 +13,14 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class AcceptAnswerHandler(IQuestionRepository questionRepository,
                                  IAnswerRepository answerRepository,
                                  IUserRepository userRepository,
+                                 AuthenticationContext authenticationContext,
                                  IOptions<ApplicationProperties> options)
     : ICommandHandler<AcceptAnswerCommand, GenericResult<GenericResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly ApplicationProperties options = options.Value;
 
     public async Task<GenericResult<GenericResponse>> Handle(AcceptAnswerCommand request, CancellationToken cancellationToken)
@@ -41,9 +44,11 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
         question.IsSolved = true;
         answer.IsAccepted = true;
 
-        var user = await _userRepository.FindUserByIdAsync(answer.AuthorId, cancellationToken);
-
-        user!.Reputation += options.ReputationAcquirePerAction.AnswerAccepted;
+        if (answer.AuthorId != _authenticationContext.UserId)
+        {
+            var user = await _userRepository.FindUserByIdAsync(answer.AuthorId, cancellationToken);
+            user!.Reputation += options.ReputationAcquirePerAction.AnswerAccepted;
+        }
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 

@@ -238,6 +238,24 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization();
 
+        group.MapPut("/{questionId:guid}/close",
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            Guid questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+            {
+                var cmd = new CloseQuestionCommand(questionId);
+
+                var result = await mediator.Send(cmd, cancellationToken);
+
+                if (!result.IsSuccess)
+                {
+                    return ProblemResultExtensions.BadRequest(result.Message);
+                }
+                return TypedResults.Ok(result.Value);
+            })
+            .RequireAuthorization();
+
         #endregion PUT
     }
 }

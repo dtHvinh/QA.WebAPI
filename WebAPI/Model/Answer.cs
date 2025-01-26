@@ -5,7 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(QuestionId))]
-public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>
+public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>, ISoftDeleteEntity
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -23,6 +23,7 @@ public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>
     public int Upvote { get; set; }
     public int Downvote { get; set; }
 
+    public bool IsDeleted { get; set; } = false;
     public bool IsAccepted { get; set; } = false;
 
     public ICollection<AnswerReport> Reports { get; set; } = default!;

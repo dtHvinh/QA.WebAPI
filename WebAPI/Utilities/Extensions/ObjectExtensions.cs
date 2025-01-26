@@ -1,4 +1,5 @@
 ﻿using WebAPI.Model;
+using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Utilities.Extensions;
 
@@ -14,5 +15,16 @@ public static class ObjectExtensions
     {
         question.AnswerCount = count;
         return question;
+    }
+
+    /// <summary>
+    /// Set <see cref="ISoftDeleteEntity.IsDeleted"/> to <see langword="true"/>
+    /// </summary>
+    /// <param name="softDeleteEntity"></param>
+    /// <returns></returns>
+    public static ISoftDeleteEntity SolftDelete(this ISoftDeleteEntity softDeleteEntity)
+    {
+        softDeleteEntity.IsDeleted = true;
+        return softDeleteEntity;
     }
 }

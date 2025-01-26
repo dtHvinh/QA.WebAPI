@@ -47,4 +47,5 @@ public enum QuestionSortOrder
     Newest,
     MostVoted,
     MostViewed,
+    Solved
 }

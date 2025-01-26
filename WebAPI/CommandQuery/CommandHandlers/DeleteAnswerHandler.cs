@@ -22,7 +22,11 @@ public class DeleteAnswerHandler(IAnswerRepository answerRepository, Authenticat
         if (!_authContext.IsResourceOwnedByUser(answer))
             return GenericResult<GenericResponse>.Failure("You are not authorized to delete this answer");
 
-        _answerRepository.Remove(answer);
+        _answerRepository.TrySoftDeleteAnswer(answer, out var errMsg);
+
+        if (errMsg is not null)
+            return GenericResult<GenericResponse>.Failure(errMsg);
+
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess

@@ -29,6 +29,7 @@ public class GetUserQuestionHandler(
                 "Newest" => QuestionSortOrder.Newest,
                 "MostViewed" => QuestionSortOrder.MostViewed,
                 "MostVoted" => QuestionSortOrder.MostVoted,
+                "Solved" => QuestionSortOrder.Solved,
                 _ => QuestionSortOrder.Newest
             }, cancellationToken);
 

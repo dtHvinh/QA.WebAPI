@@ -7,5 +7,6 @@ public interface IAnswerRepository : IRepository<Answer>
     void AddAnswer(Answer answer);
     int CountQuestionAnswer(Guid questionId);
     Task<Answer?> FindAnswerById(Guid id, CancellationToken cancellationToken = default);
-    void UpdateAnswer(Answer answer);
+    void TrySoftDeleteAnswer(Answer answer, out string? errMsg);
+    void TryEditAnswer(Answer answer, out string? errMsg);
 }

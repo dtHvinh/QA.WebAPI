@@ -1,3 +1,7 @@
+undo,Undo is a command in many computer programs. It erases the last change done to the document reverting it to an older state. In some more advanced programs such as graphic processing, undo will negate the last command done to the file being edited.
+git-commit,git-commit - Record changes to the repository along with a log message.
+version-control,Version control is the management of changes to documents, programs, and other information stored as computer files. Use this tag to mark general questions about usage and applicability of version control, VCS comparison. For most commands and techniques specific to each particular VCS there are specific tags, which should be preferred.
+git,Git is an open-source distributed version control system (DVCS). Use this tag for questions about Git usage and workflows. Do not use this tag for general programming questions that happen to involve a Git repository. Do not use this tag for GitHub/GitHub Actions questions that do not involve git usage; use [github] or [github-actions] instead. Do not use the [github] tag for Git-related issues just because a repository happens to be hosted on GitHub.
 python,A high-level programming language commonly used for web development, data analysis, and scripting.
 javascript,A versatile programming language primarily used for creating interactive web pages.
 java,A widely-used programming language known for its portability and performance in building web and mobile applications.

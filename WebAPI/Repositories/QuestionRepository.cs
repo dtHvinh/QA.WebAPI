@@ -6,6 +6,7 @@ using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Params;
 using static WebAPI.Utilities.Enums;
 
@@ -58,13 +59,15 @@ public class QuestionRepository(ApplicationDbContext dbContext)
 
     public async Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
     {
-        var query = Table.Where(e => e.AuthorId == userId);
+        var query = Table.Where(e => e.AuthorId == userId)
+                         .EvaluateQuery(new ValidQuestionSpecification());
 
         query = sortOrder switch
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
+            QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             _ => throw new InvalidOperationException(),
         };
 
@@ -132,6 +135,25 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
+    public void TryEditQuestion(Question question, out string? errMsg)
+    {
+        if (question.IsSolved)
+        {
+            errMsg = "Can not edit solved question";
+            return;
+        }
+
+        if (question.Upvote > question.Downvote)
+        {
+            errMsg = "Can not edit question people have upvoted";
+            return;
+        }
+
+        errMsg = null;
+        question.UpdatedAt = DateTime.UtcNow;
+        Entities.Update(question);
+    }
+
     public void VoteChange(Question question, VoteUpdateTypes updateType, int value)
     {
         switch (updateType)
@@ -158,6 +180,32 @@ public class QuestionRepository(ApplicationDbContext dbContext)
                 throw new InvalidOperationException();
         }
 
+        Entities.Update(question);
+    }
+
+    public void TrySoftDeleteQuestion(Question question, out string? errorMessage)
+    {
+        if (question.IsSolved)
+        {
+            errorMessage = "Can not delete solved question";
+            return;
+        }
+
+        if (question.Upvote - question.Downvote > 0)
+        {
+            errorMessage = "Can not delete question people may find it valuable";
+            return;
+        }
+
+        if (_dbContext.Set<Answer>().Where(e => e.QuestionId.Equals(question.Id))
+            .Any(e => e.Upvote > e.Downvote))
+        {
+            errorMessage = "Can not delete question people may find it valuable";
+            return;
+        }
+
+        errorMessage = null;
+        question.SolftDelete();
         Entities.Update(question);
     }
 

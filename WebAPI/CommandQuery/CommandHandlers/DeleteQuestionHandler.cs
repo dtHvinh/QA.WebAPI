@@ -23,11 +23,14 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
         if (questionToDelete is null)
             return GenericResult<DeleteQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Id));
-
         if (!_authContext.IsResourceOwnedByUser(questionToDelete))
             return GenericResult<DeleteQuestionResponse>.Failure(EM.QUESTION_DELETE_UNAUTHORIZED);
 
-        _questionRepository.Remove(questionToDelete);
+        _questionRepository.TrySoftDeleteQuestion(questionToDelete, out var errMessage);
+
+        if (errMessage is not null)
+            return GenericResult<DeleteQuestionResponse>.Failure(errMessage);
+
         var delOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 
         return delOp.IsSuccess

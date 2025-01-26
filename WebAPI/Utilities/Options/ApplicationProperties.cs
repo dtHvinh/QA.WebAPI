@@ -21,7 +21,6 @@ public class ReputationAcquirePerAction
 {
     public int QuestionUpvoted { get; set; }
     public int QuestionDownvoted { get; set; }
-    public int AnswerQuestion { get; set; }
     public int AnswerUpvoted { get; set; }
     public int AnswerDownvoted { get; set; }
     public int DownvoteAnswer { get; set; }
