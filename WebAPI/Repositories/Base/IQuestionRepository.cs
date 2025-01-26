@@ -6,7 +6,10 @@ namespace WebAPI.Repositories.Base;
 
 public interface IQuestionRepository : IRepository<Question>
 {
-    Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken);
+    /// <summary>
+    /// Find a question with almost all references is loaded
+    /// </summary>
+    Task<Question?> FindQuestionDetailByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<Question>> SearchQuestionAsync(QuestionSearchParams searchParams, CancellationToken cancellationToken);
     void MarkAsView(Guid questionId);
     Task SetQuestionTag(Question question, List<Tag> tags);

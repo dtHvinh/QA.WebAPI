@@ -219,6 +219,25 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
 
+        group.MapPut("/{questionId:guid}/accept/{answerId:guid}",
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            Guid questionId,
+            Guid answerId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new AcceptAnswerCommand(questionId, answerId);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
         #endregion PUT
     }
 }

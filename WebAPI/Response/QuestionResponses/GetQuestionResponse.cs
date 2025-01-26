@@ -20,6 +20,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public bool IsDuplicate { get; set; } = false;
     public bool IsClosed { get; set; } = false;
     public bool IsDraft { get; set; } = false;
+    public bool IsSolved { get; set; } = false;
 
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }

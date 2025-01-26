@@ -28,7 +28,7 @@ public class GetSingleQuestionHandler(IQuestionRepository questionRepository,
         GetSingleQuestionQuery request, CancellationToken cancellationToken)
     {
         var question = await _cacheService.GetQuestionAsync(request.Id);
-        question ??= await _questionRepository.FindAvailableQuestionByIdAsync(request.Id, cancellationToken);
+        question ??= await _questionRepository.FindQuestionDetailByIdAsync(request.Id, cancellationToken);
 
         if (question == null)
         {

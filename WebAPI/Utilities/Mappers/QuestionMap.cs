@@ -47,9 +47,11 @@ public static class QuestionMap
             Slug = obj.Slug,
             Content = obj.Content,
             Author = obj.Author.ToAuthorResponse(),
+
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
             IsDraft = obj.IsDraft,
+            IsSolved = obj.IsSolved,
 
             ViewCount = obj.ViewCount,
             AnswerCount = obj.AnswerCount,
@@ -82,9 +84,11 @@ public static class QuestionMap
             Slug = obj.Slug,
             Content = obj.Content,
             Author = obj.Author.ToAuthorResponse(),
+
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
             IsDraft = obj.IsDraft,
+            IsSolved = obj.IsSolved,
 
             ViewCount = obj.ViewCount,
             AnswerCount = obj.AnswerCount,

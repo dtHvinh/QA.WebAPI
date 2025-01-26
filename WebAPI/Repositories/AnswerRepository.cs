@@ -1,4 +1,5 @@
-﻿using WebAPI.Attributes;
+﻿using Microsoft.EntityFrameworkCore;
+using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
@@ -23,5 +24,10 @@ public class AnswerRepository(ApplicationDbContext dbContext)
     public int CountQuestionAnswer(Guid questionId)
     {
         return Entities.Where(e => e.QuestionId.Equals(questionId)).Count();
+    }
+
+    public async Task<Answer?> FindAnswerById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await Entities.Where(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
     }
 }

@@ -72,7 +72,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     }
 
     /// <inheritdoc/>
-    public async Task<Question?> FindAvailableQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Question?> FindQuestionDetailByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var specification = new QuestionFullDetailSpecification();
         var result = await Table.Where(e => e.Id == id)
