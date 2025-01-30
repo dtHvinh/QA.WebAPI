@@ -36,8 +36,8 @@ public class UserRepository(ApplicationDbContext dbContext,
 
             if (!result.Succeeded)
             {
-                return GenericResult<AppUser>.Failure(
-                    string.Join(',', result.Errors.Select(e => e.Description)));
+                return GenericResult<AppUser>.Failure(result.Errors.Select(e => e.Description).FirstOrDefault()
+                    ?? "Error");
             }
 
             // Add to role

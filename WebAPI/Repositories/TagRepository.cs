@@ -22,6 +22,16 @@ public class TagRepository(ApplicationDbContext dbContext)
         Entities.Add(tag);
     }
 
+    public Task<Tag?> FindTagDetailById(Guid tagId, CancellationToken cancellationToken = default)
+    {
+        return Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.OrderByDescending(e => e.Upvote)
+                                                .ThenByDescending(e => e.ViewCount)
+                                                .ThenByDescending(e => e.CreatedAt))
+                       .ThenInclude(e => e.Author)
+                       .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default)
     {
         return await Entities.ToListAsync(cancellationToken);
@@ -48,6 +58,20 @@ public class TagRepository(ApplicationDbContext dbContext)
 
         return await Entities.Where(
             x => tagsToFind.Contains(x.NormalizedName)).Select(e => e.Id).ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Tag>> FindTagsByKeyword(
+        string keyword, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        var findKeyword = keyword.ToUpperInvariant();
+
+        var tagsToFind = await Table
+            .Where(e => e.NormalizedName.Contains(findKeyword))
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        return tagsToFind;
     }
 
     public void UpdateTag(Tag tag, CancellationToken cancellation = default)

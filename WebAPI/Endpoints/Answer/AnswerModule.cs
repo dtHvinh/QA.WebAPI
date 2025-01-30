@@ -7,6 +7,7 @@ using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Response;
 using WebAPI.Response.AsnwerResponses;
+using WebAPI.Response.VoteResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 using static WebAPI.Utilities.Constants;
@@ -46,19 +47,40 @@ public class AnswerModule : IModule
             Guid answerId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new DeleteAnswerCommand(answerId);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
             {
-                var cmd = new DeleteAnswerCommand(answerId);
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
 
-                var result = await mediator.Send(cmd, cancellationToken);
-
-                if (!result.IsSuccess)
-                {
-                    return ProblemResultExtensions.BadRequest(result.Message);
-                }
-
-                return TypedResults.Ok(result.Value);
-            })
+            return TypedResults.Ok(result.Value);
+        })
             .RequireAuthorization()
             .AddEndpointFilter<AnswerReputationRequirement>();
+
+        group.MapPost("/{answerId:guid}/{action:regex(^(upvote|downvote)$)}",
+            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
+            Guid answerId,
+            string action,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new CreateAnswerVoteCommand(answerId, action == "upvote");
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
     }
 }

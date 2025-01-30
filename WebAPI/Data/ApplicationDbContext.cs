@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.VisualBasic.FileIO;
 using WebAPI.Model;
 using WebAPI.Utilities.Contract;
 
@@ -51,6 +52,56 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityWithTime<>))
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
     }
+
+    public static async Task InitTag(WebApplication app, bool run)
+    {
+        if (!run)
+            return;
+
+        using var scope = app.Services.CreateScope();
+
+        var tagRepository = scope.ServiceProvider.GetRequiredService<WebAPI.Repositories.Base.ITagRepository>();
+
+        string csvFilePath = "D:\\dev\\myproject\\qa_platform\\back-end\\WebAPI\\WebAPI\\Data\\tags.csv";
+
+        // Read the second line of the CSV file
+        using TextFieldParser parser = new(csvFilePath);
+
+        parser.TextFieldType = FieldType.Delimited;
+        parser.SetDelimiters(",");
+
+        // Skip the header line
+        if (!parser.EndOfData)
+        {
+            parser.ReadLine();
+        }
+
+        List<Tag> tags = [];
+
+        // Read the second line
+        while (!parser.EndOfData)
+        {
+            string[] fields = parser.ReadFields();
+
+            // Extract the three values
+            string tagName = fields[0];
+            string excerpt = fields[1];
+            string wikiBody = fields[2];
+
+            tags.Add(new()
+            {
+                Name = tagName,
+                NormalizedName = tagName.ToUpperInvariant(),
+                Description = excerpt,
+                WikiBody = wikiBody,
+            });
+        }
+
+        tagRepository.AddRange(tags);
+
+        var a = await tagRepository.SaveChangesAsync();
+    }
+
 
     public static async Task Init(WebApplication app, bool run)
     {

@@ -26,6 +26,13 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
         question.Tags = tags;
 
+        foreach (var tag in tags)
+        {
+            tag.QuestionCount++;
+        }
+
+        _tagRepository.UpdateRange(tags);
+
         _questionRepository.Add(question);
 
         // Process result

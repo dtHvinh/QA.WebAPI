@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowOrigins",
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:7051");
+                          policy.WithOrigins("https://localhost:7051", "https://qa-web-mu.vercel.app");
                           policy.AllowAnyHeader();
                           policy.AllowAnyMethod();
                       });
@@ -38,6 +38,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 await ApplicationDbContext.Init(app, false);
+await ApplicationDbContext.InitTag(app, false);
 
 app.RegisterEndpoints();
 await app.RunAsync();

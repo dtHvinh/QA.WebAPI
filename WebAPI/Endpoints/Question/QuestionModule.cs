@@ -12,6 +12,7 @@ using WebAPI.Response;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Response.CommentResponses;
 using WebAPI.Response.QuestionResponses;
+using WebAPI.Response.VoteResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 using static WebAPI.Utilities.Constants;
@@ -51,7 +52,7 @@ public sealed class QuestionModule : IModule
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new GetSingleQuestionQuery(id);
+            var cmd = new GetQuestionDetailQuery(id);
 
             var result = await mediator.Send(cmd, cancellationToken);
 
@@ -155,7 +156,7 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<AnswerReputationRequirement>();
 
         group.MapPost("/{questionId:guid}/{action:regex(^(upvote|downvote)$)}",
-            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
             Guid questionId,
             string action,
             [FromServices] IMediator mediator,

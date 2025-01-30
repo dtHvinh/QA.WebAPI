@@ -11,7 +11,8 @@ public static class TagMap
         return new Tag
         {
             Name = dto.Name,
-            Description = dto.Description
+            Description = dto.Description,
+            WikiBody = dto.WikiBody
         };
     }
 
@@ -21,7 +22,8 @@ public static class TagMap
         {
             Id = dto.Id,
             Name = dto.Name,
-            Description = dto.Description
+            Description = dto.Description,
+            WikiBody = dto.WikiBody
         };
     }
 
@@ -31,7 +33,14 @@ public static class TagMap
         {
             return null;
         }
-        return new TagResponse(obj.Id, obj.Name, obj.Description);
+        return new TagResponse(obj.Id, obj.Name, obj.Description, obj.WikiBody, obj.QuestionCount);
+    }
+
+    public static TagDetailResponse ToTagDetailResponse(this Tag obj)
+    {
+        return new TagDetailResponse(
+            obj.Id, obj.Name, obj.Description, obj.WikiBody,
+            obj.QuestionCount, obj.Questions.Select(x => x.ToGetQuestionResponse()).ToList());
     }
 
     public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)
@@ -41,6 +50,6 @@ public static class TagMap
 
     public static CreateTagResponse ToCreateTagResponse(this Tag obj)
     {
-        return new CreateTagResponse(obj.Id, obj.Name, obj.Description);
+        return new CreateTagResponse(obj.Id, obj.Name, obj.Description, obj.WikiBody);
     }
 }

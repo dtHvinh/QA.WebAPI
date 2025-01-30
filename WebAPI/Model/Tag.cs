@@ -15,6 +15,8 @@ public class Tag : IEntity<Guid>
     public string NormalizedName { get; set; } = default!;
     [Column(TypeName = "nvarchar(1000)")]
     public string Description { get; set; } = default!;
+    public string WikiBody { get; set; } = default!;
+    public int QuestionCount { get; set; }
 
     public ICollection<Question> Questions { get; set; } = default!;
 }

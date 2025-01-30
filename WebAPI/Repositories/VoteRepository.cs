@@ -22,7 +22,7 @@ public class VoteRepository(ApplicationDbContext dbContext)
     private async Task<VoteUpdateTypes> InternalVoteQuestion(Guid questionId, Guid userId, bool isUpvote, CancellationToken cancellationToken)
     {
         var existVote = await _dbContext.Set<QuestionVote>()
-            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.VoteType == VoteTypes.Question.ToString(),
+            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.QuestionId == questionId,
             cancellationToken);
 
         if (existVote != null)
@@ -42,6 +42,45 @@ public class VoteRepository(ApplicationDbContext dbContext)
         var upvote = new QuestionVote
         {
             QuestionId = questionId,
+            AuthorId = userId,
+            IsUpvote = isUpvote,
+        };
+
+        Entities.Add(upvote);
+
+        return VoteUpdateTypes.CreateNew;
+    }
+
+
+    public Task<VoteUpdateTypes> DownvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken)
+    => InternalVoteAnswer(answerId, userId, false, cancellationToken);
+
+    public Task<VoteUpdateTypes> UpvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken)
+        => InternalVoteAnswer(answerId, userId, true, cancellationToken);
+
+    private async Task<VoteUpdateTypes> InternalVoteAnswer(Guid answerId, Guid userId, bool isUpvote, CancellationToken cancellationToken)
+    {
+        var existVote = await _dbContext.Set<AnswerVote>()
+            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.AnswerId == answerId,
+            cancellationToken);
+
+        if (existVote != null)
+        {
+            if (existVote.IsUpvote == isUpvote)
+                return VoteUpdateTypes.NoChange;
+
+            else
+            {
+                existVote.IsUpvote = isUpvote;
+                Entities.Update(existVote);
+
+                return VoteUpdateTypes.ChangeVote;
+            }
+        }
+
+        var upvote = new AnswerVote
+        {
+            AnswerId = answerId,
             AuthorId = userId,
             IsUpvote = isUpvote,
         };

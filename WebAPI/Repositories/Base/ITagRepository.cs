@@ -10,6 +10,8 @@ public interface ITagRepository : IRepository<Tag>
     void DeleteTag(Tag tag);
     Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default);
     Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default);
+    Task<Tag?> FindTagDetailById(Guid tagId, CancellationToken cancellationToken = default);
+    Task<List<Tag>> FindTagsByKeyword(string keyword, int skip, int take, CancellationToken cancellationToken = default);
     Task<List<Tag>> FindTagsByNames(List<string> tagNames, CancellationToken cancellationToken = default);
     Task<List<Guid>> FindTagsIdByNames(List<string> tagNames, CancellationToken cancellationToken = default);
     void UpdateTag(Tag tag, CancellationToken cancellation = default);

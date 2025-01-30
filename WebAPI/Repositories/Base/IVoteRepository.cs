@@ -69,4 +69,6 @@ public interface IVoteRepository
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<VoteUpdateTypes> DownvoteQuestion(Guid questionId, Guid userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> DownvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> UpvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken);
 }

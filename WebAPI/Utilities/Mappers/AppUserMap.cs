@@ -27,7 +27,7 @@ public static class AppUserMap
             new AuthorResponse
             {
                 Id = obj.Id,
-                Username = obj.UserName,
+                Username = obj!.UserName,
                 ProfilePicture = obj.ProfilePicture,
                 FirstName = obj.FirstName,
                 LastName = obj.LastName,
