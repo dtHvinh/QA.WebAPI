@@ -9,10 +9,12 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class DeleteQuestionHandler(IQuestionRepository questionRepository,
+                                   ITagRepository tagRepository,
                                    AuthenticationContext authContext) :
     ICommandHandler<DeleteQuestionCommand, GenericResult<DeleteQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
+    private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authContext = authContext;
 
     public async Task<GenericResult<DeleteQuestionResponse>> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
@@ -23,6 +25,7 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
         if (questionToDelete is null)
             return GenericResult<DeleteQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Id));
+
         if (!_authContext.IsResourceOwnedByUser(questionToDelete))
             return GenericResult<DeleteQuestionResponse>.Failure(EM.QUESTION_DELETE_UNAUTHORIZED);
 

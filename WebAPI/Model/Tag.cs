@@ -5,6 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(NormalizedName), IsUnique = true)]
+[Index(nameof(QuestionCount), IsDescending = [true])]
 public class Tag : IEntity<Guid>
 {
     public Guid Id { get; set; }

@@ -51,12 +51,15 @@ public class TagModule : IModule
             })
             .RequireAuthorization();
 
-        group.MapGet("/all",
-            async Task<Results<Ok<List<TagResponse>>, ProblemHttpResult>> (
+        group.MapGet("/{orderBy}",
+            async Task<Results<Ok<PagedResponse<TagResponse>>, ProblemHttpResult>> (
+             string orderBy,
+             int skip,
+             int take,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
             {
-                var command = new GetAllTagQuery();
+                var command = new GetTagQuery(orderBy, skip, take);
                 var result = await mediator.Send(command, cancellationToken);
 
                 return result.IsSuccess

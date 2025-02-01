@@ -206,6 +206,15 @@ public class QuestionRepository(ApplicationDbContext dbContext)
 
         errorMessage = null;
         question.SolftDelete();
+        question.UpdatedAt = DateTime.UtcNow;
+
+        _dbContext.Entry(question).Collection(e => e.Tags);
+        foreach (var tag in question.Tags)
+        {
+            tag.QuestionCount -= 1;
+        }
+
+        _dbContext.UpdateRange(question.Tags);
         Entities.Update(question);
     }
 

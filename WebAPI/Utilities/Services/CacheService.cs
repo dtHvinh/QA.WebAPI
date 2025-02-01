@@ -4,6 +4,7 @@ using WebAPI.Attributes;
 using WebAPI.Model;
 using WebAPI.Utilities.Contract;
 using static WebAPI.Utilities.Constants;
+using static WebAPI.Utilities.Provider.CacheOptionProvider;
 
 namespace WebAPI.Utilities.Services;
 
@@ -14,7 +15,7 @@ public class CacheService(IDistributedCache cache,
 {
     private readonly IDistributedCache cache = cache;
     private readonly ICacheOptionProvider _cacheOptionProvider = cacheOptionProvider;
-    private readonly JsonSerializerOptions _options = options;
+    private readonly JsonSerializerOptions _jsonOptions = options;
 
     public async Task<AppUser?> GetAppUserAsync(Guid id)
     {
@@ -35,7 +36,7 @@ public class CacheService(IDistributedCache cache,
             return null;
         }
 
-        return JsonSerializer.Deserialize<Question>(question, _options);
+        return JsonSerializer.Deserialize<Question>(question, _jsonOptions);
     }
 
     public async Task SetAppUserAsync(AppUser user)
@@ -53,7 +54,7 @@ public class CacheService(IDistributedCache cache,
     public async Task SetQuestionAsync(Question question)
     {
         var cacheOptions = _cacheOptionProvider.GetOptions(nameof(Question));
-        var str = JsonSerializer.Serialize(question, _options);
+        var str = JsonSerializer.Serialize(question, _jsonOptions);
         await cache.SetStringAsync(RedisKeyGen.Question(question.Id), str, cacheOptions);
     }
 
@@ -65,5 +66,40 @@ public class CacheService(IDistributedCache cache,
     public async Task<bool> IsEmailUsed(string email)
     {
         return await cache.GetStringAsync(RedisKeyGen.UserEmail(email)) is not null;
+    }
+
+    public async Task<List<Tag>?> GetTags(string orderBy, int skip, int take)
+    {
+        var strValue = await cache.GetStringAsync(RedisKeyGen.GetTags(orderBy, skip, take));
+        if (strValue is null)
+        {
+            return null;
+        }
+
+        return JsonSerializer.Deserialize<List<Tag>>(strValue, _jsonOptions);
+    }
+
+    public async Task SetTags(string orderBy, int skip, int take, List<Tag> values)
+    {
+        await cache.SetStringAsync(RedisKeyGen.GetTags(orderBy, skip, take),
+            JsonSerializer.Serialize(values), _cacheOptionProvider.GetOptions(nameof(Tag)));
+    }
+
+    public async Task<Tag?> GetTagDetail(Guid tagId)
+    {
+        var strValue = await cache.GetStringAsync(RedisKeyGen.GetTagDetail(tagId));
+        if (strValue is null)
+        {
+            return null;
+        }
+
+        return JsonSerializer.Deserialize<Tag>(strValue, _jsonOptions);
+    }
+
+    public async Task SetTagDetail(Tag tag)
+    {
+        await cache.SetStringAsync(RedisKeyGen.GetTagDetail(tag.Id),
+            JsonSerializer.Serialize(tag, _jsonOptions),
+            _cacheOptionProvider.GetOptions(nameof(ExtensionCacheOptions.TagDetail)));
     }
 }

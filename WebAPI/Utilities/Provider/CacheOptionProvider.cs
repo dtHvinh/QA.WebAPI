@@ -34,8 +34,17 @@ public class CacheOptionProvider(IOptions<CacheOptions> options) : ICacheOptionP
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_options.Question.AE),
                 SlidingExpiration = TimeSpan.FromSeconds(_options.Question.SE),
             },
+            nameof(ExtensionCacheOptions.TagDetail) => new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(3600),
+                SlidingExpiration = TimeSpan.FromSeconds(3600),
+            },
             _ => GetDefault()
         };
     }
 
+    public enum ExtensionCacheOptions
+    {
+        TagDetail
+    }
 }

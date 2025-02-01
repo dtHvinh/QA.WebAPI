@@ -18,7 +18,7 @@ public class SearchTagHandler(ITagRepository tagRepository)
     {
         if (string.IsNullOrEmpty(request.Keyword))
         {
-            return GenericResult<PagedResponse<TagResponse>>.Success(new([], false, 0, 6));
+            return GenericResult<PagedResponse<TagResponse>>.Success(new([], false, 0, 8));
         }
 
         var tags = await tagRepository.FindTagsByKeyword(

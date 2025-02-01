@@ -94,10 +94,10 @@ public sealed class QuestionModule : IModule
         group.MapPost("/", async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> (
             [FromBody] CreateQuestionDto dto,
             [FromServices] IMediator mediator,
-            [FromQuery] bool draft = false,
+            [FromQuery] bool isDraft = false,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new CreateQuestionCommand(dto, draft);
+            var cmd = new CreateQuestionCommand(dto, isDraft);
 
             var result = await mediator.Send(cmd, cancellationToken);
 

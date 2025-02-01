@@ -8,7 +8,10 @@ public interface ITagRepository : IRepository<Tag>
     void CreateTags(List<Tag> tags);
     void DeleteTag(Guid id);
     void DeleteTag(Tag tag);
-    Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default);
+    /// <summary>
+    /// The tags query from this method do not include <see cref="Tag.WikiBody"/>.
+    /// </summary>
+    Task<List<Tag>> FindTagsAsync(string orderBy, int skip, int take, CancellationToken cancellationToken = default);
     Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default);
     Task<Tag?> FindTagDetailById(Guid tagId, CancellationToken cancellationToken = default);
     Task<List<Tag>> FindTagsByKeyword(string keyword, int skip, int take, CancellationToken cancellationToken = default);

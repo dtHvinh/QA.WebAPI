@@ -7,7 +7,6 @@ public class ValidQuestionSpecification : SpecificationBase<Question>
 {
     public ValidQuestionSpecification()
     {
-        AddCriteria(question => !question.IsDeleted &&
-                        !question.IsDraft);
+        AddCriteria(question => !question.IsDeleted);
     }
 }

@@ -27,14 +27,54 @@ public class TagRepository(ApplicationDbContext dbContext)
         return Entities.Where(e => e.Id.Equals(tagId))
                        .Include(e => e.Questions.OrderByDescending(e => e.Upvote)
                                                 .ThenByDescending(e => e.ViewCount)
-                                                .ThenByDescending(e => e.CreatedAt))
+                                                .ThenByDescending(e => e.CreatedAt)
+                                                .Take(15))
                        .ThenInclude(e => e.Author)
                        .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<List<Tag>> FindAllAsync(CancellationToken cancellationToken = default)
+    /// <summary>
+    /// The tags query from this method do not include <see cref="Tag.WikiBody"/> and <see cref="Tag.Questions" />.
+    /// </summary>
+    public Task<List<Tag>> FindTagsAsync(string orderBy, int skip, int take, CancellationToken cancellationToken = default)
     {
-        return await Entities.ToListAsync(cancellationToken);
+        return orderBy.ToLowerInvariant() switch
+        {
+            "popular" => Entities.OrderByDescending(e => e.QuestionCount)
+                                .Skip(skip)
+                                .Take(take)
+                                .Select(e => new Tag()
+                                {
+                                    Id = e.Id,
+                                    Name = e.Name,
+                                    Description = e.Description,
+                                    QuestionCount = e.QuestionCount
+                                })
+                                .ToListAsync(cancellationToken),
+
+            "name" => Entities.OrderBy(e => e.Name)
+                            .Skip(skip)
+                            .Take(take)
+                            .Select(e => new Tag()
+                            {
+                                Id = e.Id,
+                                Name = e.Name,
+                                Description = e.Description,
+                                QuestionCount = e.QuestionCount
+                            })
+                            .ToListAsync(cancellationToken),
+
+            _ => Entities.Skip(skip)
+                        .Take(take)
+                        .Select(e => new Tag()
+                        {
+                            Id = e.Id,
+                            Name = e.Name,
+                            Description = e.Description,
+                            QuestionCount = e.QuestionCount
+                        })
+                        .ToListAsync(cancellationToken),
+        };
     }
 
     public async Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default)

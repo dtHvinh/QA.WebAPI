@@ -15,7 +15,6 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
     /// 
     /// <list type="bullet">
     /// <item>Not Deleted</item>
-    /// <item>Not Draft</item>
     /// </list>
     /// 
     /// The each item in the query will include:
@@ -31,8 +30,7 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
     /// </remarks>
     public QuestionFullDetailSpecification()
     {
-        AddCriteria(question => !question.IsDeleted &&
-                                !question.IsDraft);
+        AddCriteria(question => !question.IsDeleted);
 
         AddOrderByDesc(question => question.CreatedAt);
     }

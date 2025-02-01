@@ -4,6 +4,8 @@ public class PagedResponse<T>(IEnumerable<T> items, bool hasNext, int pageNumber
 {
     public int PageIndex { get; set; } = pageNumber;
     public int PageSize { get; set; } = pageSize;
+    public int TotalPage { get; set; }
+    public int TotalCount { get; set; }
     public bool HasNextPage { get; set; } = hasNext;
     public bool HasPreviousPage { get; set; } = pageNumber > 1;
     public IEnumerable<T> Items { get; set; } = items;

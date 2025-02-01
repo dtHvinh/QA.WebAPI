@@ -49,5 +49,8 @@ public static class Constants
         public static string UserEmail(string email) => $"email:{email}";
         public static string AppUserKey(Guid id) => $"appuser:#{id}";
         public static string Question(Guid id) => $"question:#{id}";
+        public static string GetTagDetail(Guid id) => $"tag-detail:#{id}";
+        public static string GetTags(string orderBy, int skip, int take)
+            => $"tags:orderBy={orderBy}&skip={skip}&take={take}";
     }
 }
