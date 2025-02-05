@@ -45,7 +45,7 @@ public class GetTagHandler(ITagRepository tagRepository, ICacheService cacheServ
             new(tagResponses, hasNext, request.Skip / request.Take + 1, request.Take)
             {
                 TotalCount = totalCount,
-                TotalPage = totalCount / request.Take
+                TotalPage = (int)Math.Ceiling((double)totalCount / request.Take)
             });
     }
 }

@@ -14,6 +14,7 @@ namespace WebAPI.CommandQuery.QueryHandlers;
 public class GetQuestionDetailHandler(IQuestionRepository questionRepository,
                                       ICommentRepository commentRepository,
                                       IAnswerRepository answerRepository,
+                                      IBookmarkRepository bookmarkRepository,
                                       ICacheService cacheService,
                                       AuthenticationContext authenticationContext)
     : IQueryHandler<GetQuestionDetailQuery, GenericResult<GetQuestionResponse>>
@@ -21,6 +22,7 @@ public class GetQuestionDetailHandler(IQuestionRepository questionRepository,
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly IAnswerRepository _answerRepository = answerRepository;
+    private readonly IBookmarkRepository _bookmarkRepository = bookmarkRepository;
     private readonly ICacheService _cacheService = cacheService;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
@@ -44,9 +46,13 @@ public class GetQuestionDetailHandler(IQuestionRepository questionRepository,
         _questionRepository.MarkAsView(question.Id);
         await _questionRepository.SaveChangesAsync(cancellationToken);
 
+        var isQuestionBookmarked =
+            await _bookmarkRepository.IsBookmarked(_authenticationContext.UserId, question.Id);
+
         return GenericResult<GetQuestionResponse>.Success(
             question
             .ToGetQuestionResponse(_authenticationContext.UserId)
-            .SetResourceRight(_authenticationContext.UserId));
+            .SetResourceRight(_authenticationContext.UserId)
+            .SetIsBookmared(isQuestionBookmarked));
     }
 }

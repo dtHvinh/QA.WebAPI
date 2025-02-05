@@ -39,6 +39,7 @@ public static class Constants
 
         public const string QUESTION_ID_NOTFOUND = "Question with id {0} not found";
         public const string QUESTION_DELETE_UNAUTHORIZED = "Do not has ownership to delete this question";
+        public const string QUESTION_CLOSED_COMMENT_RESTRICT = "You can not comment to closed question";
 
         public const string PasswordWrong = "Password is wrong";
         public const string TAG_ID_NOTFOUND = "Tag not found";

@@ -22,22 +22,38 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
     {
         var existQuestion = await _questionRepository.FindFirstAsync(
             e => e.Id.Equals(request.Question.Id), cancellationToken);
+
         if (existQuestion == null)
-            return GenericResult<UpdateQuestionResponse>.Failure(
-                string.Format(EM.QUESTION_ID_NOTFOUND, request.Question.Id));
+        {
+            return GenericResult<UpdateQuestionResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND
+                , request.Question.Id));
+        }
 
         if (!_authenticationContext.IsResourceOwnedByUser(existQuestion))
+        {
             return GenericResult<UpdateQuestionResponse>.Failure("You have not authorized to perform this action");
+        }
+
+        if (existQuestion.IsSolved)
+        {
+            return GenericResult<UpdateQuestionResponse>.Failure("Can not edit solved question");
+        }
+
+        if (existQuestion.Upvote > existQuestion.Downvote)
+        {
+            return GenericResult<UpdateQuestionResponse>.Failure("Can not edit question people have upvoted");
+        }
 
         var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
 
         existQuestion.FromUpdateObject(request.Question);
+
         await _questionRepository.SetQuestionTag(existQuestion, tags);
 
-        _questionRepository.TryEditQuestion(existQuestion, out var errMsg);
+        if (existQuestion.IsDraft)
+            existQuestion.IsDraft = false;
 
-        if (errMsg is not null)
-            return GenericResult<UpdateQuestionResponse>.Failure(errMsg);
+        _questionRepository.UpdateQuestion(existQuestion);
 
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 

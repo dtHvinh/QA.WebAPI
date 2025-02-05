@@ -4,7 +4,11 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-[Index(nameof(IsDraft), nameof(IsClosed), nameof(IsDeleted))]
+[Index(nameof(AuthorId))]
+[Index(nameof(CreatedAt), AllDescending = true)]
+[Index(nameof(ViewCount), AllDescending = true)]
+[Index(nameof(IsSolved))]
+[Index(nameof(IsDraft))]
 public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
 {
     public Guid Id { get; set; }
@@ -47,5 +51,6 @@ public enum QuestionSortOrder
     Newest,
     MostVoted,
     MostViewed,
-    Solved
+    Solved,
+    Draft,
 }

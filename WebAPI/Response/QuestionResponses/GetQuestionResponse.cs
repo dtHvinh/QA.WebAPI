@@ -21,6 +21,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public bool IsClosed { get; set; } = false;
     public bool IsDraft { get; set; } = false;
     public bool IsSolved { get; set; } = false;
+    public bool IsBookmarked { get; set; } = false;
 
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }
@@ -44,6 +45,12 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
                 : nameof(ResourceRights.Viewer);
         }
 
+        return this;
+    }
+
+    public GetQuestionResponse SetIsBookmared(bool value)
+    {
+        IsBookmarked = value;
         return this;
     }
 }

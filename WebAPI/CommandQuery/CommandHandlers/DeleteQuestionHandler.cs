@@ -10,12 +10,14 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class DeleteQuestionHandler(IQuestionRepository questionRepository,
                                    ITagRepository tagRepository,
-                                   AuthenticationContext authContext) :
+                                   AuthenticationContext authContext,
+                                   IAnswerRepository answerRepository) :
     ICommandHandler<DeleteQuestionCommand, GenericResult<DeleteQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly IAnswerRepository _answerRepository = answerRepository;
 
     public async Task<GenericResult<DeleteQuestionResponse>> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
@@ -29,10 +31,37 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
         if (!_authContext.IsResourceOwnedByUser(questionToDelete))
             return GenericResult<DeleteQuestionResponse>.Failure(EM.QUESTION_DELETE_UNAUTHORIZED);
 
-        _questionRepository.TrySoftDeleteQuestion(questionToDelete, out var errMessage);
+        string? errMessage = null;
+
+        if (questionToDelete.IsSolved)
+        {
+            errMessage = "Can not delete solved question";
+        }
+
+        if (questionToDelete.Upvote - questionToDelete.Downvote > 0)
+        {
+            errMessage = "Can not delete question people may find it valuable";
+        }
+
+        var allAnswer = await _answerRepository.GetAnswersAsync(questionToDelete.Id, cancellationToken);
+
+        if (allAnswer.Any(e => e.Upvote > e.Downvote))
+        {
+            errMessage = "Can not delete question people may find it valuable";
+        }
 
         if (errMessage is not null)
             return GenericResult<DeleteQuestionResponse>.Failure(errMessage);
+
+        var allTags = await _tagRepository.GetQuestionTags(questionToDelete, cancellationToken);
+
+        foreach (var tag in allTags)
+        {
+            tag.QuestionCount--;
+        }
+
+        _tagRepository.UpdateRange(allTags);
+        _questionRepository.SoftDeleteQuestion(questionToDelete);
 
         var delOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 

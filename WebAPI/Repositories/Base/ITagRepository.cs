@@ -18,4 +18,5 @@ public interface ITagRepository : IRepository<Tag>
     Task<List<Tag>> FindTagsByNames(List<string> tagNames, CancellationToken cancellationToken = default);
     Task<List<Guid>> FindTagsIdByNames(List<string> tagNames, CancellationToken cancellationToken = default);
     void UpdateTag(Tag tag, CancellationToken cancellation = default);
+    Task<List<Tag>> GetQuestionTags(Question question, CancellationToken cancellationToken = default);
 }

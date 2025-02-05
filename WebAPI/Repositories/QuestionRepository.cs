@@ -60,7 +60,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     public async Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
     {
         var query = Table.Where(e => e.AuthorId == userId)
-                         .EvaluateQuery(new ValidQuestionSpecification());
+            .EvaluateQuery(new ValidQuestionSpecification());
 
         query = sortOrder switch
         {
@@ -68,10 +68,15 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
+            QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
             _ => throw new InvalidOperationException(),
         };
 
-        return await query.Skip(skip).Take(take).Include(e => e.Tags).ToListAsync(cancellationToken);
+        return await query
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Tags)
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -135,25 +140,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public void TryEditQuestion(Question question, out string? errMsg)
-    {
-        if (question.IsSolved)
-        {
-            errMsg = "Can not edit solved question";
-            return;
-        }
-
-        if (question.Upvote > question.Downvote)
-        {
-            errMsg = "Can not edit question people have upvoted";
-            return;
-        }
-
-        errMsg = null;
-        question.UpdatedAt = DateTime.UtcNow;
-        Entities.Update(question);
-    }
-
     public void VoteChange(Question question, VoteUpdateTypes updateType, int value)
     {
         switch (updateType)
@@ -183,39 +169,16 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public void TrySoftDeleteQuestion(Question question, out string? errorMessage)
+    public void SoftDeleteQuestion(Question question)
     {
-        if (question.IsSolved)
-        {
-            errorMessage = "Can not delete solved question";
-            return;
-        }
-
-        if (question.Upvote - question.Downvote > 0)
-        {
-            errorMessage = "Can not delete question people may find it valuable";
-            return;
-        }
-
-        if (_dbContext.Set<Answer>().Where(e => e.QuestionId.Equals(question.Id))
-            .Any(e => e.Upvote > e.Downvote))
-        {
-            errorMessage = "Can not delete question people may find it valuable";
-            return;
-        }
-
-        errorMessage = null;
         question.SolftDelete();
         question.UpdatedAt = DateTime.UtcNow;
-
-        _dbContext.Entry(question).Collection(e => e.Tags);
-        foreach (var tag in question.Tags)
-        {
-            tag.QuestionCount -= 1;
-        }
-
-        _dbContext.UpdateRange(question.Tags);
         Entities.Update(question);
+    }
+
+    public async Task<int> CountUserQuestion(Guid userId)
+    {
+        return await Table.CountAsync(e => e.AuthorId == userId);
     }
 
     public void MarkAsView(Guid questionId)

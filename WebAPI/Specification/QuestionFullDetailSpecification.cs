@@ -43,9 +43,9 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
                                           .OrderByDescending(e => e.IsAccepted)
                                           .ThenByDescending(e => e.Upvote)
                                           .ThenByDescending(e => e.CreatedAt))
-                   .ThenInclude(e => e.Author)
+                    .ThenInclude(e => e.Author)
                    .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt))
-                   .ThenInclude(e => e.Author)
+                    .ThenInclude(e => e.Author)
                    .Include(e => e.Tags);
     }
 }

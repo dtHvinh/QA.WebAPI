@@ -12,9 +12,12 @@ namespace WebAPI.Repositories;
 public class AnswerRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Answer>(dbContext), IAnswerRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public void AddAnswer(Answer answer)
     {
         Entities.Add(answer);
+        _dbContext.Entry(answer).Reference(e => e.Author).Load();
     }
 
     public void TryEditAnswer(Answer answer, out string? errMsg)
@@ -38,6 +41,11 @@ public class AnswerRepository(ApplicationDbContext dbContext)
     public async Task<Answer?> FindAnswerById(Guid id, CancellationToken cancellationToken = default)
     {
         return await Entities.Where(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<List<Answer>> GetAnswersAsync(Guid questionId, CancellationToken cancellation = default)
+    {
+        return await Entities.Where(e => e.QuestionId.Equals(questionId)).ToListAsync(cancellation);
     }
 
     public void TrySoftDeleteAnswer(Answer answer, out string? errMsg)

@@ -10,5 +10,8 @@ public class UpdateQuestionValidator : AbstractValidator<UpdateQuestionDto>
         RuleFor(e => e.Title)
             .NotEmpty().WithMessage("Title is required.")
             .MaximumLength(150).WithMessage("Title too long");
+
+        RuleFor(e => e.Tags)
+            .Must(e => e.Count <= 5).WithMessage("Tags limit is 5");
     }
 }

@@ -34,6 +34,7 @@ public static class QuestionMap
     {
         current.Title = other.Title;
         current.Content = other.Content;
+        current.Slug = other.Title.GenerateSlug();
 
         return current;
     }

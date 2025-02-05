@@ -16,6 +16,6 @@ public class CreateQuestionValidator : AbstractValidator<CreateQuestionDto>
 
         RuleFor(e => e.Tags)
             .NotEmpty().WithMessage("Tags are required.")
-            .Must(e => e.Count < 10).WithMessage("To much tag");
+            .Must(e => e.Count <= 5).WithMessage("Tag limit is 5");
     }
 }

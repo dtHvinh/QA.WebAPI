@@ -24,4 +24,9 @@ public class BookmarkRepository(ApplicationDbContext dbContext)
     {
         return await Table.FirstOrDefaultAsync(e => e.AuthorId.Equals(userId) && e.QuestionId.Equals(questionId));
     }
+
+    public async Task<bool> IsBookmarked(Guid userId, Guid questionId)
+    {
+        return await Table.AnyAsync(e => e.AuthorId == userId && e.QuestionId == questionId);
+    }
 }

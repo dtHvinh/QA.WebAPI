@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250205020335_AddCreateAtIdxQuestionTab")]
+    partial class AddCreateAtIdxQuestionTab
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -433,14 +436,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("CreatedAt")
-                        .IsDescending();
-
-                    b.HasIndex("IsDraft");
-
-                    b.HasIndex("IsSolved");
-
-                    b.HasIndex("ViewCount")
+                    b.HasIndex("IsDraft", "IsClosed", "IsDeleted", "CreatedAt", "IsSolved", "AuthorId", "ViewCount")
                         .IsDescending();
 
                     b.ToTable("Question");

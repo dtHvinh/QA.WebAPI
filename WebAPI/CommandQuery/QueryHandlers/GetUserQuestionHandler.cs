@@ -30,6 +30,7 @@ public class GetUserQuestionHandler(
                 "MostViewed" => QuestionSortOrder.MostViewed,
                 "MostVoted" => QuestionSortOrder.MostVoted,
                 "Solved" => QuestionSortOrder.Solved,
+                "Draft" => QuestionSortOrder.Draft,
                 _ => QuestionSortOrder.Newest
             }, cancellationToken);
 
@@ -40,11 +41,17 @@ public class GetUserQuestionHandler(
             question.RemoveAt(question.Count - 1);
         }
 
+        int count = await _questionRepository.CountUserQuestion(_authenticationContext.UserId);
+
         return GenericResult<PagedResponse<GetQuestionResponse>>.Success(
             new PagedResponse<GetQuestionResponse>(
                 question.Select(q => q.ToGetQuestionResponse()).ToList(),
                 hasNext,
                 request.Args.Page,
-                request.Args.PageSize));
+                request.Args.PageSize)
+            {
+                TotalCount = count,
+                TotalPage = (int)Math.Ceiling((double)count / request.Args.PageSize)
+            });
     }
 }
