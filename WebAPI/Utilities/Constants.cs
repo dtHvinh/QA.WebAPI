@@ -32,6 +32,7 @@ public static class Constants
     public static class EM
     {
         public const string USER_EMAIL_NOTFOUND = "User with email {0} not found";
+        public const string BOOKMARK_NOT_FOUND = "Bookmark not found";
         public const string USER_ID_NOTFOUND = "User with id {0} not found";
         public const string ANSWER_ID_NOTFOUND = "Answer with id {0} not found";
         public const string ENDPOINT_NOARG = "No argument found at this endpoint";
@@ -42,7 +43,9 @@ public static class Constants
         public const string QUESTION_CLOSED_COMMENT_RESTRICT = "You can not comment to closed question";
 
         public const string PasswordWrong = "Password is wrong";
-        public const string TAG_ID_NOTFOUND = "Tag not found";
+        public const string TAG_NOTFOUND = "Tag not found";
+
+        public const string ACTION_REQUIRE_RESOURCE_OWNER = "You are not allow to do this";
     }
 
     public static class RedisKeyGen
@@ -50,7 +53,8 @@ public static class Constants
         public static string UserEmail(string email) => $"email:{email}";
         public static string AppUserKey(Guid id) => $"appuser:#{id}";
         public static string Question(Guid id) => $"question:#{id}";
-        public static string GetTagDetail(Guid id) => $"tag-detail:#{id}";
+        public static string GetTagDetail(Guid id, string orderBy, int questionPage, int questionPageSize)
+            => $"tag-detail:#{id}:&orderBy={orderBy}&qSkip={questionPage}&qTake={questionPageSize}";
         public static string GetTags(string orderBy, int skip, int take)
             => $"tags:orderBy={orderBy}&skip={skip}&take={take}";
     }

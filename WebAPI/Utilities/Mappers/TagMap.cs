@@ -1,5 +1,7 @@
 ﻿using WebAPI.Dto;
 using WebAPI.Model;
+using WebAPI.Pagination;
+using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 
 namespace WebAPI.Utilities.Mappers;
@@ -36,11 +38,11 @@ public static class TagMap
         return new TagResponse(obj.Id, obj.Name, obj.Description, obj.WikiBody, obj.QuestionCount);
     }
 
-    public static TagDetailResponse ToTagDetailResponse(this Tag obj)
+    public static TagWithQuestionResponse ToTagWithQuestionResponse(this Tag obj, PagedResponse<GetQuestionResponse> questions)
     {
-        return new TagDetailResponse(
+        return new TagWithQuestionResponse(
             obj.Id, obj.Name, obj.Description, obj.WikiBody,
-            obj.QuestionCount, obj.Questions.Select(x => x.ToGetQuestionResponse()).ToList());
+            obj.QuestionCount, questions);
     }
 
     public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)

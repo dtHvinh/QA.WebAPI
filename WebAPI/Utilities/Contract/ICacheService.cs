@@ -13,6 +13,6 @@ public interface ICacheService
     Task SetAppUserAsync(AppUser user);
     Task SetQuestionAsync(Question question);
     Task SetTags(string orderBy, int skip, int take, List<Tag> values);
-    Task SetTagDetail(Tag tag);
-    Task<Tag?> GetTagDetail(Guid tagId);
+    Task SetTagDetail(Tag tag, string orderBy, int questionPage, int questionPageSize);
+    Task<Tag?> GetTagWithQuestion(Guid tagId, string orderBy, int questionPage, int questionPageSize);
 }

@@ -4,6 +4,7 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.TagResponses;
+using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
@@ -45,7 +46,7 @@ public class GetTagHandler(ITagRepository tagRepository, ICacheService cacheServ
             new(tagResponses, hasNext, request.Skip / request.Take + 1, request.Take)
             {
                 TotalCount = totalCount,
-                TotalPage = (int)Math.Ceiling((double)totalCount / request.Take)
+                TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.Take)
             });
     }
 }

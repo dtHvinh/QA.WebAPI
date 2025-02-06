@@ -75,7 +75,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return await query
             .Skip(skip)
             .Take(take)
-            .Include(e => e.Tags)
+            .Include(e => e.Tags.Take(5))
             .ToListAsync(cancellationToken);
     }
 
@@ -90,9 +90,36 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return result;
     }
 
+    public async Task<List<Question>> FindQuestionsByTagId(
+        Guid tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
+    {
+        Func<Question, object> orderByFunc;
+
+        orderByFunc = sortOrder switch
+        {
+            QuestionSortOrder.Newest => (q => q.CreatedAt),
+            QuestionSortOrder.MostVoted => (q => q.Upvote - q.Downvote),
+            QuestionSortOrder.MostViewed => (q => q.ViewCount),
+            QuestionSortOrder.Solved => (q => q.IsSolved),
+            QuestionSortOrder.Draft => (q => q.IsDraft),
+            _ => (q => q.CreatedAt),
+        };
+
+        var result = await _dbContext.Set<Tag>().Where(e => e.Id == tagId)
+            .Select(e => new Tag()
+            {
+                Name = e.Name,
+                Description = e.Description,
+                Questions = e.Questions.OrderByDescending(orderByFunc).Skip(skip).Take(take).ToList()
+            }).FirstAsync(cancellationToken);
+
+        return [.. result.Questions];
+    }
+
     public async Task<Question?> FindQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var result = await Table.Where(e => e.Id == id)
+                    .Include(e => e.Author)
                     .FirstOrDefaultAsync(cancellationToken);
 
         return result;

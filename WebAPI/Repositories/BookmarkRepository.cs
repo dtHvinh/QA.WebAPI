@@ -20,6 +20,23 @@ public class BookmarkRepository(ApplicationDbContext dbContext)
         Entities.Remove(bookMark);
     }
 
+    public async Task<List<BookMark>> FindUserBookmark(Guid userId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await Table
+            .AsNoTracking()
+            .Where(e => e.AuthorId == userId)
+            .OrderByDescending(e => e.CreatedAt)
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Question)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> CountUserBookmark(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await Entities.CountAsync(e => e.AuthorId == userId, cancellationToken);
+    }
+
     public async Task<BookMark?> FindBookmark(Guid userId, Guid questionId)
     {
         return await Table.FirstOrDefaultAsync(e => e.AuthorId.Equals(userId) && e.QuestionId.Equals(questionId));

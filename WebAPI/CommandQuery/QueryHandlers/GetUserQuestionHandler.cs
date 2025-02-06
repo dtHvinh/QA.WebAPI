@@ -4,6 +4,7 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
+using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
@@ -51,7 +52,7 @@ public class GetUserQuestionHandler(
                 request.Args.PageSize)
             {
                 TotalCount = count,
-                TotalPage = (int)Math.Ceiling((double)count / request.Args.PageSize)
+                TotalPage = NumericCalcHelper.GetTotalPage(count, request.Args.PageSize)
             });
     }
 }

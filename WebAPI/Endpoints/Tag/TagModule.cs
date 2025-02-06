@@ -7,6 +7,7 @@ using WebAPI.Dto;
 using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Pagination;
+using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
@@ -22,13 +23,49 @@ public class TagModule : IModule
         var group = endpoints.MapGroup(EG.Tag);
 
         group.MapGet("/{id:guid}",
-            async Task<Results<Ok<TagDetailResponse>, ProblemHttpResult>> (
+            async Task<Results<Ok<TagWithQuestionResponse>, ProblemHttpResult>> (
+             Guid id,
+             string orderBy,
+             int pageIndex,
+             int pageSize,
+             [FromServices] IMediator mediator,
+             CancellationToken cancellationToken) =>
+            {
+                var query = new GetTagWithQuestionQuery(id, orderBy, PageArgs.From(pageIndex, pageSize));
+                var result = await mediator.Send(query, cancellationToken);
+
+                return result.IsSuccess
+                    ? TypedResults.Ok(result.Value)
+                    : ProblemResultExtensions.BadRequest(result.Message);
+            })
+            .RequireAuthorization();
+
+        group.MapGet("/wiki/{id:guid}",
+            async Task<Results<Ok<TagResponse>, ProblemHttpResult>> (
              Guid id,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
             {
-                var command = new GetTagDetailQuery(id);
-                var result = await mediator.Send(command, cancellationToken);
+                var query = new GetTagDetailQuery(id);
+                var result = await mediator.Send(query, cancellationToken);
+
+                return result.IsSuccess
+                    ? TypedResults.Ok(result.Value)
+                    : ProblemResultExtensions.BadRequest(result.Message);
+            })
+            .RequireAuthorization();
+
+        group.MapGet("/{tagId:guid}/questions/",
+            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+             Guid tagId,
+             string orderBy,
+             int pageIndex,
+             int pageSize,
+             [FromServices] IMediator mediator,
+             CancellationToken cancellationToken) =>
+            {
+                var query = new GetTagQuestionQuery(tagId, orderBy, PageArgs.From(pageIndex, pageSize));
+                var result = await mediator.Send(query, cancellationToken);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)
@@ -42,8 +79,8 @@ public class TagModule : IModule
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
             {
-                var command = new SearchTagByKeywordQuery(keyword, new() { Page = 1, PageSize = 6 });
-                var result = await mediator.Send(command, cancellationToken);
+                var query = new SearchTagByKeywordQuery(keyword, new() { Page = 1, PageSize = 6 });
+                var result = await mediator.Send(query, cancellationToken);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)
@@ -59,8 +96,8 @@ public class TagModule : IModule
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
             {
-                var command = new GetTagQuery(orderBy, skip, take);
-                var result = await mediator.Send(command, cancellationToken);
+                var query = new GetTagQuery(orderBy, skip, take);
+                var result = await mediator.Send(query, cancellationToken);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)

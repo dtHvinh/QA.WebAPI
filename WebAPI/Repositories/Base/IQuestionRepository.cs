@@ -23,4 +23,5 @@ public interface IQuestionRepository : IRepository<Question>
     Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     void SoftDeleteQuestion(Question question);
     Task<int> CountUserQuestion(Guid userId);
+    Task<List<Question>> FindQuestionsByTagId(Guid tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken);
 }

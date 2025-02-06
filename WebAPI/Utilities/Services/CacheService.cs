@@ -85,9 +85,9 @@ public class CacheService(IDistributedCache cache,
             JsonSerializer.Serialize(values), _cacheOptionProvider.GetOptions(nameof(Tag)));
     }
 
-    public async Task<Tag?> GetTagDetail(Guid tagId)
+    public async Task<Tag?> GetTagWithQuestion(Guid tagId, string orderBy, int questionPage, int questionPageSize)
     {
-        var strValue = await cache.GetStringAsync(RedisKeyGen.GetTagDetail(tagId));
+        var strValue = await cache.GetStringAsync(RedisKeyGen.GetTagDetail(tagId, orderBy, questionPage, questionPageSize));
         if (strValue is null)
         {
             return null;
@@ -96,9 +96,9 @@ public class CacheService(IDistributedCache cache,
         return JsonSerializer.Deserialize<Tag>(strValue, _jsonOptions);
     }
 
-    public async Task SetTagDetail(Tag tag)
+    public async Task SetTagDetail(Tag tag, string orderBy, int questionPage, int questionPageSize)
     {
-        await cache.SetStringAsync(RedisKeyGen.GetTagDetail(tag.Id),
+        await cache.SetStringAsync(RedisKeyGen.GetTagDetail(tag.Id, orderBy, questionPage, questionPageSize),
             JsonSerializer.Serialize(tag, _jsonOptions),
             _cacheOptionProvider.GetOptions(nameof(ExtensionCacheOptions.TagDetail)));
     }

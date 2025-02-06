@@ -165,7 +165,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag");
+                    b.ToTable("QuestionTag", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
@@ -208,7 +208,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answer", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
@@ -333,7 +333,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("AuthorId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark");
+                    b.ToTable("BookMark", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Comment", b =>
@@ -365,7 +365,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
 
                     b.HasDiscriminator<string>("CommentType").HasValue("Comment");
 
@@ -443,7 +443,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("ViewCount")
                         .IsDescending();
 
-                    b.ToTable("Question");
+                    b.ToTable("Question", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Report", b =>
@@ -474,7 +474,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Report");
+                    b.ToTable("Report", (string)null);
 
                     b.HasDiscriminator<string>("ReportType").HasValue("Report");
 
@@ -514,7 +514,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("QuestionCount")
                         .IsDescending();
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tag", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Vote", b =>
@@ -538,7 +538,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Vote");
+                    b.ToTable("Vote", (string)null);
 
                     b.HasDiscriminator<string>("VoteType").HasValue("Vote");
 

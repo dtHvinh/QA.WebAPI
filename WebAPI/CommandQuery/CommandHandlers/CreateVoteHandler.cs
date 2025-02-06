@@ -1,9 +1,11 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Microsoft.Extensions.Options;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.VoteResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -12,7 +14,9 @@ public class CreateVoteHandler(
     IQuestionRepository questionRepository,
     IVoteRepository voteRepository,
     IAnswerRepository answerRepository,
-    AuthenticationContext authContext)
+    IUserRepository userRepository,
+    AuthenticationContext authContext,
+    IOptions<ApplicationProperties> applicationProperties)
     : ICommandHandler<CreateQuestionVoteCommand, GenericResult<VoteResponse>>,
     ICommandHandler<CreateAnswerVoteCommand, GenericResult<VoteResponse>>
 
@@ -20,10 +24,17 @@ public class CreateVoteHandler(
     private readonly IQuestionRepository questionRepository = questionRepository;
     private readonly IVoteRepository _voteRepository = voteRepository;
     private readonly IAnswerRepository answerRepository = answerRepository;
+    private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly ApplicationProperties _applicationProperties = applicationProperties.Value;
 
     public async Task<GenericResult<VoteResponse>> Handle(CreateQuestionVoteCommand request, CancellationToken cancellationToken)
     {
+        var requester = await _userRepository.FindUserByIdAsync(_authContext.UserId, cancellationToken);
+
+        if (request == null)
+            return GenericResult<VoteResponse>.Failure("Invalid requester");
+
         var question = await questionRepository.FindQuestionByIdAsync(request.QuestionId, cancellationToken);
 
         if (question == null)
@@ -44,8 +55,29 @@ public class CreateVoteHandler(
         {
             case Enums.VoteUpdateTypes.NoChange:
                 return GenericResult<VoteResponse>.Failure("You already done this");
+
+            case Enums.VoteUpdateTypes.CreateNew:
+                if (request.IsUpvote)
+                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
+                else
+                {
+                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
+                    requester!.Reputation += _applicationProperties.ReputationAcquirePerAction.DownvoteQuestion;
+                }
+                break;
+
+            case Enums.VoteUpdateTypes.ChangeVote:
+                if (request.IsUpvote)
+                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
+                else
+                {
+                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
+                    requester!.Reputation += _applicationProperties.ReputationAcquirePerAction.DownvoteAnswer;
+                }
+                break;
         }
 
+        _userRepository.Update(question.Author!);
         questionRepository.VoteChange(question, type, request.IsUpvote ? 1 : -1);
 
         var result = await questionRepository.SaveChangesAsync(cancellationToken);
@@ -78,6 +110,20 @@ public class CreateVoteHandler(
         {
             case Enums.VoteUpdateTypes.NoChange:
                 return GenericResult<VoteResponse>.Failure("You already done this");
+
+            case Enums.VoteUpdateTypes.CreateNew:
+                if (request.IsUpvote)
+                    answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
+                else
+                    answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
+                break;
+
+            case Enums.VoteUpdateTypes.ChangeVote:
+                if (request.IsUpvote)
+                    answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
+                else
+                    answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
+                break;
         }
 
         answerRepository.VoteChange(answer, type, request.IsUpvote ? 1 : -1);

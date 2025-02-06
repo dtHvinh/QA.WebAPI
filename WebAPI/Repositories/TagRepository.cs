@@ -24,6 +24,11 @@ public class TagRepository(ApplicationDbContext dbContext)
         Entities.Add(tag);
     }
 
+    public async Task<Tag?> FindTagById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await Entities.FirstOrDefaultAsync(e => e.Id.Equals(id), cancellationToken);
+    }
+
 
     public async Task<List<Tag>> GetQuestionTags(Question question, CancellationToken cancellationToken = default)
     {
@@ -32,15 +37,64 @@ public class TagRepository(ApplicationDbContext dbContext)
         return [.. question.Tags];
     }
 
-    public Task<Tag?> FindTagDetailById(Guid tagId, CancellationToken cancellationToken = default)
+    public Task<Tag?> FindTagWithQuestionById(Guid tagId, QuestionSortOrder orderBy, int questionSkip, int questionTake, CancellationToken cancellationToken = default)
     {
-        return Entities.Where(e => e.Id.Equals(tagId))
-                       .Include(e => e.Questions.OrderByDescending(e => e.Upvote)
-                                                .ThenByDescending(e => e.ViewCount)
-                                                .ThenByDescending(e => e.CreatedAt)
-                                                .Take(15))
+        return orderBy switch
+        {
+            QuestionSortOrder.Newest => Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.OrderByDescending(e => e.CreatedAt)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
                        .ThenInclude(e => e.Author)
-                       .FirstOrDefaultAsync(cancellationToken);
+                       .Include(e => e.Questions.OrderByDescending(e => e.CreatedAt)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Tags)
+                       .FirstOrDefaultAsync(cancellationToken),
+
+            QuestionSortOrder.MostVoted => Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.OrderByDescending(e => e.Upvote - e.Downvote)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Author)
+                       .Include(e => e.Questions.OrderByDescending(e => e.Upvote - e.Downvote)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Tags)
+                       .FirstOrDefaultAsync(cancellationToken),
+
+            QuestionSortOrder.MostViewed => Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.OrderByDescending(e => e.ViewCount)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Author)
+                       .Include(e => e.Questions.OrderByDescending(e => e.ViewCount)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Tags)
+                       .FirstOrDefaultAsync(cancellationToken),
+
+            QuestionSortOrder.Solved => Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.OrderByDescending(e => e.IsSolved)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Author)
+                       .Include(e => e.Questions.OrderByDescending(e => e.IsSolved)
+                                                .Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Tags)
+                       .FirstOrDefaultAsync(cancellationToken),
+
+            _ => Entities.Where(e => e.Id.Equals(tagId))
+                       .Include(e => e.Questions.Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Author)
+                       .Include(e => e.Questions.Skip(questionSkip)
+                                                .Take(questionTake))
+                       .ThenInclude(e => e.Tags)
+                       .FirstOrDefaultAsync(cancellationToken),
+        };
+
     }
 
     /// <summary>

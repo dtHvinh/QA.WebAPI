@@ -16,7 +16,8 @@ public class CacheOptionProvider(IOptions<CacheOptions> options) : ICacheOptionP
     {
         return new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60),
+            // TODO: Set default cache options to 60 seconds
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(1),
         };
     }
 
@@ -36,8 +37,9 @@ public class CacheOptionProvider(IOptions<CacheOptions> options) : ICacheOptionP
             },
             nameof(ExtensionCacheOptions.TagDetail) => new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(3600),
-                SlidingExpiration = TimeSpan.FromSeconds(3600),
+                // TODO: Set default cache options to 3600 seconds
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(1),
+                SlidingExpiration = TimeSpan.FromSeconds(1),
             },
             _ => GetDefault()
         };

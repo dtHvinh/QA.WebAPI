@@ -3,7 +3,7 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Repositories.Base;
 
-public interface IUserRepository
+public interface IUserRepository : IRepository<AppUser>
 {
     Task<GenericResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken);
     Task ChangeReputationAsync(Guid id, int amount, CancellationToken cancellationToken = default);

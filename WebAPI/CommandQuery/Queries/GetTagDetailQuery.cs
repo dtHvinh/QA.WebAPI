@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record GetTagDetailQuery(Guid TagId) : IQuery<GenericResult<TagDetailResponse>>;
+public record GetTagDetailQuery(Guid Id) : IQuery<GenericResult<TagResponse>>;

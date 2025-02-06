@@ -1,36 +1,26 @@
 ﻿using WebAPI.CommandQuery.Queries;
 using WebAPI.CQRS;
-using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.TagResponses;
-using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetTagDetailHandler(ITagRepository tagRepository, ICacheService cacheService)
-    : IQueryHandler<GetTagDetailQuery, GenericResult<TagDetailResponse>>
+public class GetTagDetailHandler(ITagRepository tagRepository) : IQueryHandler<GetTagDetailQuery, GenericResult<TagResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
-    private readonly ICacheService cacheService = cacheService;
 
-    public async Task<GenericResult<TagDetailResponse>> Handle(GetTagDetailQuery request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TagResponse>> Handle(GetTagDetailQuery request, CancellationToken cancellationToken)
     {
-        Tag? tag = await cacheService.GetTagDetail(request.TagId);
+        var tag = await _tagRepository.FindTagById(request.Id, cancellationToken);
 
-        if (tag == null)
+        if (tag is null)
         {
-            tag = await _tagRepository.FindTagDetailById(request.TagId, cancellationToken);
-
-            if (tag == null)
-                return GenericResult<TagDetailResponse>.Failure(EM.TAG_ID_NOTFOUND);
-
-            await cacheService.SetTagDetail(tag);
+            return GenericResult<TagResponse>.Failure(EM.TAG_NOTFOUND);
         }
 
-
-        return GenericResult<TagDetailResponse>.Success(tag.ToTagDetailResponse());
+        return GenericResult<TagResponse>.Success(tag.ToTagResonse());
     }
 }
