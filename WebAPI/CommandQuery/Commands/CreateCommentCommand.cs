@@ -6,5 +6,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateCommentCommand(CreateCommentDto Comment, CommentTypes CommentType, Guid ObjectId)
+public record CreateCommentCommand(CreateCommentDto Comment, CommentTypes CommentType, int ObjectId)
     : ICommand<GenericResult<CommentResponse>>;

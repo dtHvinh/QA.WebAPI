@@ -37,8 +37,8 @@ public class BookmarkModule : IModule
         })
         .RequireAuthorization();
 
-        group.MapPost("/{questionId:guid}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid questionId,
+        group.MapPost("/{questionId:int}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -53,8 +53,8 @@ public class BookmarkModule : IModule
         })
         .RequireAuthorization();
 
-        group.MapDelete("/{bookmarkId:guid}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid bookmarkId,
+        group.MapDelete("/{bookmarkId:int}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            int bookmarkId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {

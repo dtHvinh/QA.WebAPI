@@ -24,20 +24,23 @@ public class TagRepository(ApplicationDbContext dbContext)
         Entities.Add(tag);
     }
 
-    public async Task<Tag?> FindTagById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Tag?> FindTagWithBodyById(int id, CancellationToken cancellationToken = default)
     {
-        return await Entities.FirstOrDefaultAsync(e => e.Id.Equals(id), cancellationToken);
+        var tag = await Entities.FirstOrDefaultAsync(e => e.Id.Equals(id), cancellationToken);
+        if (tag is null) return null;
+        await _dbContext.Entry(tag).Reference(e => e.WikiBody).LoadAsync(cancellationToken);
+        await _dbContext.Entry(tag).Reference(e => e.Description).LoadAsync(cancellationToken);
+        return tag;
     }
 
 
     public async Task<List<Tag>> GetQuestionTags(Question question, CancellationToken cancellationToken = default)
     {
         await _dbContext.Entry(question).Collection(e => e.Tags).LoadAsync(cancellationToken);
-
         return [.. question.Tags];
     }
 
-    public Task<Tag?> FindTagWithQuestionById(Guid tagId, QuestionSortOrder orderBy, int questionSkip, int questionTake, CancellationToken cancellationToken = default)
+    public Task<Tag?> FindTagWithQuestionById(int tagId, QuestionSortOrder orderBy, int questionSkip, int questionTake, CancellationToken cancellationToken = default)
     {
         return orderBy switch
         {
@@ -141,7 +144,7 @@ public class TagRepository(ApplicationDbContext dbContext)
         };
     }
 
-    public async Task<List<Tag>> FindAllTagByIds(List<Guid> ids, CancellationToken cancellationToken = default)
+    public async Task<List<Tag>> FindAllTagByIds(List<int> ids, CancellationToken cancellationToken = default)
     {
         return await Entities.Where(x => ids.Contains(x.Id)).ToListAsync(cancellationToken);
     }
@@ -155,7 +158,7 @@ public class TagRepository(ApplicationDbContext dbContext)
              x => tagsToFind.Contains(x.NormalizedName)).ToListAsync(cancellationToken);
     }
 
-    public async Task<List<Guid>> FindTagsIdByNames(
+    public async Task<List<int>> FindTagsIdByNames(
         List<string> tagNames, CancellationToken cancellationToken = default)
     {
         var tagsToFind = tagNames.Select(e => e.ToUpperInvariant());
@@ -184,7 +187,7 @@ public class TagRepository(ApplicationDbContext dbContext)
         Entities.Update(tag);
     }
 
-    public void DeleteTag(Guid id)
+    public void DeleteTag(int id)
     {
         var tag = Table.FirstOrDefault(x => x.Id == id);
         if (tag != null)

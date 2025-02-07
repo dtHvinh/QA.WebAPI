@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
+using System.Security.Claims;
 using WebAPI.Model;
+using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>(options)
+    : IdentityDbContext<AppUser, IdentityRole<int>, int>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -60,9 +62,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         using var scope = app.Services.CreateScope();
 
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var tagRepository = scope.ServiceProvider.GetRequiredService<WebAPI.Repositories.Base.ITagRepository>();
-
+        var tabBodyRepo = dbContext.Set<TagBody>();
+        var tabDescRepo = dbContext.Set<TagDescription>();
         string csvFilePath = "D:\\dev\\myproject\\qa_platform\\back-end\\WebAPI\\WebAPI\\Data\\tags.csv";
+
+        dbContext.Database.SetCommandTimeout(300);
 
         // Read the second line of the CSV file
         using TextFieldParser parser = new(csvFilePath);
@@ -77,7 +83,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         }
 
         List<Tag> tags = [];
+        List<TagBody> tagBodies = [];
+        List<TagDescription> tagDescriptions = [];
 
+        int i = 1;
         // Read the second line
         while (!parser.EndOfData)
         {
@@ -92,12 +101,26 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             {
                 Name = tagName,
                 NormalizedName = tagName.ToUpperInvariant(),
-                Description = excerpt,
-                WikiBody = wikiBody,
             });
+
+            tagBodies.Add(new()
+            {
+                Content = wikiBody,
+                TagId = i,
+            });
+
+            tagDescriptions.Add(new()
+            {
+                Content = excerpt,
+                TagId = i,
+            });
+
+            i++;
         }
 
+        tabBodyRepo.AddRange(tagBodies);
         tagRepository.AddRange(tags);
+        tabDescRepo.AddRange(tagDescriptions);
 
         var a = await tagRepository.SaveChangesAsync();
     }
@@ -109,53 +132,56 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             return;
 
         using var scope = app.Services.CreateScope();
-        //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        //var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-        //await roleManager.CreateAsync(new IdentityRole<Guid>(Constants.Roles.Admin));
-        //await roleManager.CreateAsync(new IdentityRole<Guid>(Constants.Roles.User));
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+        await roleManager.CreateAsync(new IdentityRole<int>(Constants.Roles.Admin));
+        await roleManager.CreateAsync(new IdentityRole<int>(Constants.Roles.User));
 
-        var tagRepository = scope.ServiceProvider.GetRequiredService<WebAPI.Repositories.Base.ITagRepository>();
-
-        var file = new StreamReader(
-            new FileStream(
-                path: "D:\\dev\\myproject\\qa_platform\\back-end\\WebAPI\\WebAPI\\Data\\tags.txt", mode: FileMode.Open));
-
-        List<Tag> tags = [];
-
-        while (!file.EndOfStream)
+        var user = new AppUser()
         {
-            var line = await file.ReadLineAsync()!;
-            var tokens = line?.Split(',');
+            Email = "admin@email.com",
+            UserName = "admin@email.com",
+            Reputation = 99999999,
+            ProfilePicture = "https://ui-avatars.com/api/?name=V"
+        };
+        await userManager.CreateAsync(user, "0123456789");
+        await userManager.AddClaimsAsync(user,
+        [
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, Constants.Roles.Admin),
+        ]);
+        await userManager.AddToRoleAsync(user, Constants.Roles.Admin);
 
-            var name = tokens![0]!;
-            var des = string.Join(',', tokens[1..]!);
+        var user1 = new AppUser()
+        {
+            Email = "vinh01234_2@email.com",
+            UserName = "vinh01234_2@email.com",
+            Reputation = 99999999,
+            ProfilePicture = "https://ui-avatars.com/api/?name=V2"
+        };
+        await userManager.CreateAsync(user1, "01234vinh");
+        await userManager.AddClaimsAsync(user1,
+        [
+            new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString()),
+            new Claim(ClaimTypes.Role, Constants.Roles.Admin),
+        ]);
 
-            var tag = new Tag
-            {
-                Name = name,
-                Description = des
-            };
+        await userManager.AddToRoleAsync(user1, Constants.Roles.Admin);
 
-            tags.Add(tag);
-        }
-        tagRepository.CreateTags(tags);
-
-        var a = await tagRepository.SaveChangesAsync();
-
-        //var user = new AppUser()
-        //{
-        //    Email = "admin@email.com",
-        //    UserName = "admin@email.com",
-        //    Reputation = 99999999,
-        //    ProfilePicture = "avc"
-        //};
-        //await userManager.CreateAsync(user, "0123456789");
-        //await userManager.AddClaimsAsync(user,
-        //[
-        //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        //    new Claim(ClaimTypes.Role, Constants.Roles.Admin),
-        //]);
-        //await userManager.AddToRoleAsync(user, Constants.Roles.Admin);
+        var user2 = new AppUser()
+        {
+            Email = "vinh01234_1@email.com",
+            UserName = "vinh01234_1@email.com",
+            Reputation = 99999999,
+            ProfilePicture = "https://ui-avatars.com/api/?name=V1"
+        };
+        await userManager.CreateAsync(user2, "01234vinh");
+        await userManager.AddClaimsAsync(user2,
+        [
+            new Claim(ClaimTypes.NameIdentifier, user2.Id.ToString()),
+            new Claim(ClaimTypes.Role, Constants.Roles.Admin),
+        ]);
+        await userManager.AddToRoleAsync(user2, Constants.Roles.Admin);
     }
 }
 

@@ -4,5 +4,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateQuestionVoteCommand(Guid QuestionId, bool IsUpvote)
+public record CreateQuestionVoteCommand(int QuestionId, bool IsUpvote)
     : ICommand<GenericResult<VoteResponse>>;

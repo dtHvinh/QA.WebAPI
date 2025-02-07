@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record struct DeleteQuestionCommand(Guid Id) : ICommand<GenericResult<DeleteQuestionResponse>>;
+public record struct DeleteQuestionCommand(int Id) : ICommand<GenericResult<DeleteQuestionResponse>>;

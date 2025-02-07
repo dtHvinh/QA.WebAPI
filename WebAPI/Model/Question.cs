@@ -9,15 +9,15 @@ namespace WebAPI.Model;
 [Index(nameof(ViewCount), AllDescending = true)]
 [Index(nameof(IsSolved))]
 [Index(nameof(IsDraft))]
-public class Question : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
+public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<int>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
 
     [ForeignKey(nameof(Author))]
-    public required Guid AuthorId { get; set; }
+    public required int AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
 
     [Column(TypeName = "nvarchar(150)")]

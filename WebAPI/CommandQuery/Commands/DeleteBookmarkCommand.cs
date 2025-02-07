@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record DeleteBookmarkCommand(Guid BookmarkId) : ICommand<GenericResult<GenericResponse>>;
+public record DeleteBookmarkCommand(int BookmarkId) : ICommand<GenericResult<GenericResponse>>;

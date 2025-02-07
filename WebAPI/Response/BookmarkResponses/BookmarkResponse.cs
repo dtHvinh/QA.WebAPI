@@ -2,4 +2,4 @@
 
 namespace WebAPI.Response.BookmarkResponses;
 
-public record BookmarkResponse(Guid Id, DateTime CreatedAt, GetQuestionResponse Question);
+public record BookmarkResponse(int Id, DateTime CreatedAt, GetQuestionResponse Question);

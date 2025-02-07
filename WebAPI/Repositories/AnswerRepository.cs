@@ -33,23 +33,23 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         Entities.Update(answer);
     }
 
-    public int CountQuestionAnswer(Guid questionId)
+    public int CountQuestionAnswer(int questionId)
     {
         return Entities.Where(e => e.QuestionId.Equals(questionId)).Count();
     }
 
-    public async Task<Answer?> FindAnswerById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Answer?> FindAnswerById(int id, CancellationToken cancellationToken = default)
     {
         return await Entities.Where(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<Answer?> FindAnswerWithAuthorById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Answer?> FindAnswerWithAuthorById(int id, CancellationToken cancellationToken = default)
     {
         return await Entities.Where(e => e.Id.Equals(id)).Include(e => e.Author)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<List<Answer>> GetAnswersAsync(Guid questionId, CancellationToken cancellation = default)
+    public async Task<List<Answer>> GetAnswersAsync(int questionId, CancellationToken cancellation = default)
     {
         return await Entities.Where(e => e.QuestionId.Equals(questionId)).ToListAsync(cancellation);
     }

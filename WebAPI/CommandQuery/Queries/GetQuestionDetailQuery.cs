@@ -4,7 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public class GetQuestionDetailQuery(Guid id) : IQuery<GenericResult<GetQuestionResponse>>
-{
-    public Guid Id { get; } = id;
-}
+public record GetQuestionDetailQuery(int Id) : IQuery<GenericResult<GetQuestionResponse>>;

@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record UpdateCommentCommand(Guid Id, UpdateCommentDto Comment) : ICommand<GenericResult<CommentResponse>>;
+public record UpdateCommentCommand(int Id, UpdateCommentDto Comment) : ICommand<GenericResult<CommentResponse>>;

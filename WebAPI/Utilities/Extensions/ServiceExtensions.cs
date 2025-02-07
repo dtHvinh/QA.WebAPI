@@ -35,7 +35,7 @@ public static class ServiceExtensions
             options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
         });
 
-        services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+        services.AddIdentity<AppUser, IdentityRole<int>>(options =>
         {
             options.User.RequireUniqueEmail = true;
             options.Password.RequireDigit = false;

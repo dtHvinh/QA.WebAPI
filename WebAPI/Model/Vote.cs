@@ -3,12 +3,12 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class Vote : IEntity<Guid>, IOwnedByUser<Guid>
+public class Vote : IEntity<int>, IOwnedByUser<int>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [ForeignKey(nameof(Author))]
-    public Guid AuthorId { get; set; }
+    public int AuthorId { get; set; }
     public AppUser? Author { get; set; }
 
     public bool IsUpvote { get; set; }

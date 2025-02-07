@@ -71,7 +71,7 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
-    public async Task<AppUser?> FindUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<AppUser?> FindUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByIdAsync(id.ToString());
@@ -81,7 +81,7 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
-    public async Task ChangeReputationAsync(Guid id, int amount, CancellationToken cancellationToken = default)
+    public async Task ChangeReputationAsync(int id, int amount, CancellationToken cancellationToken = default)
     {
         var user = await Entities.FirstAsync(e => e.Id.Equals(id), cancellationToken);
         if (user is null)

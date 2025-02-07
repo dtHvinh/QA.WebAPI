@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Response.QuestionResponses;
 
-public record struct DeleteQuestionResponse(Guid Id);
+public record struct DeleteQuestionResponse(int Id);

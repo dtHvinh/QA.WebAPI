@@ -5,7 +5,7 @@ namespace WebAPI.Response.AsnwerResponses;
 
 public class AnswerResponse : IResourceRight<AnswerResponse>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public AuthorResponse? Author { get; set; } = default!;
@@ -15,7 +15,7 @@ public class AnswerResponse : IResourceRight<AnswerResponse>
     public bool IsAccepted { get; set; }
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
-    public AnswerResponse SetResourceRight(Guid? requesterId)
+    public AnswerResponse SetResourceRight(int? requesterId)
     {
         if (requesterId != null && Author != null && requesterId == Author.Id)
             ResourceRight = nameof(ResourceRights.Owner);

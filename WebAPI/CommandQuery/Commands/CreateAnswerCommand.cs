@@ -5,5 +5,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateAnswerCommand(CreateAnswerDto Answer, Guid QuestionId)
+public record CreateAnswerCommand(CreateAnswerDto Answer, int QuestionId)
     : ICommand<GenericResult<AnswerResponse>>;

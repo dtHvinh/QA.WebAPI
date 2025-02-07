@@ -67,8 +67,8 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization();
 
-        group.MapGet("/view/{id:guid}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
-            Guid id,
+        group.MapGet("/view/{id:int}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
+            int id,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -88,7 +88,7 @@ public sealed class QuestionModule : IModule
         group.MapGet("/search",
             async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
             [FromQuery] string keyword,
-            [FromQuery] Guid tagId,
+            [FromQuery] int tagId,
             [FromQuery] int page,
             [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
@@ -131,10 +131,10 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
 
-        group.MapPost("/{questionId:guid}/comment",
+        group.MapPost("/{questionId:int}/comment",
             async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
             [FromBody] CreateCommentDto dto,
-            Guid questionId,
+            int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -153,10 +153,10 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
             .AddEndpointFilter<QuestionCommentReputationRequirement>();
 
-        group.MapPost("/{questionId:guid}/answer",
+        group.MapPost("/{questionId:int}/answer",
             async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
             [FromBody] CreateAnswerDto dto,
-            Guid questionId,
+            int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -175,9 +175,9 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
             .AddEndpointFilter<AnswerReputationRequirement>();
 
-        group.MapPost("/{questionId:guid}/{action:regex(^(upvote|downvote)$)}",
+        group.MapPost("/{questionId:int}/{action:regex(^(upvote|downvote)$)}",
             async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
-            Guid questionId,
+            int questionId,
             string action,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
@@ -200,8 +200,8 @@ public sealed class QuestionModule : IModule
 
         #region DELETE
 
-        group.MapDelete("/{id:guid}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
-            Guid id,
+        group.MapDelete("/{id:int}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
+            int id,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -240,10 +240,10 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
 
-        group.MapPut("/{questionId:guid}/accept/{answerId:guid}",
+        group.MapPut("/{questionId:int}/accept/{answerId:int}",
             async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid questionId,
-            Guid answerId,
+            int questionId,
+            int answerId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -259,9 +259,9 @@ public sealed class QuestionModule : IModule
         })
             .RequireAuthorization();
 
-        group.MapPut("/{questionId:guid}/close",
+        group.MapPut("/{questionId:int}/close",
             async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid questionId,
+            int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
             {

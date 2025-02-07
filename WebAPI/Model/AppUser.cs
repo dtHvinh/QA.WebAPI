@@ -6,7 +6,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(IsDeleted), nameof(IsBanned))]
-public class AppUser : IdentityUser<Guid>, ISoftDeleteEntity
+public class AppUser : IdentityUser<int>, ISoftDeleteEntity
 {
     [Column(TypeName = "nvarchar(50)")]
     public string? FirstName { get; set; }

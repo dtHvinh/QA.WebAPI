@@ -17,7 +17,7 @@ public class CacheService(IDistributedCache cache,
     private readonly ICacheOptionProvider _cacheOptionProvider = cacheOptionProvider;
     private readonly JsonSerializerOptions _jsonOptions = options;
 
-    public async Task<AppUser?> GetAppUserAsync(Guid id)
+    public async Task<AppUser?> GetAppUserAsync(int id)
     {
         var user = await cache.GetStringAsync(RedisKeyGen.AppUserKey(id));
         if (user is null)
@@ -28,7 +28,7 @@ public class CacheService(IDistributedCache cache,
         return JsonSerializer.Deserialize<AppUser>(user);
     }
 
-    public async Task<Question?> GetQuestionAsync(Guid id)
+    public async Task<Question?> GetQuestionAsync(int id)
     {
         var question = await cache.GetStringAsync(RedisKeyGen.Question(id));
         if (question is null)
@@ -58,7 +58,7 @@ public class CacheService(IDistributedCache cache,
         await cache.SetStringAsync(RedisKeyGen.Question(question.Id), str, cacheOptions);
     }
 
-    public async Task RemoveAppUserAsync(Guid id)
+    public async Task RemoveAppUserAsync(int id)
     {
         await cache.RemoveAsync(RedisKeyGen.AppUserKey(id));
     }
@@ -85,7 +85,7 @@ public class CacheService(IDistributedCache cache,
             JsonSerializer.Serialize(values), _cacheOptionProvider.GetOptions(nameof(Tag)));
     }
 
-    public async Task<Tag?> GetTagWithQuestion(Guid tagId, string orderBy, int questionPage, int questionPageSize)
+    public async Task<Tag?> GetTagWithQuestion(int tagId, string orderBy, int questionPage, int questionPageSize)
     {
         var strValue = await cache.GetStringAsync(RedisKeyGen.GetTagDetail(tagId, orderBy, questionPage, questionPageSize));
         if (strValue is null)

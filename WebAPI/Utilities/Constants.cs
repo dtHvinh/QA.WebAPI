@@ -51,9 +51,9 @@ public static class Constants
     public static class RedisKeyGen
     {
         public static string UserEmail(string email) => $"email:{email}";
-        public static string AppUserKey(Guid id) => $"appuser:#{id}";
-        public static string Question(Guid id) => $"question:#{id}";
-        public static string GetTagDetail(Guid id, string orderBy, int questionPage, int questionPageSize)
+        public static string AppUserKey(int id) => $"appuser:#{id}";
+        public static string Question(int id) => $"question:#{id}";
+        public static string GetTagDetail(int id, string orderBy, int questionPage, int questionPageSize)
             => $"tag-detail:#{id}:&orderBy={orderBy}&qSkip={questionPage}&qTake={questionPageSize}";
         public static string GetTags(string orderBy, int skip, int take)
             => $"tags:orderBy={orderBy}&skip={skip}&take={take}";

@@ -24,7 +24,7 @@ public static class CommentMap
         return comment;
     }
 
-    public static Comment ToComment(this CreateCommentDto dto, CommentTypes type, Guid authorId, Guid targetId)
+    public static Comment ToComment(this CreateCommentDto dto, CommentTypes type, int authorId, int targetId)
     {
         if (type == CommentTypes.Question)
         {

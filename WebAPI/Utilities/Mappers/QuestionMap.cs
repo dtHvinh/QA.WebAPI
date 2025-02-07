@@ -6,7 +6,7 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class QuestionMap
 {
-    public static Question ToQuestion(this CreateQuestionDto dto, Guid authorId, bool isDraft)
+    public static Question ToQuestion(this CreateQuestionDto dto, int authorId, bool isDraft)
     {
         return new Question
         {
@@ -18,7 +18,7 @@ public static class QuestionMap
         };
     }
 
-    public static Question ToQuestion(this UpdateQuestionDto dto, Guid authorId)
+    public static Question ToQuestion(this UpdateQuestionDto dto, int authorId)
     {
         return new Question
         {
@@ -76,7 +76,7 @@ public static class QuestionMap
         return response;
     }
 
-    public static GetQuestionResponse ToGetQuestionResponse(this Question obj, Guid requesterId)
+    public static GetQuestionResponse ToGetQuestionResponse(this Question obj, int requesterId)
     {
         var response = new GetQuestionResponse()
         {

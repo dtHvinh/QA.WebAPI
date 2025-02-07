@@ -16,7 +16,7 @@ public class CommentRepository(ApplicationDbContext dbContext)
         Entities.Add(comment);
     }
 
-    public int CountQuestionComment(Guid questionId)
+    public int CountQuestionComment(int questionId)
     {
         return _dbContext.Set<QuestionComment>().Where(e => e.QuestionId.Equals(questionId))
              .Count();
@@ -28,7 +28,7 @@ public class CommentRepository(ApplicationDbContext dbContext)
         Entities.Update(comment);
     }
 
-    public async Task<Comment?> GetCommentByIdAsync(Guid commentId)
+    public async Task<Comment?> GetCommentByIdAsync(int commentId)
     {
         return await Entities.FindAsync(commentId);
     }

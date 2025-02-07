@@ -22,11 +22,13 @@ namespace WebAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -50,7 +52,7 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,8 +66,8 @@ namespace WebAPI.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -74,7 +76,7 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,8 +90,8 @@ namespace WebAPI.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -98,7 +100,7 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -109,8 +111,8 @@ namespace WebAPI.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -119,13 +121,13 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -134,10 +136,10 @@ namespace WebAPI.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -155,27 +157,29 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("QuestionTag", b =>
                 {
-                    b.Property<Guid>("QuestionsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
 
                     b.HasKey("QuestionsId", "TagsId");
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag", (string)null);
+                    b.ToTable("QuestionTag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -193,8 +197,8 @@ namespace WebAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -208,14 +212,16 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -310,18 +316,20 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Model.BookMark", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -333,17 +341,19 @@ namespace WebAPI.Migrations
                     b.HasIndex("AuthorId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark", (string)null);
+                    b.ToTable("BookMark");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Comment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CommentType")
                         .IsRequired()
@@ -365,7 +375,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comment", (string)null);
+                    b.ToTable("Comment");
 
                     b.HasDiscriminator<string>("CommentType").HasValue("Comment");
 
@@ -374,15 +384,17 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Model.Question", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AnswerCount")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
@@ -443,17 +455,19 @@ namespace WebAPI.Migrations
                     b.HasIndex("ViewCount")
                         .IsDescending();
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Report", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -474,7 +488,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Report", (string)null);
+                    b.ToTable("Report");
 
                     b.HasDiscriminator<string>("ReportType").HasValue("Report");
 
@@ -483,13 +497,11 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1000)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -502,10 +514,6 @@ namespace WebAPI.Migrations
                     b.Property<int>("QuestionCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("WikiBody")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -514,17 +522,65 @@ namespace WebAPI.Migrations
                     b.HasIndex("QuestionCount")
                         .IsDescending();
 
-                    b.ToTable("Tag", (string)null);
+                    b.ToTable("Tag");
+                });
+
+            modelBuilder.Entity("WebAPI.Model.TagBody", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TagId")
+                        .IsUnique();
+
+                    b.ToTable("TagBody");
+                });
+
+            modelBuilder.Entity("WebAPI.Model.TagDescription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TagId")
+                        .IsUnique();
+
+                    b.ToTable("TagDescription");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Vote", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsUpvote")
                         .HasColumnType("bit");
@@ -538,7 +594,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Vote", (string)null);
+                    b.ToTable("Vote");
 
                     b.HasDiscriminator<string>("VoteType").HasValue("Vote");
 
@@ -549,8 +605,8 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Comment");
 
-                    b.Property<Guid>("AnswerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
 
                     b.HasIndex("AnswerId");
 
@@ -563,8 +619,8 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Comment");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.HasIndex("AuthorId");
 
@@ -577,8 +633,8 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Report");
 
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("AnswerId")
+                        .HasColumnType("int");
 
                     b.HasIndex("AnswerId");
 
@@ -589,8 +645,8 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Report");
 
-                    b.Property<Guid?>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.HasIndex("QuestionId");
 
@@ -601,8 +657,8 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Vote");
 
-                    b.Property<Guid>("AnswerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
 
                     b.HasIndex("AnswerId");
 
@@ -613,24 +669,24 @@ namespace WebAPI.Migrations
                 {
                     b.HasBaseType("WebAPI.Model.Vote");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.HasIndex("QuestionId");
 
                     b.HasDiscriminator().HasValue("Question");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.HasOne("WebAPI.Model.AppUser", null)
                         .WithMany()
@@ -639,7 +695,7 @@ namespace WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("WebAPI.Model.AppUser", null)
                         .WithMany()
@@ -648,9 +704,9 @@ namespace WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -663,7 +719,7 @@ namespace WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("WebAPI.Model.AppUser", null)
                         .WithMany()
@@ -734,6 +790,28 @@ namespace WebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("WebAPI.Model.TagBody", b =>
+                {
+                    b.HasOne("WebAPI.Model.Tag", "Tag")
+                        .WithOne("WikiBody")
+                        .HasForeignKey("WebAPI.Model.TagBody", "TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("WebAPI.Model.TagDescription", b =>
+                {
+                    b.HasOne("WebAPI.Model.Tag", "Tag")
+                        .WithOne("Description")
+                        .HasForeignKey("WebAPI.Model.TagDescription", "TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("WebAPI.Model.Vote", b =>
@@ -812,7 +890,9 @@ namespace WebAPI.Migrations
 
                     b.HasOne("WebAPI.Model.Question", "Question")
                         .WithMany("Reports")
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
 
@@ -870,6 +950,13 @@ namespace WebAPI.Migrations
                     b.Navigation("Reports");
 
                     b.Navigation("Votes");
+                });
+
+            modelBuilder.Entity("WebAPI.Model.Tag", b =>
+                {
+                    b.Navigation("Description");
+
+                    b.Navigation("WikiBody");
                 });
 #pragma warning restore 612, 618
         }

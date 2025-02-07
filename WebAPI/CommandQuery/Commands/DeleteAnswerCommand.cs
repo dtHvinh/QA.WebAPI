@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record DeleteAnswerCommand(Guid Id) : ICommand<GenericResult<GenericResponse>>;
+public record DeleteAnswerCommand(int Id) : ICommand<GenericResult<GenericResponse>>;

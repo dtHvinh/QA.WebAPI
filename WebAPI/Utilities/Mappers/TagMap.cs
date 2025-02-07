@@ -13,8 +13,6 @@ public static class TagMap
         return new Tag
         {
             Name = dto.Name,
-            Description = dto.Description,
-            WikiBody = dto.WikiBody
         };
     }
 
@@ -24,34 +22,31 @@ public static class TagMap
         {
             Id = dto.Id,
             Name = dto.Name,
-            Description = dto.Description,
-            WikiBody = dto.WikiBody
         };
     }
 
-    public static TagResponse ToTagResonse(this Tag obj)
+    public static TagWithWikiBodyResponse ToTagWithBodyResonse(this Tag? obj)
     {
         if (obj == null)
         {
             return null;
         }
-        return new TagResponse(obj.Id, obj.Name, obj.Description, obj.WikiBody, obj.QuestionCount);
+        return new TagWithWikiBodyResponse(obj.Id, obj.Name, obj.Description!.Content, obj.WikiBody!.Content, obj.QuestionCount);
+    }
+
+    public static TagResponse ToTagResonse(this Tag? obj)
+    {
+        if (obj == null)
+        {
+            return null;
+        }
+        return new TagResponse(obj.Id, obj.Name, obj.Description!.Content, obj.QuestionCount);
     }
 
     public static TagWithQuestionResponse ToTagWithQuestionResponse(this Tag obj, PagedResponse<GetQuestionResponse> questions)
     {
         return new TagWithQuestionResponse(
-            obj.Id, obj.Name, obj.Description, obj.WikiBody,
+            obj.Id, obj.Name, obj.Description!.Content,
             obj.QuestionCount, questions);
-    }
-
-    public static DeleteTagResponse ToDeleteTagResponse(this Tag obj)
-    {
-        return new DeleteTagResponse(obj.Id);
-    }
-
-    public static CreateTagResponse ToCreateTagResponse(this Tag obj)
-    {
-        return new CreateTagResponse(obj.Id, obj.Name, obj.Description, obj.WikiBody);
     }
 }

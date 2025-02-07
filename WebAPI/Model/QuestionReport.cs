@@ -7,6 +7,6 @@ public class QuestionReport : Report, IKeylessEntityWithTime
 {
 
     [ForeignKey(nameof(Question))]
-    public Guid? QuestionId { get; set; }
+    public int QuestionId { get; set; }
     public Question? Question { get; set; } = default!;
 }

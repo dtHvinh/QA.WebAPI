@@ -34,7 +34,7 @@ public interface IVoteRepository
     /// <param name="userId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<VoteUpdateTypes> UpvoteQuestion(Guid questionId, Guid userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> UpvoteQuestion(int questionId, int userId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Downvote a question
@@ -68,7 +68,7 @@ public interface IVoteRepository
     /// <param name="userId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<VoteUpdateTypes> DownvoteQuestion(Guid questionId, Guid userId, CancellationToken cancellationToken);
-    Task<VoteUpdateTypes> DownvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken);
-    Task<VoteUpdateTypes> UpvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> DownvoteQuestion(int questionId, int userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> DownvoteAnswer(int answerId, int userId, CancellationToken cancellationToken);
+    Task<VoteUpdateTypes> UpvoteAnswer(int answerId, int userId, CancellationToken cancellationToken);
 }

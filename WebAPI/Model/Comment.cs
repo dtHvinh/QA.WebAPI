@@ -3,9 +3,9 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Guid>
+public class Comment : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<int>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     public string? CommentType { get; set; }
@@ -15,7 +15,7 @@ public class Comment : IEntityWithTime<Guid>, ISoftDeleteEntity, IOwnedByUser<Gu
     public bool IsDeleted { get; set; }
 
     [ForeignKey(nameof(Author))]
-    public Guid AuthorId { get; set; }
+    public int AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
 }
 

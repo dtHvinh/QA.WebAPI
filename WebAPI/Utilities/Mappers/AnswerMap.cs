@@ -22,7 +22,7 @@ public static class AnswerMap
     }
 
 
-    public static Answer ToAnswer(this CreateAnswerDto dto, Guid authorId, Guid questionId)
+    public static Answer ToAnswer(this CreateAnswerDto dto, int authorId, int questionId)
     {
         return new Answer
         {

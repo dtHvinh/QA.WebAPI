@@ -17,8 +17,8 @@ public class CommentModule : IModule
     {
         var group = endpoints.MapGroup(EG.Comment);
 
-        group.MapPut("/{id:guid}", async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
-            Guid id,
+        group.MapPut("/{id:int}", async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
+            int id,
             [FromBody] UpdateCommentDto dto,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
@@ -33,8 +33,8 @@ public class CommentModule : IModule
                 })
             .RequireAuthorization();
 
-        group.MapDelete("/{id:guid}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid id,
+        group.MapDelete("/{id:int}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+            int id,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {

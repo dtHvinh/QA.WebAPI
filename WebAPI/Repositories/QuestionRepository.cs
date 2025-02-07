@@ -57,7 +57,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return questions ?? [];
     }
 
-    public async Task<List<Question>> FindQuestionByUserId(Guid userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
+    public async Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
     {
         var query = Table.Where(e => e.AuthorId == userId)
             .EvaluateQuery(new ValidQuestionSpecification());
@@ -102,7 +102,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     }
 
     /// <inheritdoc/>
-    public async Task<Question?> FindQuestionDetailByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Question?> FindQuestionDetailByIdAsync(int id, CancellationToken cancellationToken)
     {
         var specification = new QuestionFullDetailSpecification();
         var result = await Table.Where(e => e.Id == id)
@@ -113,7 +113,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     }
 
     public async Task<List<Question>> FindQuestionsByTagId(
-        Guid tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
+        int tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
     {
         Func<Question, object> orderByFunc;
 
@@ -138,7 +138,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return [.. result.Questions];
     }
 
-    public async Task<Question?> FindQuestionWithAuthorByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Question?> FindQuestionWithAuthorByIdAsync(int id, CancellationToken cancellationToken)
     {
         var result = await Table.Where(e => e.Id == id)
                     .Include(e => e.Author)
@@ -225,12 +225,12 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public async Task<int> CountUserQuestion(Guid userId)
+    public async Task<int> CountUserQuestion(int userId)
     {
         return await Table.CountAsync(e => e.AuthorId == userId);
     }
 
-    public void MarkAsView(Guid questionId)
+    public void MarkAsView(int questionId)
     {
         var q = Entities.FirstOrDefault(e => e.Id == questionId);
         if (q != null)

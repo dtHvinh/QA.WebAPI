@@ -5,18 +5,18 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(QuestionId))]
-public class Answer : IEntityWithTime<Guid>, IOwnedByUser<Guid>, ISoftDeleteEntity
+public class Answer : IEntityWithTime<int>, IOwnedByUser<int>, ISoftDeleteEntity
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     [ForeignKey(nameof(Question))]
-    public Guid QuestionId { get; set; }
+    public int QuestionId { get; set; }
     public Question? Question { get; set; } = default!;
 
     [ForeignKey(nameof(Author))]
-    public Guid AuthorId { get; set; }
+    public int AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
     [Column(TypeName = "nvarchar(max)")]
     public required string Content { get; set; }

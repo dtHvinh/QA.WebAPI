@@ -20,10 +20,10 @@ public class AnswerModule : IModule
     {
         var group = endpoints.MapGroup(EG.Answer);
 
-        group.MapPut("/{answerId:guid}",
+        group.MapPut("/{answerId:int}",
             static async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
             [FromBody] UpdateAnswerDto dto,
-            Guid answerId,
+            int answerId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -42,9 +42,9 @@ public class AnswerModule : IModule
             .AddEndpointFilter<FluentValidation<UpdateAnswerDto>>()
             .AddEndpointFilter<AnswerReputationRequirement>();
 
-        group.MapDelete("/{answerId:guid}",
+        group.MapDelete("/{answerId:int}",
             static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            Guid answerId,
+            int answerId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
@@ -62,9 +62,9 @@ public class AnswerModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<AnswerReputationRequirement>();
 
-        group.MapPost("/{answerId:guid}/{action:regex(^(upvote|downvote)$)}",
+        group.MapPost("/{answerId:int}/{action:regex(^(upvote|downvote)$)}",
             async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
-            Guid answerId,
+            int answerId,
             string action,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>

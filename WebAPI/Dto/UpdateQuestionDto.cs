@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Dto;
 
-public record UpdateQuestionDto(Guid Id, string Title, string Content, List<Guid> Tags);
+public record UpdateQuestionDto(int Id, string Title, string Content, List<int> Tags);

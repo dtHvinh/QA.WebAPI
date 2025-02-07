@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record GetTagWithQuestionQuery(Guid TagId, string OrderBy, PageArgs PageArgs) : IQuery<GenericResult<TagWithQuestionResponse>>;
+public record GetTagWithQuestionQuery(int TagId, string OrderBy, PageArgs PageArgs) : IQuery<GenericResult<TagWithQuestionResponse>>;

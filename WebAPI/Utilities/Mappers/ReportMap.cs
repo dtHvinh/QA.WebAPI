@@ -5,7 +5,7 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class ReportMap
 {
-    public static QuestionReport ToQuestionReport(this CreateReportDto dto, Guid reporterId)
+    public static QuestionReport ToQuestionReport(this CreateReportDto dto, int reporterId)
     {
         return new QuestionReport
         {
@@ -15,7 +15,7 @@ public static class ReportMap
         };
     }
 
-    public static AnswerReport ToAnswerReport(this CreateReportDto dto, Guid reporterId)
+    public static AnswerReport ToAnswerReport(this CreateReportDto dto, int reporterId)
     {
         return new AnswerReport
         {

@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record DeleteTagCommand(Guid Id) : ICommand<GenericResult<DeleteTagResponse>>;
+public record DeleteTagCommand(int Id) : ICommand<GenericResult<DeleteTagResponse>>;

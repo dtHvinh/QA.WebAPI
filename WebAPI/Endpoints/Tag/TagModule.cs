@@ -7,6 +7,7 @@ using WebAPI.Dto;
 using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Pagination;
+using WebAPI.Response;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities.Contract;
@@ -22,9 +23,9 @@ public class TagModule : IModule
     {
         var group = endpoints.MapGroup(EG.Tag);
 
-        group.MapGet("/{id:guid}",
+        group.MapGet("/{id:int}",
             async Task<Results<Ok<TagWithQuestionResponse>, ProblemHttpResult>> (
-             Guid id,
+             int id,
              string orderBy,
              int pageIndex,
              int pageSize,
@@ -40,9 +41,9 @@ public class TagModule : IModule
             })
             .RequireAuthorization();
 
-        group.MapGet("/wiki/{id:guid}",
-            async Task<Results<Ok<TagResponse>, ProblemHttpResult>> (
-             Guid id,
+        group.MapGet("/wiki/{id:int}",
+            async Task<Results<Ok<TagWithWikiBodyResponse>, ProblemHttpResult>> (
+             int id,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
             {
@@ -55,9 +56,9 @@ public class TagModule : IModule
             })
             .RequireAuthorization();
 
-        group.MapGet("/{tagId:guid}/questions/",
+        group.MapGet("/{tagId:int}/questions/",
             async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
-             Guid tagId,
+             int tagId,
              string orderBy,
              int pageIndex,
              int pageSize,
@@ -106,7 +107,7 @@ public class TagModule : IModule
             .RequireAuthorization();
 
         group.MapPost("/",
-            async Task<Results<Ok<CreateTagResponse>, ProblemHttpResult>>
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>>
             ([FromBody] CreateTagDto dto,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
@@ -124,7 +125,7 @@ public class TagModule : IModule
 
 
         group.MapPut("/",
-            async Task<Results<Ok<UpdateTagResponse>, ProblemHttpResult>>
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>>
             ([FromBody] UpdateTagDto dto,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
@@ -140,9 +141,9 @@ public class TagModule : IModule
             .AddEndpointFilter<FluentValidation<UpdateTagDto>>()
             .AddEndpointFilter<UpdateTagReputationRequirementFilter>();
 
-        group.MapDelete("/{id:guid}",
+        group.MapDelete("/{id:int}",
             async Task<Results<Ok<DeleteTagResponse>, ProblemHttpResult>>
-            (Guid id,
+            (int id,
              [FromServices] IMediator mediator,
              CancellationToken cancellationToken) =>
         {

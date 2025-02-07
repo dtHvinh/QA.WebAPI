@@ -13,13 +13,13 @@ public class VoteRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public Task<VoteUpdateTypes> DownvoteQuestion(Guid questionId, Guid userId, CancellationToken cancellationToken)
+    public Task<VoteUpdateTypes> DownvoteQuestion(int questionId, int userId, CancellationToken cancellationToken)
         => InternalVoteQuestion(questionId, userId, false, cancellationToken);
 
-    public Task<VoteUpdateTypes> UpvoteQuestion(Guid questionId, Guid userId, CancellationToken cancellationToken)
+    public Task<VoteUpdateTypes> UpvoteQuestion(int questionId, int userId, CancellationToken cancellationToken)
         => InternalVoteQuestion(questionId, userId, true, cancellationToken);
 
-    private async Task<VoteUpdateTypes> InternalVoteQuestion(Guid questionId, Guid userId, bool isUpvote, CancellationToken cancellationToken)
+    private async Task<VoteUpdateTypes> InternalVoteQuestion(int questionId, int userId, bool isUpvote, CancellationToken cancellationToken)
     {
         var existVote = await _dbContext.Set<QuestionVote>()
             .FirstOrDefaultAsync(u => u.AuthorId == userId && u.QuestionId == questionId,
@@ -52,13 +52,13 @@ public class VoteRepository(ApplicationDbContext dbContext)
     }
 
 
-    public Task<VoteUpdateTypes> DownvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken)
+    public Task<VoteUpdateTypes> DownvoteAnswer(int answerId, int userId, CancellationToken cancellationToken)
     => InternalVoteAnswer(answerId, userId, false, cancellationToken);
 
-    public Task<VoteUpdateTypes> UpvoteAnswer(Guid answerId, Guid userId, CancellationToken cancellationToken)
+    public Task<VoteUpdateTypes> UpvoteAnswer(int answerId, int userId, CancellationToken cancellationToken)
         => InternalVoteAnswer(answerId, userId, true, cancellationToken);
 
-    private async Task<VoteUpdateTypes> InternalVoteAnswer(Guid answerId, Guid userId, bool isUpvote, CancellationToken cancellationToken)
+    private async Task<VoteUpdateTypes> InternalVoteAnswer(int answerId, int userId, bool isUpvote, CancellationToken cancellationToken)
     {
         var existVote = await _dbContext.Set<AnswerVote>()
             .FirstOrDefaultAsync(u => u.AuthorId == userId && u.AnswerId == answerId,

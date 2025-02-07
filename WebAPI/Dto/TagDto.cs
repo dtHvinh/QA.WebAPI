@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Dto;
 
-public record TagDto(Guid Id, string Name);
+public record TagDto(int Id, string Name);

@@ -5,9 +5,9 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(AuthorId))]
-public class Report : IEntityWithTime<Guid>, IOwnedByUser<Guid>
+public class Report : IEntityWithTime<int>, IOwnedByUser<int>
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
@@ -16,7 +16,7 @@ public class Report : IEntityWithTime<Guid>, IOwnedByUser<Guid>
     public string? ReportType { get; set; }
 
     [ForeignKey(nameof(Author))]
-    public Guid AuthorId { get; set; }
+    public int AuthorId { get; set; }
     public AppUser? Author { get; set; } = default!;
 }
 

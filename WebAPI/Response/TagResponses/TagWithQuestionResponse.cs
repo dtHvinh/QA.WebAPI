@@ -4,5 +4,5 @@ using WebAPI.Response.QuestionResponses;
 namespace WebAPI.Response.TagResponses;
 
 public record TagWithQuestionResponse(
-    Guid Id, string Name, string Description, string WikiBody, int QuestionCount,
+    int Id, string Name, string Description, int QuestionCount,
     PagedResponse<GetQuestionResponse> Questions);

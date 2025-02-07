@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Dto;
 
-public record CreateReportDto(Guid TargetId, string Description);
+public record CreateReportDto(int TargetId, string Description);
