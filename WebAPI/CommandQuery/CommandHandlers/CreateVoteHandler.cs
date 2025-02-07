@@ -35,7 +35,7 @@ public class CreateVoteHandler(
         if (request == null)
             return GenericResult<VoteResponse>.Failure("Invalid requester");
 
-        var question = await questionRepository.FindQuestionByIdAsync(request.QuestionId, cancellationToken);
+        var question = await questionRepository.FindQuestionWithAuthorByIdAsync(request.QuestionId, cancellationToken);
 
         if (question == null)
         {
@@ -90,7 +90,7 @@ public class CreateVoteHandler(
 
     public async Task<GenericResult<VoteResponse>> Handle(CreateAnswerVoteCommand request, CancellationToken cancellationToken)
     {
-        var answer = await answerRepository.FindAnswerById(request.AnswerId, cancellationToken);
+        var answer = await answerRepository.FindAnswerWithAuthorById(request.AnswerId, cancellationToken);
 
         if (answer == null)
         {
@@ -126,6 +126,7 @@ public class CreateVoteHandler(
                 break;
         }
 
+        _userRepository.Update(answer.Author!);
         answerRepository.VoteChange(answer, type, request.IsUpvote ? 1 : -1);
 
         var result = await answerRepository.SaveChangesAsync(cancellationToken);

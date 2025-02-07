@@ -12,4 +12,5 @@ public interface IAnswerRepository : IRepository<Answer>
     void TryEditAnswer(Answer answer, out string? errMsg);
     void VoteChange(Answer answer, Enums.VoteUpdateTypes updateType, int value);
     Task<List<Answer>> GetAnswersAsync(Guid questionId, CancellationToken cancellation = default);
+    Task<Answer?> FindAnswerWithAuthorById(Guid id, CancellationToken cancellationToken = default);
 }

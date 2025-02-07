@@ -16,5 +16,5 @@ public interface IRepository<T> where T : class
     void UpdateRange(T[] entities);
     void UpdateRange(IEnumerable<T> entities);
     Task<GenericResult> SaveChangesAsync(CancellationToken cancellationToken = default);
-    int CountAll();
+    Task<int> CountAsync();
 }

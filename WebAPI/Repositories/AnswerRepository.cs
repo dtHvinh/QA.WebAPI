@@ -43,6 +43,12 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         return await Entities.Where(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<Answer?> FindAnswerWithAuthorById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await Entities.Where(e => e.Id.Equals(id)).Include(e => e.Author)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<Answer>> GetAnswersAsync(Guid questionId, CancellationToken cancellation = default)
     {
         return await Entities.Where(e => e.QuestionId.Equals(questionId)).ToListAsync(cancellation);

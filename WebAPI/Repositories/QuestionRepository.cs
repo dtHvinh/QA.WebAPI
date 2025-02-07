@@ -79,6 +79,28 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             .ToListAsync(cancellationToken);
     }
 
+
+    public async Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
+    {
+        var query = Table.EvaluateQuery(new ValidQuestionSpecification());
+
+        query = sortOrder switch
+        {
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
+            QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
+            QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
+            _ => throw new InvalidOperationException(),
+        };
+
+        return await query
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Tags.Take(5))
+            .ToListAsync(cancellationToken);
+    }
+
     /// <inheritdoc/>
     public async Task<Question?> FindQuestionDetailByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -116,7 +138,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return [.. result.Questions];
     }
 
-    public async Task<Question?> FindQuestionByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Question?> FindQuestionWithAuthorByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var result = await Table.Where(e => e.Id == id)
                     .Include(e => e.Author)

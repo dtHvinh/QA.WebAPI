@@ -5,5 +5,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record GetUserQuestionQuery(PageArgs PageArgs, string Order)
+public record GetQuestionQuery(string OrderBy, PageArgs PageArgs)
     : IQuery<GenericResult<PagedResponse<GetQuestionResponse>>>;

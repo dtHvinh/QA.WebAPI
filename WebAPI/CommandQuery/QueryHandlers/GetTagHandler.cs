@@ -40,7 +40,7 @@ public class GetTagHandler(ITagRepository tagRepository, ICacheService cacheServ
         if (hasNext)
             tagResponses.RemoveAt(tagResponses.Count - 1);
 
-        var totalCount = _tagRepository.CountAll();
+        var totalCount = await _tagRepository.CountAsync();
 
         return GenericResult<PagedResponse<TagResponse>>.Success(
             new(tagResponses, hasNext, request.Skip / request.Take + 1, request.Take)

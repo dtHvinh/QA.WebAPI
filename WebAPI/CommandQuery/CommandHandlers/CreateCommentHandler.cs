@@ -22,7 +22,7 @@ public class CreateCommentHandler(ICommentRepository commentRepository,
     {
         if (request.CommentType == Model.CommentTypes.Question)
         {
-            var question = await _questionRepository.FindQuestionByIdAsync(request.ObjectId, cancellationToken);
+            var question = await _questionRepository.FindQuestionWithAuthorByIdAsync(request.ObjectId, cancellationToken);
 
             if (question is null)
                 return GenericResult<CommentResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND, request.ObjectId));

@@ -13,7 +13,7 @@ public interface IQuestionRepository : IRepository<Question>
     Task<List<Question>> SearchQuestionAsync(QuestionSearchParams searchParams, CancellationToken cancellationToken);
     void MarkAsView(Guid questionId);
     Task SetQuestionTag(Question question, List<Tag> tags);
-    Task<Question?> FindQuestionByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Question?> FindQuestionWithAuthorByIdAsync(Guid id, CancellationToken cancellationToken);
     /// <summary>
     /// Update question also update the <see cref="Question.UpdatedAt"/> field.
     /// </summary>
@@ -24,4 +24,5 @@ public interface IQuestionRepository : IRepository<Question>
     void SoftDeleteQuestion(Question question);
     Task<int> CountUserQuestion(Guid userId);
     Task<List<Question>> FindQuestionsByTagId(Guid tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken);
+    Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
 }

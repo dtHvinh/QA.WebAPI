@@ -25,7 +25,7 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
 
     public async Task<GenericResult<GenericResponse>> Handle(AcceptAnswerCommand request, CancellationToken cancellationToken)
     {
-        var question = await _questionRepository.FindQuestionByIdAsync(request.QuestionId, cancellationToken);
+        var question = await _questionRepository.FindQuestionWithAuthorByIdAsync(request.QuestionId, cancellationToken);
 
         if (question is null)
             return GenericResult<GenericResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND, request.QuestionId));

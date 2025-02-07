@@ -34,6 +34,6 @@ public class CreateUserHandler(IUserRepository userRepository,
         var refreshToken = _tokenProvider.CreateRefreshToken();
 
         return GenericResult<AuthResponse>
-            .Success(newUser.ToLoginResponseDto(jwtToken, refreshToken));
+            .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, "User"));
     }
 }

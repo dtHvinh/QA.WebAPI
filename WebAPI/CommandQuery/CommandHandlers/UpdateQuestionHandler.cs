@@ -39,11 +39,6 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<UpdateQuestionResponse>.Failure("Can not edit solved question");
         }
 
-        if (existQuestion.Upvote > existQuestion.Downvote)
-        {
-            return GenericResult<UpdateQuestionResponse>.Failure("Can not edit question people have upvoted");
-        }
-
         var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
 
         existQuestion.FromUpdateObject(request.Question);

@@ -28,14 +28,7 @@ public class GetTagWithQuestionHandler(ITagRepository tagRepository, ICacheServi
         {
             tag = await _tagRepository.FindTagWithQuestionById(
                 request.TagId,
-                request.OrderBy switch
-                {
-                    "Newest" => QuestionSortOrder.Newest,
-                    "MostViewed" => QuestionSortOrder.MostViewed,
-                    "MostVoted" => QuestionSortOrder.MostVoted,
-                    "Solved" => QuestionSortOrder.Solved,
-                    _ => QuestionSortOrder.Newest
-                },
+                Enum.Parse<QuestionSortOrder>(request.OrderBy, true),
                 (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
                 request.PageArgs.PageSize + 1,
                 cancellationToken);

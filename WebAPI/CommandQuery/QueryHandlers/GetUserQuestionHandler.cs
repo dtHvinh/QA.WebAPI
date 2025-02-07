@@ -23,36 +23,24 @@ public class GetUserQuestionHandler(
     {
         var question = await _questionRepository.FindQuestionByUserId(
             _authenticationContext.UserId,
-            (request.Args.Page - 1) * request.Args.PageSize,
-            request.Args.PageSize + 1,
-            request.Order switch
-            {
-                "Newest" => QuestionSortOrder.Newest,
-                "MostViewed" => QuestionSortOrder.MostViewed,
-                "MostVoted" => QuestionSortOrder.MostVoted,
-                "Solved" => QuestionSortOrder.Solved,
-                "Draft" => QuestionSortOrder.Draft,
-                _ => QuestionSortOrder.Newest
-            }, cancellationToken);
+            (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+            request.PageArgs.PageSize + 1,
+            Enum.Parse<QuestionSortOrder>(request.Order, true),
+            cancellationToken);
 
-        var hasNext = question.Count > request.Args.PageSize;
-
-        if (hasNext)
-        {
-            question.RemoveAt(question.Count - 1);
-        }
+        var hasNext = question.Count == request.PageArgs.PageSize + 1;
 
         int count = await _questionRepository.CountUserQuestion(_authenticationContext.UserId);
 
         return GenericResult<PagedResponse<GetQuestionResponse>>.Success(
             new PagedResponse<GetQuestionResponse>(
-                question.Select(q => q.ToGetQuestionResponse()).ToList(),
+                question.Select(q => q.ToGetQuestionResponse()).Take(request.PageArgs.PageSize).ToList(),
                 hasNext,
-                request.Args.Page,
-                request.Args.PageSize)
+                request.PageArgs.Page,
+                request.PageArgs.PageSize)
             {
                 TotalCount = count,
-                TotalPage = NumericCalcHelper.GetTotalPage(count, request.Args.PageSize)
+                TotalPage = NumericCalcHelper.GetTotalPage(count, request.PageArgs.PageSize)
             });
     }
 }

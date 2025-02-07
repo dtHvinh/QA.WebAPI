@@ -27,14 +27,34 @@ public sealed class QuestionModule : IModule
 
         #region GET
 
-        group.MapGet("/", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+        group.MapGet("/user", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
             int pageIndex,
             int pageSize,
-            string order,
+            string orderBy,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), order);
+            var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), orderBy);
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
+        group.MapGet("/", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+            int pageIndex,
+            int pageSize,
+            string orderBy,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
 
             var result = await mediator.Send(cmd, cancellationToken);
 
