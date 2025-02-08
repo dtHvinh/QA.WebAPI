@@ -94,11 +94,14 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             _ => throw new InvalidOperationException(),
         };
 
-        return await query
+        var q = await query
             .Skip(skip)
             .Take(take)
-            .Include(e => e.Tags.Take(5))
+            .Include(e => e.Tags)
+            .ThenInclude(e => e.Description)
             .ToListAsync(cancellationToken);
+
+        return q;
     }
 
     /// <inheritdoc/>

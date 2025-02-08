@@ -46,6 +46,7 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
                     .ThenInclude(e => e.Author)
                    .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt))
                     .ThenInclude(e => e.Author)
-                   .Include(e => e.Tags);
+                   .Include(e => e.Tags)
+                    .ThenInclude(e => e.Description);
     }
 }

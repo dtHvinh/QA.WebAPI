@@ -41,7 +41,6 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
 
     public ICollection<Answer> Answers { get; set; } = default!;
     public ICollection<QuestionVote> Votes { get; set; } = default!;
-    public ICollection<QuestionReport> Reports { get; set; } = default!;
     public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<Tag> Tags { get; set; } = default!;
 }

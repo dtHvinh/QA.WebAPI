@@ -458,43 +458,6 @@ namespace WebAPI.Migrations
                     b.ToTable("Question");
                 });
 
-            modelBuilder.Entity("WebAPI.Model.Report", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ReportType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Report");
-
-                    b.HasDiscriminator<string>("ReportType").HasValue("Report");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -623,30 +586,6 @@ namespace WebAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasDiscriminator().HasValue("Question");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.AnswerReport", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Report");
-
-                    b.Property<int?>("AnswerId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasDiscriminator().HasValue("Answer");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionReport", b =>
-                {
-                    b.HasBaseType("WebAPI.Model.Report");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
 
                     b.HasIndex("QuestionId");
 
@@ -863,42 +802,6 @@ namespace WebAPI.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("WebAPI.Model.AnswerReport", b =>
-                {
-                    b.HasOne("WebAPI.Model.Answer", "Answer")
-                        .WithMany("Reports")
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("WebAPI.Model.AppUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("WebAPI.Model.QuestionReport", b =>
-                {
-                    b.HasOne("WebAPI.Model.AppUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebAPI.Model.Question", "Question")
-                        .WithMany("Reports")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("WebAPI.Model.AnswerVote", b =>
                 {
                     b.HasOne("WebAPI.Model.Answer", "Answer")
@@ -925,8 +828,6 @@ namespace WebAPI.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Reports");
-
                     b.Navigation("Votes");
                 });
 
@@ -946,8 +847,6 @@ namespace WebAPI.Migrations
                     b.Navigation("Answers");
 
                     b.Navigation("Comments");
-
-                    b.Navigation("Reports");
 
                     b.Navigation("Votes");
                 });

@@ -53,6 +53,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
+                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.MostVoted => Entities.Where(e => e.Id.Equals(tagId))
@@ -64,6 +65,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
+                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.MostViewed => Entities.Where(e => e.Id.Equals(tagId))
@@ -75,6 +77,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
+                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.Solved => Entities.Where(e => e.Id.Equals(tagId))
@@ -86,6 +89,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
+                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             _ => Entities.Where(e => e.Id.Equals(tagId))
@@ -95,6 +99,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .Include(e => e.Questions.Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
+                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
         };
 

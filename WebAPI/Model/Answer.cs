@@ -26,7 +26,6 @@ public class Answer : IEntityWithTime<int>, IOwnedByUser<int>, ISoftDeleteEntity
     public bool IsDeleted { get; set; } = false;
     public bool IsAccepted { get; set; } = false;
 
-    public ICollection<AnswerReport> Reports { get; set; } = default!;
     public ICollection<AnswerVote> Votes { get; set; } = default!;
     public ICollection<AnswerComment> Comments { get; set; } = default!;
 }

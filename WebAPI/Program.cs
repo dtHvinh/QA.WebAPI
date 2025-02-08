@@ -1,4 +1,3 @@
-using WebAPI.Data;
 using WebAPI.Utilities.Auto;
 using WebAPI.Utilities.Extensions;
 
@@ -40,9 +39,6 @@ app.UseCors("AllowOrigins");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
-await ApplicationDbContext.Init(app, false);
-await ApplicationDbContext.InitTag(app, false);
 
 app.RegisterEndpoints();
 await app.RunAsync();
