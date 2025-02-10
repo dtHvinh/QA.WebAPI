@@ -11,6 +11,7 @@ using WebAPI.Pagination;
 using WebAPI.Response;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Response.CommentResponses;
+using WebAPI.Response.HistoryResponses;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.VoteResponses;
 using WebAPI.Utilities.Contract;
@@ -95,6 +96,25 @@ public sealed class QuestionModule : IModule
             CancellationToken cancellationToken = default) =>
         {
             var cmd = new SearchQuestionQuery(keyword, tagId, PageArgs.From(page, pageSize));
+
+            var result = await mediator.Send(cmd, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization();
+
+        group.MapGet("/{questionId:int}/history",
+            async Task<Results<Ok<List<QuestionHistoryResponse>>, ProblemHttpResult>> (
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+        {
+            var cmd = new GetQuestionHistoryQuery(questionId);
 
             var result = await mediator.Send(cmd, cancellationToken);
 

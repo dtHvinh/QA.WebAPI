@@ -181,6 +181,7 @@ public class TagRepository(ApplicationDbContext dbContext)
             .Where(e => e.NormalizedName.Contains(findKeyword))
             .Skip(skip)
             .Take(take)
+            .Include(e => e.Description)
             .ToListAsync(cancellationToken);
 
         return tagsToFind;

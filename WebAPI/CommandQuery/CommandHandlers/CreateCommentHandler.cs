@@ -1,5 +1,6 @@
 ﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.CommentResponses;
 using WebAPI.Utilities.Context;
@@ -11,16 +12,18 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateCommentHandler(ICommentRepository commentRepository,
                                   IQuestionRepository questionRepository,
-                                  AuthenticationContext authContext)
+                                  AuthenticationContext authContext,
+                                  IQuestionHistoryRepository questionHistoryRepository)
     : ICommandHandler<CreateCommentCommand, GenericResult<CommentResponse>>
 {
     private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
 
     public async Task<GenericResult<CommentResponse>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
-        if (request.CommentType == Model.CommentTypes.Question)
+        if (request.CommentType == CommentTypes.Question)
         {
             var question = await _questionRepository.FindQuestionWithAuthorByIdAsync(request.ObjectId, cancellationToken);
 
@@ -30,6 +33,8 @@ public class CreateCommentHandler(ICommentRepository commentRepository,
             if (question.IsClosed)
                 return GenericResult<CommentResponse>.Failure(EM.QUESTION_CLOSED_COMMENT_RESTRICT);
 
+            _questionHistoryRepository.AddHistory(
+                question.Id, _authContext.UserId, QuestionHistoryType.AddComment, request.Comment.Content);
         }
 
         var newComment = request.Comment.ToComment(request.CommentType, _authContext.UserId, request.ObjectId);

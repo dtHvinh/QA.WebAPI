@@ -30,7 +30,7 @@ public class GetUserQuestionHandler(
 
         var hasNext = question.Count == request.PageArgs.PageSize + 1;
 
-        int count = await _questionRepository.CountUserQuestion(_authenticationContext.UserId);
+        int count = await _questionRepository.CountUserQuestion(_authenticationContext.UserId, cancellationToken);
 
         return GenericResult<PagedResponse<GetQuestionResponse>>.Success(
             new PagedResponse<GetQuestionResponse>(

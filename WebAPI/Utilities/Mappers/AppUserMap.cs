@@ -16,7 +16,7 @@ public static class AppUserMap
     {
         return new AppUser
         {
-            UserName = dto.Email,
+            UserName = $"user{Random.Shared.Next(100)}{Random.Shared.Next(100000)}",
             Email = dto.Email
         };
     }
@@ -40,8 +40,7 @@ public static class AppUserMap
         return new UserResponse
         {
             ProfilePicture = obj!.ProfilePicture,
-            FirstName = obj.FirstName,
-            LastName = obj.LastName,
+            Username = obj!.UserName!,
             Reputation = obj.Reputation,
             Bio = obj.Bio,
             DateJoined = obj.DateJoined,

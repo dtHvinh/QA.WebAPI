@@ -54,6 +54,11 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         return await Entities.Where(e => e.QuestionId.Equals(questionId)).ToListAsync(cancellation);
     }
 
+    public async Task<int> CountUserAnswer(int userId, CancellationToken cancellationToken = default)
+    {
+        return await Entities.Where(e => e.AuthorId.Equals(userId)).CountAsync(cancellationToken);
+    }
+
     public void TrySoftDeleteAnswer(Answer answer, out string? errMsg)
     {
         if (answer.IsAccepted)

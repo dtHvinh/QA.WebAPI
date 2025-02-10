@@ -1,4 +1,5 @@
-﻿using WebAPI.Attributes;
+﻿using Microsoft.EntityFrameworkCore;
+using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
@@ -26,6 +27,10 @@ public class CommentRepository(ApplicationDbContext dbContext)
     {
         comment.UpdatedAt = DateTime.UtcNow;
         Entities.Update(comment);
+    }
+    public Task<int> CountUserComment(int userId, CancellationToken cancellationToken)
+    {
+        return Table.CountAsync(e => e.AuthorId.Equals(userId), cancellationToken);
     }
 
     public async Task<Comment?> GetCommentByIdAsync(int commentId)

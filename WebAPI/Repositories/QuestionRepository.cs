@@ -76,6 +76,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             .Skip(skip)
             .Take(take)
             .Include(e => e.Tags.Take(5))
+            .ThenInclude(e => e.Description)
             .ToListAsync(cancellationToken);
     }
 
@@ -228,9 +229,14 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public async Task<int> CountUserQuestion(int userId)
+    public async Task<int> CountUserQuestion(int userId, CancellationToken cancellationToken)
     {
-        return await Table.CountAsync(e => e.AuthorId == userId);
+        return await Table.CountAsync(e => e.AuthorId == userId, cancellationToken);
+    }
+
+    public async Task<int> CountQuestionAskedByUser(int userId, CancellationToken cancellationToken)
+    {
+        return await Table.CountAsync(e => e.AuthorId == userId, cancellationToken);
     }
 
     public void MarkAsView(int questionId)

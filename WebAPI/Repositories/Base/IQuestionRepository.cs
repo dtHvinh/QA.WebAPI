@@ -22,7 +22,7 @@ public interface IQuestionRepository : IRepository<Question>
     void VoteChange(Question question, Enums.VoteUpdateTypes updateType, int value);
     Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     void SoftDeleteQuestion(Question question);
-    Task<int> CountUserQuestion(int userId);
+    Task<int> CountUserQuestion(int userId, CancellationToken cancellationToken);
     Task<List<Question>> FindQuestionsByTagId(int tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken);
     Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
 }

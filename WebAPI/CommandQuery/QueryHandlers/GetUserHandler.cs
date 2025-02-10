@@ -12,10 +12,18 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.CommandQuery.QueryHandlers;
 
 public class GetUserHandler(
-    IUserRepository userRepository, AuthenticationContext authenticationContext, ICacheService cacheService)
+    IUserRepository userRepository,
+    IQuestionRepository questionRepository,
+    IAnswerRepository answerRepository,
+    ICommentRepository commentRepository,
+    AuthenticationContext authenticationContext,
+    ICacheService cacheService)
     : IQueryHandler<GetUserQuery, GenericResult<UserResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly IQuestionRepository _questionRepository = questionRepository;
+    private readonly IAnswerRepository _answerRepository = answerRepository;
+    private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly AuthenticationContext _authContext = authenticationContext;
     private readonly ICacheService _cacheService = cacheService;
 
@@ -37,8 +45,17 @@ public class GetUserHandler(
             await _cacheService.SetAppUserAsync(user);
         }
 
+        int questionCount = await _questionRepository.CountUserQuestion(user.Id, cancellationToken);
+        int answerCount = await _answerRepository.CountUserAnswer(user.Id, cancellationToken);
+        int commentCount = await _commentRepository.CountUserComment(user.Id, cancellationToken);
+
+        var response = user.ToUserResponse();
+        response.AnswerCount = answerCount;
+        response.QuestionCount = questionCount;
+        response.CommentCount = commentCount;
+
         return user == null
             ? GenericResult<UserResponse>.Failure(string.Format(EM.USER_ID_NOTFOUND, _authContext.UserId))
-            : GenericResult<UserResponse>.Success(user.ToUserResponse());
+            : GenericResult<UserResponse>.Success(response);
     }
 }

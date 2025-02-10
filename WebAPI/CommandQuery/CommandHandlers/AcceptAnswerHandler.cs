@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
@@ -14,13 +15,15 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
                                  IAnswerRepository answerRepository,
                                  IUserRepository userRepository,
                                  AuthenticationContext authenticationContext,
-                                 IOptions<ApplicationProperties> options)
+                                 IOptions<ApplicationProperties> options,
+                                 IQuestionHistoryRepository questionHistoryRepository)
     : ICommandHandler<AcceptAnswerCommand, GenericResult<GenericResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
     private readonly ApplicationProperties options = options.Value;
 
     public async Task<GenericResult<GenericResponse>> Handle(AcceptAnswerCommand request, CancellationToken cancellationToken)
@@ -49,6 +52,8 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
             var user = await _userRepository.FindUserByIdAsync(answer.AuthorId, cancellationToken);
             user!.Reputation += options.ReputationAcquirePerAction.AnswerAccepted;
         }
+
+        _questionHistoryRepository.AddHistory(question.Id, _authenticationContext.UserId, QuestionHistoryType.AcceptAnswer, answer.Content);
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 

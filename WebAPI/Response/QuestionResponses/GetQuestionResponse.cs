@@ -1,6 +1,7 @@
 ﻿using WebAPI.Response.AppUserResponses;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Response.CommentResponses;
+using WebAPI.Response.HistoryResponses;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities.Contract;
 
@@ -34,6 +35,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public ICollection<TagResponse> Tags { get; set; } = default!;
     public ICollection<AnswerResponse> Answers { get; set; } = default!;
     public ICollection<CommentResponse> Comments { get; set; } = default!;
+    public ICollection<QuestionHistoryResponse> Histories { get; set; } = default!;
 
     public GetQuestionResponse SetResourceRight(int? requesterId)
     {

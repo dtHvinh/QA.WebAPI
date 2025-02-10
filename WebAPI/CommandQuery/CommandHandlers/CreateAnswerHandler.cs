@@ -1,5 +1,6 @@
 ﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Utilities.Context;
@@ -11,12 +12,14 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateAnswerHandler(IAnswerRepository answerRepository,
                                  IQuestionRepository questionRepository,
-                                 AuthenticationContext authContext)
+                                 AuthenticationContext authContext,
+                                 IQuestionHistoryRepository questionHistoryRepository)
     : ICommandHandler<CreateAnswerCommand, GenericResult<AnswerResponse>>
 {
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
 
     public async Task<GenericResult<AnswerResponse>> Handle(
         CreateAnswerCommand request, CancellationToken cancellationToken)
@@ -32,6 +35,9 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
 
         var newAnswer = request.Answer.ToAnswer(_authContext.UserId, request.QuestionId);
         _answerRepository.AddAnswer(newAnswer);
+
+        _questionHistoryRepository.AddHistory(
+            question.Id, _authContext.UserId, QuestionHistoryType.AddAnswer, request.Answer.Content);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
