@@ -8,7 +8,7 @@ using static WebAPI.Utilities.Provider.CacheOptionProvider;
 
 namespace WebAPI.Utilities.Services;
 
-[Implement(typeof(ICacheService), ServiceLifetime.Singleton)]
+[Dependency(typeof(ICacheService), ServiceLifetime.Singleton)]
 public class CacheService(IDistributedCache cache,
                           ICacheOptionProvider cacheOptionProvider,
                           JsonSerializerOptions options) : ICacheService

@@ -7,7 +7,7 @@ using WebAPI.Utilities.Options;
 
 namespace WebAPI.Utilities.Provider;
 
-[Implement(typeof(ICacheOptionProvider), ServiceLifetime.Singleton)]
+[Dependency(typeof(ICacheOptionProvider), ServiceLifetime.Singleton)]
 public class CacheOptionProvider(IOptions<CacheOptions> options) : ICacheOptionProvider
 {
     private readonly CacheOptions _options = options.Value;

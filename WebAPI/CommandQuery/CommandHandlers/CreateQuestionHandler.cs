@@ -5,15 +5,19 @@ using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
+using WebAPI.Utilities.Services;
+using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                    IQuestionRepository questionRepository,
-                                   ITagRepository tagRepository)
+                                   ITagRepository tagRepository,
+                                   QuestionSearchService questionSearchService)
     : ICommandHandler<CreateQuestionCommand, GenericResult<CreateQuestionResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
+    private readonly QuestionSearchService questionSearchService = questionSearchService;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authentcationContext = authentcationContext;
 
@@ -40,6 +44,12 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         if (!opResult.IsSuccess)
         {
             return GenericResult<CreateQuestionResponse>.Failure(opResult.Message);
+        }
+
+        var indexDoc = await questionSearchService.IndexOrUpdateAsync(question, cancellationToken);
+        if (!indexDoc)
+        {
+            return GenericResult<CreateQuestionResponse>.Failure(EM.ES_INDEX_OR_UPDATE_DOCUMENT_FAILED);
         }
 
         var response = new CreateQuestionResponse(Id: question.Id,

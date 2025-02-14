@@ -83,7 +83,7 @@ public class CreateVoteHandler(
         var result = await questionRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? GenericResult<VoteResponse>.Success(new(question.Upvote, question.Downvote))
+            ? GenericResult<VoteResponse>.Success(new(question.Upvotes, question.Downvotes))
             : GenericResult<VoteResponse>.Failure(result.Message);
     }
 

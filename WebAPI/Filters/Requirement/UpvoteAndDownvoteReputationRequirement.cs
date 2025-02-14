@@ -15,6 +15,6 @@ public class UpvoteAndDownvoteReputationRequirement(IUserRepository userReposito
         userRepository,
         authContext,
         cache,
-        options.Value.ReputationRequirePerAction.UpvoteAndDownvote)
+        options.Value.ActionRepRequirement.UpvoteAndDownvote)
 {
 }

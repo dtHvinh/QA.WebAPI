@@ -1,6 +1,5 @@
 ﻿using WebAPI.Model;
 using WebAPI.Utilities;
-using WebAPI.Utilities.Params;
 
 namespace WebAPI.Repositories.Base;
 
@@ -10,7 +9,6 @@ public interface IQuestionRepository : IRepository<Question>
     /// Find a question with almost all references is loaded
     /// </summary>
     Task<Question?> FindQuestionDetailByIdAsync(int id, CancellationToken cancellationToken);
-    Task<List<Question>> SearchQuestionAsync(QuestionSearchParams searchParams, CancellationToken cancellationToken);
     void MarkAsView(int questionId);
     Task SetQuestionTag(Question question, List<Tag> tags);
     Task<Question?> FindQuestionWithAuthorByIdAsync(int id, CancellationToken cancellationToken);

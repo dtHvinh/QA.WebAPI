@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
@@ -22,8 +23,12 @@ public class AppUser : IdentityUser<int>, ISoftDeleteEntity
     public string Bio { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
 
+    [JsonIgnore]
     public ICollection<Question> Questions { get; set; } = default!;
+    [JsonIgnore]
     public ICollection<Answer> Answers { get; set; } = default!;
+    [JsonIgnore]
     public ICollection<Vote> Votes { get; set; } = default!;
+    [JsonIgnore]
     public ICollection<BookMark> BookMarks { get; set; } = default!;
 }

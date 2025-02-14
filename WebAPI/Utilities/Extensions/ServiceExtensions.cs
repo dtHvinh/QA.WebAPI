@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.Serialization;
+using Elastic.Transport;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +11,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebAPI.Data;
 using WebAPI.Model;
-using WebAPI.Utilities.Auto;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
@@ -96,11 +98,28 @@ public static class ServiceExtensions
         {
             return new JsonSerializerOptions()
             {
-                ReferenceHandler = ReferenceHandler.Preserve,
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
             };
         });
-        services.AddTransient<AuthenticationContext>();
+        services.AddSingleton(e =>
+        {
+            var nodePool = new SingleNodePool(new Uri(Configuration["ElasticSearch:Uri"]!));
 
+            var ess =
+            new ElasticsearchClientSettings(
+                nodePool: nodePool,
+                sourceSerializer: (defaultSerializer, settings) =>
+                    new DefaultSourceSerializer(settings,
+                    (e) => e.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+            )
+            .CertificateFingerprint(Configuration["ElasticSearch:CertFingerprint"]!)
+            .Authentication(new BasicAuthentication(
+                Configuration["ElasticSearch:Username"]!, Configuration["ElasticSearch:Password"]!));
+
+            return ess;
+        });
+        services.AddSingleton<QuestionSearchService>();
+        services.AddTransient<AuthenticationContext>();
         services.AddSingleton(new ImageProvider(
             Configuration["ImageProvider:DefaultProfileImage"]
             ?? throw new InvalidOperationException("Provider not found")));

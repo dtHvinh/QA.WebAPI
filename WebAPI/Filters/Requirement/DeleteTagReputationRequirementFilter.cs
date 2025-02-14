@@ -15,6 +15,6 @@ public class DeleteTagReputationRequirementFilter(IUserRepository userRepository
     : ReputationRequirementFilter(userRepository,
                             authContext,
                             cache,
-                            options.Value.ReputationRequirePerAction.DeleteTag)
+                            options.Value.ActionRepRequirement.DeleteTag)
 {
 }

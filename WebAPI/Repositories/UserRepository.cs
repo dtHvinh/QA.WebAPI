@@ -23,6 +23,13 @@ public class UserRepository(ApplicationDbContext dbContext,
     private readonly ImageProvider _imgProv = imageProvider;
     private readonly ICacheService _cache = cache;
 
+    public async Task<int> GetReputation(int id, CancellationToken cancellationToken = default)
+    {
+        var user = await Table.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        return user is null ? 0 : user.Reputation;
+
+    }
     public async Task<GenericResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
     {
         try

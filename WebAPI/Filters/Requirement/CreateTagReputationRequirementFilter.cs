@@ -14,6 +14,6 @@ public class CreateTagReputationRequirementFilter(IUserRepository userRepository
     : ReputationRequirementFilter(userRepository,
                             authContext,
                             cache,
-                            options.Value.ReputationRequirePerAction.CreateTag)
+                            options.Value.ActionRepRequirement.CreateTag)
 {
 }

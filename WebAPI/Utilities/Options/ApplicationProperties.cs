@@ -2,7 +2,7 @@
 
 public class ApplicationProperties
 {
-    public required ReputationRequirePerAction ReputationRequirePerAction { get; set; }
+    public required ReputationRequirePerAction ActionRepRequirement { get; set; }
     public required ReputationAcquirePerAction ReputationAcquirePerAction { get; set; }
 }
 
@@ -15,6 +15,7 @@ public class ReputationRequirePerAction
     public int CommentToQuestion { get; set; }
     public int AnswerQuestion { get; set; }
     public int UpvoteAndDownvote { get; set; }
+    public int EditQuestion { get; set; }
 }
 
 public class ReputationAcquirePerAction

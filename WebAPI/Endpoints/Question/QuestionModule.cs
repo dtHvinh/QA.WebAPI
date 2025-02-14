@@ -88,14 +88,14 @@ public sealed class QuestionModule : IModule
 
         group.MapGet("/search",
             async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
-            [FromQuery] string keyword,
+            [FromQuery] string searchTerm,
             [FromQuery] int tagId,
-            [FromQuery] int page,
+            [FromQuery] int pageIndex,
             [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
         {
-            var cmd = new SearchQuestionQuery(keyword, tagId, PageArgs.From(page, pageSize));
+            var cmd = new SearchQuestionQuery(searchTerm, tagId, PageArgs.From(pageIndex, pageSize));
 
             var result = await mediator.Send(cmd, cancellationToken);
 
@@ -125,6 +125,27 @@ public sealed class QuestionModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .RequireAuthorization();
+
+        group.MapGet("/{questionId:int}/similar",
+            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+            int questionId,
+            int skip,
+            int take,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default) =>
+            {
+                var cmd = new GetSimilarQuestionQuery(questionId, skip, take);
+
+                var result = await mediator.Send(cmd, cancellationToken);
+
+                if (!result.IsSuccess)
+                {
+                    return ProblemResultExtensions.BadRequest(result.Message);
+                }
+
+                return TypedResults.Ok(result.Value);
+            })
             .RequireAuthorization();
 
         #endregion GET

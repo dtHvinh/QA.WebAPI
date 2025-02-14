@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Elastic.Clients.Elasticsearch;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,6 +10,7 @@ using WebAPI.Model;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Services;
 
 namespace WebAPI.Data;
 
@@ -179,7 +181,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         ]);
         await userManager.AddToRoleAsync(user2, Constants.Roles.Admin);
     }
-
     public static async Task InitUser(WebApplication app, bool run)
     {
         if (!run)
@@ -254,7 +255,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             var b = await dbContext.SaveChangesAsync();
         }
     }
-
     public static async Task InitQuestion(WebApplication app, bool run)
     {
         if (!run)
@@ -305,7 +305,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
         var a = await dbContext.SaveChangesAsync();
     }
-
     public static async Task InitQuestionTag(WebApplication app, bool run)
     {
         if (!run)
@@ -362,7 +361,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
         var a = await dbContext.SaveChangesAsync();
     }
-
     public static async Task UpdateTagCount(WebApplication app, bool run)
     {
         if (!run)
@@ -386,6 +384,37 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         dbContext.UpdateRange(t);
 
         var a = await dbContext.SaveChangesAsync();
+    }
+    public static async Task LoadElasticSearchData(WebApplication app, bool run)
+    {
+        if (!run)
+            return;
+
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var es = scope.ServiceProvider.GetRequiredService<QuestionSearchService>();
+        var escs = scope.ServiceProvider.GetRequiredService<ElasticsearchClientSettings>();
+
+        var q = dbContext.Set<Question>();
+
+        var client = new ElasticsearchClient(escs);
+
+        dbContext.Database.SetCommandTimeout(300);
+
+        List<Question> t = await q.Include(e => e.Author).Include(e => e.Tags).ToListAsync();
+
+        var res1 = await client.Indices.CreateAsync<Question>("user_questions", c =>
+           {
+               c.Mappings(m =>
+               {
+                   m.Properties(p =>
+                   {
+                       p.Nested(n => n.Tags);
+                   });
+               });
+           });
+
+        var res2 = await es.IndexOrUpdateManyAsync(t, QuestionSearchService.QuestionIndexName);
     }
 
     [GeneratedRegex("<([^>]+)>")]

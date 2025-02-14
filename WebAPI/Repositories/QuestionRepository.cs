@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAPI.Attributes;
 using WebAPI.Data;
-using WebAPI.Libraries.Collections;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Params;
 using static WebAPI.Utilities.Enums;
 
 namespace WebAPI.Repositories;
@@ -18,45 +16,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    private static async Task<List<Question>> SearchQuestionWithKeyword(
-        ICollection<Question> tagQuestions,
-        string keyword,
-        int skip,
-        int take,
-        CancellationToken cancellationToken = default)
-    {
-        var questions = await tagQuestions
-            .Where(q =>
-            {
-                return
-                q.Title.Contains(keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                q.Content.Contains(keyword, StringComparison.InvariantCultureIgnoreCase);
-            })
-            .AsAsyncQueryable()
-            .EvaluateQuery(new SearchQuestionSpecification())
-            .Skip(skip)
-            .Take(take)
-            .ToListAsync(cancellationToken);
-
-        return questions ?? [];
-    }
-
-    private static async Task<List<Question>> SearchQuestionByTag(
-        ICollection<Question> tagQuestions,
-        int skip,
-        int take,
-        CancellationToken cancellationToken = default)
-    {
-        var questions = await tagQuestions
-            .AsAsyncQueryable()
-            .EvaluateQuery(new SearchQuestionSpecification())
-            .Skip(skip)
-            .Take(take)
-            .ToListAsync(cancellationToken);
-
-        return questions ?? [];
-    }
-
     public async Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
     {
         var query = Table.Where(e => e.AuthorId == userId)
@@ -66,7 +25,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
-            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes - e.Downvotes),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
             _ => throw new InvalidOperationException(),
@@ -89,7 +48,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
-            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvote - e.Downvote),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
             _ => throw new InvalidOperationException(),
@@ -124,7 +83,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         orderByFunc = sortOrder switch
         {
             QuestionSortOrder.Newest => (q => q.CreatedAt),
-            QuestionSortOrder.MostVoted => (q => q.Upvote - q.Downvote),
+            QuestionSortOrder.MostVoted => (q => q.Upvotes - q.Downvotes),
             QuestionSortOrder.MostViewed => (q => q.ViewCount),
             QuestionSortOrder.Solved => (q => q.IsSolved),
             QuestionSortOrder.Draft => (q => q.IsDraft),
@@ -151,36 +110,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return result;
     }
 
-    public async Task<List<Question>> SearchQuestionAsync(
-        QuestionSearchParams searchParams, CancellationToken cancellationToken)
-    {
-        // Load questions of the tag
-        var tagQuestions = await _dbContext
-            .Set<Tag>()
-            .Where(e => e.Id.Equals(searchParams.TagId))
-            .AsSplitQuery()
-            .Include(e => e.Questions)
-            .ThenInclude(e => e.Tags)
-            .Include(e => e.Questions)
-            .ThenInclude(e => e.Comments
-                               .OrderByDescending(o => o.CreatedAt)
-                               .Take(10))
-            .FirstAsync(cancellationToken);
-
-        // Evaluate the query
-        return
-            string.IsNullOrEmpty(searchParams.Keyword)
-            ? await SearchQuestionByTag(tagQuestions.Questions,
-                                        searchParams.Skip,
-                                        searchParams.Take,
-                                        cancellationToken)
-            : await SearchQuestionWithKeyword(tagQuestions.Questions,
-                                              searchParams.Keyword,
-                                              searchParams.Skip,
-                                              searchParams.Take,
-                                              cancellationToken);
-    }
-
     public async Task SetQuestionTag(Question question, List<Tag> tags)
     {
         await _dbContext.Entry(question).Collection(e => e.Tags).LoadAsync();
@@ -199,16 +128,16 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             case VoteUpdateTypes.CreateNew:
                 if (value == 1)
-                    question.Upvote += value;
+                    question.Upvotes += value;
                 else if (value == -1)
-                    question.Downvote -= value; // - plus - eq +
+                    question.Downvotes -= value; // - plus - eq +
 
                 Entities.Update(question);
                 break;
 
             case VoteUpdateTypes.ChangeVote:
-                question.Upvote += value;
-                question.Downvote -= value;
+                question.Upvotes += value;
+                question.Downvotes -= value;
                 Entities.Update(question);
                 break;
 

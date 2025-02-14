@@ -5,6 +5,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(AuthorId))]
+[Index(nameof(Upvotes))]
 [Index(nameof(CreatedAt), AllDescending = true)]
 [Index(nameof(ViewCount), AllDescending = true)]
 [Index(nameof(IsSolved))]
@@ -26,8 +27,8 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
     public required string Slug { get; set; }
     [Column(TypeName = "nvarchar(max)")]
     public required string Content { get; set; }
-    public int Upvote { get; set; }
-    public int Downvote { get; set; }
+    public int Upvotes { get; set; }
+    public int Downvotes { get; set; }
 
     public bool IsDuplicate { get; set; } = false; // When user or admin mark as duplicate
     public bool IsClosed { get; set; } = false; // Disable new answer

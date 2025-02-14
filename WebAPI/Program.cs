@@ -1,11 +1,12 @@
-using WebAPI.Utilities.Auto;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddLogging()
                 .AddHttpContextAccessor();
+
 
 builder.Services.WithConfiguration(builder.Configuration)
                 .ConfigureApplicationOptions()
@@ -35,7 +36,6 @@ builder.Services.AddMediatR(
 var app = builder.Build();
 
 app.UseCors("AllowOrigins");
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

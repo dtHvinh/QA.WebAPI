@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using WebAPI.Utilities.Contract;
 
-namespace WebAPI.Utilities.Auto;
+namespace WebAPI.Utilities.Reflection;
 
 public static class ModuleRegistration
 {

@@ -15,6 +15,6 @@ public class QuestionCommentReputationRequirement(IUserRepository userRepository
         userRepository,
         authContext,
         cache,
-        options.Value.ReputationRequirePerAction.CommentToQuestion)
+        options.Value.ActionRepRequirement.CommentToQuestion)
 {
 }

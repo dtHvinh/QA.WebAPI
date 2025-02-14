@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
@@ -19,5 +20,6 @@ public class Tag : IEntity<int>
     public TagDescription? Description { get; set; }
     public TagBody? WikiBody { get; set; }
 
+    [JsonIgnore]
     public ICollection<Question> Questions { get; set; } = default!;
 }

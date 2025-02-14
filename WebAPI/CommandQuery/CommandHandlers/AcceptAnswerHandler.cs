@@ -7,6 +7,7 @@ using WebAPI.Response;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
+using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -16,7 +17,8 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
                                  IUserRepository userRepository,
                                  AuthenticationContext authenticationContext,
                                  IOptions<ApplicationProperties> options,
-                                 IQuestionHistoryRepository questionHistoryRepository)
+                                 IQuestionHistoryRepository questionHistoryRepository,
+                                 QuestionSearchService questionSearchService)
     : ICommandHandler<AcceptAnswerCommand, GenericResult<GenericResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
@@ -24,6 +26,7 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
+    private readonly QuestionSearchService _questionSearchService = questionSearchService;
     private readonly ApplicationProperties options = options.Value;
 
     public async Task<GenericResult<GenericResponse>> Handle(AcceptAnswerCommand request, CancellationToken cancellationToken)
@@ -56,6 +59,8 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
         _questionHistoryRepository.AddHistory(question.Id, _authenticationContext.UserId, QuestionHistoryType.AcceptAnswer, answer.Content);
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
+
+        await _questionSearchService.IndexOrUpdateAsync(question, cancellationToken);
 
         return result.IsSuccess
             ? GenericResult<GenericResponse>.Success(new("Done"))

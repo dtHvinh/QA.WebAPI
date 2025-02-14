@@ -11,4 +11,4 @@ public class UpdateTagReputationRequirementFilter(IUserRepository userRepository
                              AuthenticationContext authContext,
                              ICacheService cache,
                              IOptions<ApplicationProperties> options)
-    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ReputationRequirePerAction.UpdateTag);
+    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ActionRepRequirement.UpdateTag);

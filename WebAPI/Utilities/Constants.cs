@@ -31,6 +31,10 @@ public static class Constants
 
     public static class EM
     {
+        public const string ES_INDEX_OR_UPDATE_DOCUMENT_FAILED = "Something wrong with ES";
+
+        public const string REP_NOT_MEET_REQ = "You need at least {0} reputation to do this";
+
         public const string USER_EMAIL_NOTFOUND = "User with email {0} not found";
         public const string BOOKMARK_NOT_FOUND = "Bookmark not found";
         public const string USER_ID_NOTFOUND = "User with id {0} not found";

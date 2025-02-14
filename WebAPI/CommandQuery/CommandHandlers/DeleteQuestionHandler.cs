@@ -4,6 +4,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Result.Base;
+using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -11,13 +12,15 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class DeleteQuestionHandler(IQuestionRepository questionRepository,
                                    ITagRepository tagRepository,
                                    AuthenticationContext authContext,
-                                   IAnswerRepository answerRepository) :
+                                   IAnswerRepository answerRepository,
+                                   QuestionSearchService questionSearchService) :
     ICommandHandler<DeleteQuestionCommand, GenericResult<DeleteQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authContext = authContext;
     private readonly IAnswerRepository _answerRepository = answerRepository;
+    private readonly QuestionSearchService _questionSearchService = questionSearchService;
 
     public async Task<GenericResult<DeleteQuestionResponse>> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
@@ -38,7 +41,7 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
             errMessage = "Can not delete solved question";
         }
 
-        if (questionToDelete.Upvote - questionToDelete.Downvote > 0)
+        if (questionToDelete.Upvotes - questionToDelete.Downvotes > 0)
         {
             errMessage = "Can not delete question people may find it valuable";
         }
@@ -64,6 +67,8 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
         _questionRepository.SoftDeleteQuestion(questionToDelete);
 
         var delOp = await _questionRepository.SaveChangesAsync(cancellationToken);
+
+        await _questionSearchService.IndexOrUpdateAsync(questionToDelete, cancellationToken);
 
         return delOp.IsSuccess
             ? GenericResult<DeleteQuestionResponse>.Success(new DeleteQuestionResponse(request.Id))

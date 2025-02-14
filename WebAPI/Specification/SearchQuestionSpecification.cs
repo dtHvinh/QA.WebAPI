@@ -16,7 +16,7 @@ public class SearchQuestionSpecification : SpecificationBase<Question>
     public override IQueryable<Question> EvaluateQuery(IQueryable<Question> query)
     {
         return base.EvaluateQuery(query)
-            .OrderByDescending(e => e.Upvote)
+            .OrderByDescending(e => e.Upvotes)
             .ThenByDescending(e => e.ViewCount);
     }
 }
