@@ -124,6 +124,16 @@ public static class ServiceExtensions
             Configuration["ImageProvider:DefaultProfileImage"]
             ?? throw new InvalidOperationException("Provider not found")));
 
+        services.AddSingleton(sp =>
+        {
+            var endpoint = new Uri(Configuration["OpenAI:Endpoint"]
+                ?? throw new InvalidOperationException("Endpoint not found"));
+            var model = Configuration["OpenAI:Model"]
+                ?? throw new InvalidOperationException("Model not found");
+
+            return new AIService(endpoint, model);
+        });
+
         services.AddValidatorsFromAssembly(typeof(ServiceExtensions).Assembly);
 
         return services;
