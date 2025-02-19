@@ -130,8 +130,10 @@ public static class ServiceExtensions
                 ?? throw new InvalidOperationException("Endpoint not found"));
             var model = Configuration["OpenAI:Model"]
                 ?? throw new InvalidOperationException("Model not found");
+            var reasoningModel = Configuration["OpenAI:ReasoningModel"]
+                ?? throw new InvalidOperationException("Model not found");
 
-            return new AIService(endpoint, model);
+            return new AIService(endpoint, model, reasoningModel);
         });
 
         services.AddValidatorsFromAssembly(typeof(ServiceExtensions).Assembly);

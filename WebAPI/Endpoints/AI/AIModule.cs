@@ -13,10 +13,12 @@ public class AIModule : IModule
     {
         var group = endpoints.MapGroup(EG.AI);
 
-        group.MapPost("/chat", SendMessage);
+        group.MapPost("/chat", SendMessage)
+            .RequireAuthorization();
     }
 
     public static async Task SendMessage(
+        [FromQuery] bool isReasoning,
         [FromBody] ChatRequest request, AIService service, HttpContext httpContext, AuthenticationContext authenticationContext, CancellationToken cancellationToken)
     {
         httpContext.Response.ContentType = "text/event-stream";
@@ -29,20 +31,32 @@ public class AIModule : IModule
 
         chatMessages.Add(userMessage);
 
-        var streamingReply = service.ChatClient.CompleteChatStreamingAsync(
+        var chatClient = isReasoning ? service.ReasoningChatClient : service.ChatClient;
+
+        var streamingReply = chatClient.CompleteChatStreamingAsync(
             chatMessages,
             new() { EndUserId = authenticationContext.UserId.ToString() },
             cancellationToken);
 
-        await foreach (var streamingMessage in streamingReply)
+        try
         {
-            if (streamingMessage.ContentUpdate.Count > 0)
+            await foreach (var streamingMessage in streamingReply)
             {
-                var content = streamingMessage.ContentUpdate[0].Text;
+                if (streamingMessage.ContentUpdate.Count > 0)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                await httpContext.Response.WriteAsync($"{content}", cancellationToken);
-                await httpContext.Response.Body.FlushAsync(cancellationToken);
+
+                    var content = streamingMessage.ContentUpdate[0].Text;
+
+                    await httpContext.Response.WriteAsync($"{content}", cancellationToken);
+                    await httpContext.Response.Body.FlushAsync(cancellationToken);
+                }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore
         }
     }
 

@@ -44,7 +44,7 @@ public class CreateVoteHandler(
 
         if (_authContext.IsResourceOwnedByUser(question))
         {
-            return GenericResult<VoteResponse>.Failure("You can't vote your own question");
+            return GenericResult<VoteResponse>.Failure("You can't vote for your own question");
         }
 
         var type = request.IsUpvote
@@ -99,7 +99,7 @@ public class CreateVoteHandler(
 
         if (_authContext.IsResourceOwnedByUser(answer))
         {
-            return GenericResult<VoteResponse>.Failure("You can't vote your own answer");
+            return GenericResult<VoteResponse>.Failure("You can't vote for your own answer");
         }
 
         var type = request.IsUpvote

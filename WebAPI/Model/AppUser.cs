@@ -13,6 +13,7 @@ public class AppUser : IdentityUser<int>, ISoftDeleteEntity
     public string? FirstName { get; set; }
     [Column(TypeName = "nvarchar(50)")]
     public string? LastName { get; set; }
+    public string? RefreshToken { get; set; }
     public int Reputation { get; set; }
     public bool IsBanned { get; set; }
     public DateTime DateJoined { get; set; } = DateTime.UtcNow;

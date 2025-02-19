@@ -24,6 +24,23 @@ public sealed class AuthModule : IModule
             return Results.Ok("Hello");
         });
 
+        group.MapPost("/refresh",
+            async Task<Results<Ok<AuthRefreshResponse>, ProblemHttpResult>> (
+            [FromBody] RefreshTokenRequestDto dto,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var query = new RefreshTokenCommand(dto);
+            var result = await mediator.Send(query, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                return ProblemResultExtensions.BadRequest(result.Message);
+            }
+            return TypedResults.Ok(result.Value);
+        })
+            .RequireAuthorization()
+            .AllowAnonymous();
+
         MapLogin(group);
         MapRegister(group);
     }

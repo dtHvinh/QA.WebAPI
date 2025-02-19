@@ -36,9 +36,6 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
         if (question is null)
             return GenericResult<GenericResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND, request.QuestionId));
 
-        if (question.IsSolved)
-            return GenericResult<GenericResponse>.Failure("Question is already been solved");
-
         var answer = await _answerRepository.FindAnswerById(request.AnswerId, cancellationToken);
 
         if (answer is null)
@@ -49,12 +46,6 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
 
         question.IsSolved = true;
         answer.IsAccepted = true;
-
-        if (answer.AuthorId != _authenticationContext.UserId)
-        {
-            var user = await _userRepository.FindUserByIdAsync(answer.AuthorId, cancellationToken);
-            user!.Reputation += options.ReputationAcquirePerAction.AnswerAccepted;
-        }
 
         _questionHistoryRepository.AddHistory(question.Id, _authenticationContext.UserId, QuestionHistoryType.AcceptAnswer, answer.Content);
 

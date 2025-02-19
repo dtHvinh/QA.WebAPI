@@ -37,7 +37,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
         }
 
         var at = await _tokenProvider.CreateTokenAsync(user);
-        var rt = _tokenProvider.CreateRefreshToken();
+        var rt = await _tokenProvider.GenerateRefreshToken(user);
 
         var userRoles = await _userManager.GetRolesAsync(user);
 

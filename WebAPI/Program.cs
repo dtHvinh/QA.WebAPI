@@ -41,4 +41,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.RegisterEndpoints();
+
 await app.RunAsync();

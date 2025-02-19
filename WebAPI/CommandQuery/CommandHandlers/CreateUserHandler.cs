@@ -31,7 +31,9 @@ public class CreateUserHandler(IUserRepository userRepository,
         newUser = result.Value!;
 
         var jwtToken = await _tokenProvider.CreateTokenAsync(newUser);
-        var refreshToken = _tokenProvider.CreateRefreshToken();
+        var refreshToken = await _tokenProvider.GenerateRefreshToken(newUser);
+
+        await _userRepository.SaveChangesAsync(cancellationToken);
 
         return GenericResult<AuthResponse>
             .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, "User"));
