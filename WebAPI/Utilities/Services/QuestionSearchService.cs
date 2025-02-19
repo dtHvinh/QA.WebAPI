@@ -58,6 +58,26 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
         return new([], -1);
     }
 
+    public async Task<SearchResult<Question>> SearchQuestionYouMayLikeAsync(int skip, int take, CancellationToken cancellationToken)
+    {
+        var response = await ElasticSearchClient.SearchAsync<Question>(s => s
+            .Index(QuestionIndexName)
+            .From(skip)
+            .Size(take)
+            .Query(q => q
+                .FunctionScore(fs =>
+                {
+                    fs.Functions(f => f.RandomScore(new RandomScoreFunction()));
+                })), cancellationToken);
+
+        if (response.IsValidResponse)
+        {
+            return new([.. response.Documents], -1);
+        }
+
+        return new([], -1);
+    }
+
     public async Task<SearchResult<Question>> SearchQuestionAsync(
         string keyword, int tagId, int skip, int take, CancellationToken cancellationToken)
     {

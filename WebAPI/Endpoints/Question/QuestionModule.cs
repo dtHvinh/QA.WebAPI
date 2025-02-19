@@ -26,298 +26,340 @@ public sealed class QuestionModule : IModule
     {
         var group = endpoints.MapGroup(EG.Question);
 
-        #region GET
-
-        group.MapGet("/user", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
-            int pageIndex,
-            int pageSize,
-            string orderBy,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), orderBy);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
+        group.MapGet("/user", GetUserQuestionHandler)
             .RequireAuthorization();
 
-        group.MapGet("/", async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
-            int pageIndex,
-            int pageSize,
-            string orderBy,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
+        group.MapGet("/", GetQuestionsHandler)
             .RequireAuthorization();
 
-        group.MapGet("/view/{id:int}", async Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> (
+        group.MapGet("/view/{id:int}", ViewQuestionDetailHandler)
+            .RequireAuthorization();
+
+        group.MapGet("/search", SearchQuestionHandler)
+            .RequireAuthorization();
+
+        group.MapGet("/you_may_like", QuestionYouMayLikeHandler)
+            .RequireAuthorization();
+
+        group.MapGet("/{questionId:int}/history", ViewQuestionHistory)
+            .RequireAuthorization();
+
+        group.MapGet("/{questionId:int}/similar", GetSimilarQuestion)
+            .RequireAuthorization();
+
+        group.MapPost("/", CreateQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
+
+        group.MapPost("/{questionId:int}/comment", CommentToQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
+            .AddEndpointFilter<QuestionCommentReputationRequirement>();
+
+        group.MapPost("/{questionId:int}/answer", AnswerToQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
+            .AddEndpointFilter<AnswerReputationRequirement>();
+
+        group.MapPost("/{questionId:int}/{action:regex(^(upvote|downvote)$)}", VoteQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
+
+        group.MapDelete("/{id:int}", DeleteQuestionHandler)
+             .RequireAuthorization();
+
+        group.MapPut("/", UpdateQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
+
+        group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestionHandler)
+            .RequireAuthorization();
+
+        group.MapPut("/{questionId:int}/close", CloseQuestionHandler)
+            .RequireAuthorization();
+    }
+
+    public static
+        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> QuestionYouMayLikeHandler(
+            [FromQuery] int pageIndex,
+            [FromQuery] int pageSize,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetQuestionYouMayLikeQuery(PageArgs.From(pageIndex, pageSize));
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+        async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> UpdateQuestionHandler(
+            [FromBody] UpdateQuestionDto dto,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new UpdateQuestionCommand(dto);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> AcceptQuestionHandler(
+            int questionId,
+            int answerId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new AcceptAnswerCommand(questionId, answerId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+
+            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> CloseQuestionHandler(
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CloseQuestionCommand(questionId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+        async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> DeleteQuestionHandler(
             int id,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new DeleteQuestionCommand(id);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
         {
-            var cmd = new GetQuestionDetailQuery(id);
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
 
-            var result = await mediator.Send(cmd, cancellationToken);
+        return TypedResults.Ok(result.Value);
+    }
 
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
+    public static
+            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> VoteQuestionHandler(
+            int questionId,
+            string action,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateQuestionVoteCommand(questionId, action == "upvote");
 
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization();
+        var result = await mediator.Send(cmd, cancellationToken);
 
-        group.MapGet("/search",
-            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+
+            async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> AnswerToQuestionHandler(
+            [FromBody] CreateAnswerDto dto,
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateAnswerCommand(dto, questionId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+            async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> CommentToQuestionHandler(
+            [FromBody] CreateCommentDto dto,
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateCommentCommand(dto, CommentTypes.Question, questionId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestionHandler(
+            [FromBody] CreateQuestionDto dto,
+            [FromServices] IMediator mediator,
+            [FromQuery] bool isDraft = false,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateQuestionCommand(dto, isDraft);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static async
+        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetUserQuestionHandler(
+            int pageIndex,
+            int pageSize,
+            string orderBy,
+            [FromServices] IMediator mediator,
+    CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), orderBy);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static async
+        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetQuestionsHandler(
+            int pageIndex,
+            int pageSize,
+            string orderBy,
+            [FromServices] IMediator mediator,
+    CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static async
+         Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ViewQuestionDetailHandler(
+             int id,
+             [FromServices] IMediator mediator,
+             CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetQuestionDetailQuery(id);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> SearchQuestionHandler(
             [FromQuery] string searchTerm,
             [FromQuery] int tagId,
             [FromQuery] int pageIndex,
             [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new SearchQuestionQuery(searchTerm, tagId, PageArgs.From(pageIndex, pageSize));
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
         {
-            var cmd = new SearchQuestionQuery(searchTerm, tagId, PageArgs.From(pageIndex, pageSize));
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
 
-            var result = await mediator.Send(cmd, cancellationToken);
+        return TypedResults.Ok(result.Value);
+    }
 
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization();
-
-        group.MapGet("/{questionId:int}/history",
-            async Task<Results<Ok<List<QuestionHistoryResponse>>, ProblemHttpResult>> (
+    public static
+            async Task<Results<Ok<List<QuestionHistoryResponse>>, ProblemHttpResult>> ViewQuestionHistory(
             int questionId,
             [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetQuestionHistoryQuery(questionId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
         {
-            var cmd = new GetQuestionHistoryQuery(questionId);
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
 
-            var result = await mediator.Send(cmd, cancellationToken);
+        return TypedResults.Ok(result.Value);
+    }
 
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
 
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization();
+    public static async
+        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetSimilarQuestion(
+      int questionId,
+      int skip,
+      int take,
 
-        group.MapGet("/{questionId:int}/similar",
-            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> (
-            int questionId,
-            int skip,
-            int take,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-            {
-                var cmd = new GetSimilarQuestionQuery(questionId, skip, take);
 
-                var result = await mediator.Send(cmd, cancellationToken);
+      [FromServices] IMediator mediator,
+      CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetSimilarQuestionQuery(questionId, skip, take);
 
-                if (!result.IsSuccess)
-                {
-                    return ProblemResultExtensions.BadRequest(result.Message);
-                }
+        var result = await mediator.Send(cmd, cancellationToken);
 
-                return TypedResults.Ok(result.Value);
-            })
-            .RequireAuthorization();
-
-        #endregion GET
-
-        #region POST
-
-        group.MapPost("/", async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> (
-            [FromBody] CreateQuestionDto dto,
-            [FromServices] IMediator mediator,
-            [FromQuery] bool isDraft = false,
-            CancellationToken cancellationToken = default) =>
+        if (!result.IsSuccess)
         {
-            var cmd = new CreateQuestionCommand(dto, isDraft);
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
 
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
-
-        group.MapPost("/{questionId:int}/comment",
-            async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
-            [FromBody] CreateCommentDto dto,
-            int questionId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new CreateCommentCommand(dto, CommentTypes.Question, questionId);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
-            .AddEndpointFilter<QuestionCommentReputationRequirement>();
-
-        group.MapPost("/{questionId:int}/answer",
-            async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
-            [FromBody] CreateAnswerDto dto,
-            int questionId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new CreateAnswerCommand(dto, questionId);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
-            .AddEndpointFilter<AnswerReputationRequirement>();
-
-        group.MapPost("/{questionId:int}/{action:regex(^(upvote|downvote)$)}",
-            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
-            int questionId,
-            string action,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new CreateQuestionVoteCommand(questionId, action == "upvote");
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization()
-            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
-
-        #endregion POST
-
-        #region DELETE
-
-        group.MapDelete("/{id:int}", async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> (
-            int id,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new DeleteQuestionCommand(id);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-             .RequireAuthorization();
-
-        #endregion DELETE
-
-        #region PUT
-
-        group.MapPut("/", async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> (
-            [FromBody] UpdateQuestionDto dto,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new UpdateQuestionCommand(dto);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
-
-        group.MapPut("/{questionId:int}/accept/{answerId:int}",
-            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            int questionId,
-            int answerId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-        {
-            var cmd = new AcceptAnswerCommand(questionId, answerId);
-
-            var result = await mediator.Send(cmd, cancellationToken);
-
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-            return TypedResults.Ok(result.Value);
-        })
-            .RequireAuthorization();
-
-        group.MapPut("/{questionId:int}/close",
-            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            int questionId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
-            {
-                var cmd = new CloseQuestionCommand(questionId);
-
-                var result = await mediator.Send(cmd, cancellationToken);
-
-                if (!result.IsSuccess)
-                {
-                    return ProblemResultExtensions.BadRequest(result.Message);
-                }
-                return TypedResults.Ok(result.Value);
-            })
-            .RequireAuthorization();
-
-        #endregion PUT
+        return TypedResults.Ok(result.Value);
     }
 }

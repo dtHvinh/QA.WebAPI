@@ -45,6 +45,7 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
     public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<Tag> Tags { get; set; } = default!;
     public ICollection<QuestionHistory> QuestionHistories { get; set; } = default!;
+    public ICollection<QuestionCollection> QuestionCollections { get; set; } = default!;
 }
 
 public enum QuestionSortOrder
