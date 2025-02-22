@@ -30,3 +30,9 @@ public class QuestionCollection : IEntityWithTime<int>, IOwnedByUser<int>
 
     public ICollection<Question> Questions { get; set; } = default!;
 }
+
+public enum CollectionSortOrder
+{
+    Newest,
+    MostLiked
+}

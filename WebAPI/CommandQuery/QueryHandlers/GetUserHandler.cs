@@ -16,6 +16,7 @@ public class GetUserHandler(
     IQuestionRepository questionRepository,
     IAnswerRepository answerRepository,
     ICommentRepository commentRepository,
+    IQuestionCollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext,
     ICacheService cacheService)
     : IQueryHandler<GetUserQuery, GenericResult<UserResponse>>
@@ -24,6 +25,7 @@ public class GetUserHandler(
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly ICommentRepository _commentRepository = commentRepository;
+    private readonly IQuestionCollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authContext = authenticationContext;
     private readonly ICacheService _cacheService = cacheService;
 
@@ -48,11 +50,13 @@ public class GetUserHandler(
         int questionCount = await _questionRepository.CountUserQuestion(user.Id, cancellationToken);
         int answerCount = await _answerRepository.CountUserAnswer(user.Id, cancellationToken);
         int commentCount = await _commentRepository.CountUserComment(user.Id, cancellationToken);
+        int collectionCount = await _qcRepository.CountByAuthorId(user.Id, cancellationToken);
 
         var response = user.ToUserResponse();
         response.AnswerCount = answerCount;
         response.QuestionCount = questionCount;
         response.CommentCount = commentCount;
+        response.CollectionCount = collectionCount;
 
         return user == null
             ? GenericResult<UserResponse>.Failure(string.Format(EM.USER_ID_NOTFOUND, _authContext.UserId))

@@ -13,4 +13,5 @@ public class UserResponse
     public int QuestionCount { get; set; }
     public int AnswerCount { get; set; }
     public int CommentCount { get; set; }
+    public int CollectionCount { get; set; }
 }

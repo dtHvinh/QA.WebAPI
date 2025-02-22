@@ -2,6 +2,6 @@
 
 public record CreateCollectionDto(
     string Name,
-    string Description,
-    string? ImageUrl
+    string? Description,
+    bool IsPublic
 );

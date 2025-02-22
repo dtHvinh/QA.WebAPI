@@ -13,4 +13,9 @@ public class PageArgs
             PageSize = pageSize
         };
     }
+
+    public int CalculateSkip()
+    {
+        return (Page - 1) * PageSize;
+    }
 }
