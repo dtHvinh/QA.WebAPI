@@ -8,15 +8,15 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class DeleteQuestionCollectionHandler(
-    IQuestionCollectionRepository questionCollectionRepository,
+public class DeleteCollectionHandler(
+    ICollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext)
-    : ICommandHandler<DeleteQuestionCollectionCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<DeleteCollectionCommand, GenericResult<GenericResponse>>
 {
-    private readonly IQuestionCollectionRepository _qcRepository = questionCollectionRepository;
+    private readonly ICollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
-    public async Task<GenericResult<GenericResponse>> Handle(DeleteQuestionCollectionCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<GenericResponse>> Handle(DeleteCollectionCommand request, CancellationToken cancellationToken)
     {
         var questionCollection = await _qcRepository.FindByIdAsync(request.Id, cancellationToken);
         if (questionCollection == null)

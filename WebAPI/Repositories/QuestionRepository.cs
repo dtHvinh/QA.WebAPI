@@ -16,6 +16,11 @@ public class QuestionRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
+    public async Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken)
+    {
+        return await Table.FirstOrDefaultAsync(e => e.Id == questionId, cancellationToken);
+    }
+
     public async Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
     {
         var query = Table.Where(e => e.AuthorId == userId)

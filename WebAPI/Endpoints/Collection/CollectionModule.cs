@@ -9,6 +9,8 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Response;
 using WebAPI.Response.CollectionResponses;
+using WebAPI.Response.QuestionResponses;
+using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
 using static WebAPI.Utilities.Constants;
@@ -27,12 +29,19 @@ public class CollectionModule : IModule
         group.MapGet("/{id}", HandleGetCollectionDetail)
             .RequireAuthorization();
 
+        group.MapGet("/{collectionId}/search/{searchTerm}", HandleSearchQuestionInCollection)
+            .RequireAuthorization();
+
         group.MapGet("/my-collections", HandleGetUserCollection)
             .RequireAuthorization();
 
         group.MapPost("/", HandleCreateCollection)
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCollectionDto>>();
+
+        group.MapPost("/{collectionId}/{action:regex(^(add|delete)$)}/{questionId}",
+            HandleQuestionCollectionOp)
+            .RequireAuthorization();
 
         group.MapPut("/", HandleUpdateCollection)
             .RequireAuthorization()
@@ -43,10 +52,49 @@ public class CollectionModule : IModule
     }
 
     public static
-        async Task<Results<Ok<List<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>> HandleGetCollectionAndAddStatus(
+        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleQuestionCollectionOp(
         int questionId,
+        int collectionId,
+        string action,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
+    {
+        var command = new CollectionQuestionOperationCommand(questionId, collectionId, Enum.Parse<Operations>(action, true));
+
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+        async Task<Results<Ok<List<GetQuestionResponse>>, ProblemHttpResult>> HandleSearchQuestionInCollection(
+        int collectionId,
+        string searchTerm,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new SearchQuestionInCollectionQuery(collectionId, searchTerm);
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+    async Task<Results<Ok<List<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>> HandleGetCollectionAndAddStatus(
+    int questionId,
+    [FromServices] IMediator mediator,
+    CancellationToken cancellationToken)
     {
         var query = new GetUserCollectionAndAddStatusQuery(questionId);
 
@@ -102,7 +150,7 @@ public class CollectionModule : IModule
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = new DeleteQuestionCollectionCommand(id);
+        var command = new DeleteCollectionCommand(id);
 
         var result = await mediator.Send(command, cancellationToken);
 

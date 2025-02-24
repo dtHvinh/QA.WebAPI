@@ -8,12 +8,12 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.QueryHandlers;
 
 public class GetCollectionAndAddStatusHandler(
-    IQuestionCollectionRepository questionCollectionRepository,
+    ICollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext)
     : IRequestHandler<GetUserCollectionAndAddStatusQuery,
         GenericResult<List<GetCollectionWithAddStatusResponse>>>
 {
-    private readonly IQuestionCollectionRepository _qcr = questionCollectionRepository;
+    private readonly ICollectionRepository _qcr = questionCollectionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<List<GetCollectionWithAddStatusResponse>>> Handle(GetUserCollectionAndAddStatusQuery request, CancellationToken cancellationToken)

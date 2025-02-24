@@ -8,14 +8,14 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class CreateCollectionHandler(IQuestionCollectionRepository qcr, AuthenticationContext authenticationContext) : ICommandHandler<CreateCollectionCommand, GenericResult<GenericResponse>>
+public class CreateCollectionHandler(ICollectionRepository qcr, AuthenticationContext authenticationContext) : ICommandHandler<CreateCollectionCommand, GenericResult<GenericResponse>>
 {
-    private readonly IQuestionCollectionRepository _questionCollectionRepository = qcr;
+    private readonly ICollectionRepository _questionCollectionRepository = qcr;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<GenericResponse>> Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
     {
-        var collection = request.Dto.ToQuestionCollection();
+        var collection = request.Dto.ToCollection();
 
         collection.AuthorId = _authenticationContext.UserId;
 

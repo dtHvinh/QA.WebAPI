@@ -16,7 +16,7 @@ public class GetUserHandler(
     IQuestionRepository questionRepository,
     IAnswerRepository answerRepository,
     ICommentRepository commentRepository,
-    IQuestionCollectionRepository questionCollectionRepository,
+    ICollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext,
     ICacheService cacheService)
     : IQueryHandler<GetUserQuery, GenericResult<UserResponse>>
@@ -25,7 +25,7 @@ public class GetUserHandler(
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly ICommentRepository _commentRepository = commentRepository;
-    private readonly IQuestionCollectionRepository _qcRepository = questionCollectionRepository;
+    private readonly ICollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authContext = authenticationContext;
     private readonly ICacheService _cacheService = cacheService;
 

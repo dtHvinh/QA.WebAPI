@@ -6,9 +6,9 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class UpdateCollectionHandler(IQuestionCollectionRepository repository) : ICommandHandler<UpdateCollectionCommand, GenericResult<GenericResponse>>
+public class UpdateCollectionHandler(ICollectionRepository repository) : ICommandHandler<UpdateCollectionCommand, GenericResult<GenericResponse>>
 {
-    private readonly IQuestionCollectionRepository _qcr = repository;
+    private readonly ICollectionRepository _qcr = repository;
 
     public async Task<GenericResult<GenericResponse>> Handle(UpdateCollectionCommand request, CancellationToken cancellationToken)
     {

@@ -6,11 +6,11 @@ using WebAPI.Response.QuestionResponses;
 
 namespace WebAPI.Utilities.Mappers;
 
-public static class QuestionCollectionMap
+public static class CollectionMap
 {
-    public static QuestionCollection ToQuestionCollection(this CreateCollectionDto dto)
+    public static Collection ToCollection(this CreateCollectionDto dto)
     {
-        return new QuestionCollection
+        return new Collection
         {
             Name = dto.Name,
             Description = dto.Description,
@@ -18,7 +18,7 @@ public static class QuestionCollectionMap
         };
     }
 
-    public static GetCollectionResponse ToGetCollectionResponse(this QuestionCollection obj)
+    public static GetCollectionResponse ToGetCollectionResponse(this Collection obj)
     {
         return new(obj.Id,
                    obj.Name,
@@ -29,7 +29,7 @@ public static class QuestionCollectionMap
                    obj.Author.ToAuthorResponse()!);
     }
 
-    public static GetCollectionDetailResponse ToCollectionDetailResponse(this QuestionCollection obj, PagedResponse<GetQuestionResponse> questions)
+    public static GetCollectionDetailResponse ToCollectionDetailResponse(this Collection obj, PagedResponse<GetQuestionResponse> questions)
     {
         return new(obj.Id,
                    obj.Name,

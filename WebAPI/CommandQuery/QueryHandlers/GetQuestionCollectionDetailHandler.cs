@@ -11,11 +11,11 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetQuestionCollectionDetailHandler(IQuestionCollectionRepository collectionRepository,
+public class GetCollectionDetailHandler(ICollectionRepository collectionRepository,
     AuthenticationContext authenticationContext)
     : IQueryHandler<GetCollectionDetailQuery, GenericResult<GetCollectionDetailResponse>>
 {
-    private readonly IQuestionCollectionRepository _collectionRepository = collectionRepository;
+    private readonly ICollectionRepository _collectionRepository = collectionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<GetCollectionDetailResponse>> Handle(GetCollectionDetailQuery request, CancellationToken cancellationToken)

@@ -10,9 +10,9 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetUserCollectionHandler(IQuestionCollectionRepository qcr, AuthenticationContext authenticationContext) : IQueryHandler<GetUserCollectionQuery, GenericResult<PagedResponse<GetCollectionResponse>>>
+public class GetUserCollectionHandler(ICollectionRepository qcr, AuthenticationContext authenticationContext) : IQueryHandler<GetUserCollectionQuery, GenericResult<PagedResponse<GetCollectionResponse>>>
 {
-    private readonly IQuestionCollectionRepository _qcr = qcr;
+    private readonly ICollectionRepository _qcr = qcr;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<PagedResponse<GetCollectionResponse>>> Handle(GetUserCollectionQuery request, CancellationToken cancellationToken)

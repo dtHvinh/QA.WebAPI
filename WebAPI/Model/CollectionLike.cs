@@ -14,5 +14,5 @@ public class CollectionLike : IEntityWithTime<int>, IOwnedByUser<int>
 
     [ForeignKey(nameof(Collection))]
     public int CollectionId { get; set; }
-    public QuestionCollection? Collection { get; set; }
+    public Collection? Collection { get; set; }
 }

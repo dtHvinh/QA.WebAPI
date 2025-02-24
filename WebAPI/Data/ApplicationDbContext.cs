@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using WebAPI.Data.Configurations;
 using WebAPI.Model;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
@@ -35,6 +36,8 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             .Entity<Comment>().HasDiscriminator(e => e.CommentType)
             .HasValue<QuestionComment>(nameof(Question))
             .HasValue<AnswerComment>(nameof(Answer));
+
+        builder.ApplyConfiguration(new QuestionConfig());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

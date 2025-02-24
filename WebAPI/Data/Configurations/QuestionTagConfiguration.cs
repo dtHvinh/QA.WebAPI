@@ -11,6 +11,10 @@ public class QuestionConfig : IEntityTypeConfiguration<Question>
         builder.HasMany(e => e.Tags)
             .WithMany(e => e.Questions)
             .UsingEntity(nameof(QuestionTag));
+
+        builder.HasMany(e => e.Collections)
+            .WithMany(e => e.Questions)
+            .UsingEntity(nameof(QuestionCollection));
     }
 }
 
@@ -21,5 +25,15 @@ public class TagConfig : IEntityTypeConfiguration<Tag>
         builder.HasMany(e => e.Questions)
             .WithMany(e => e.Tags)
             .UsingEntity(nameof(QuestionTag));
+    }
+}
+
+public class CollectionConfig : IEntityTypeConfiguration<Collection>
+{
+    public void Configure(EntityTypeBuilder<Collection> builder)
+    {
+        builder.HasMany(e => e.Questions)
+            .WithMany(e => e.Collections)
+            .UsingEntity(nameof(QuestionCollection));
     }
 }
