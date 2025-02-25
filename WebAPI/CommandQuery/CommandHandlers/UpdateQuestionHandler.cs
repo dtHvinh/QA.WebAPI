@@ -38,17 +38,9 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
                 , request.Question.Id));
         }
 
-        if (!_authenticationContext.IsResourceOwnedByUser(existQuestion))
+        if (!_authenticationContext.IsAdmin())
         {
-            var editorRep = await _userRepository.GetReputation(
-                _authenticationContext.UserId, cancellationToken);
-            var reqReq = _applicationProperties.ActionRepRequirement.EditQuestion;
-
-            if (editorRep < reqReq)
-            {
-                return GenericResult<UpdateQuestionResponse>.Failure(
-                    string.Format(EM.REP_NOT_MEET_REQ, reqReq));
-            }
+            return GenericResult<UpdateQuestionResponse>.Failure("Need admin role to delete this question");
         }
 
         if (existQuestion.IsSolved)

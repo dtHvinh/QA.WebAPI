@@ -1,5 +1,3 @@
-One answer per user per question
-
 Question bounty
 
 Implement user is banned check
