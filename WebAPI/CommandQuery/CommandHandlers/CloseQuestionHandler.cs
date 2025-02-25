@@ -1,17 +1,25 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Microsoft.Extensions.Options;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class CloseQuestionHandler(IQuestionRepository questionRepository, AuthenticationContext authenticationContext)
+public class CloseQuestionHandler(
+    IQuestionRepository questionRepository,
+    IUserRepository userRepository,
+    IOptions<ApplicationProperties> applicationProperties,
+    AuthenticationContext authenticationContext)
     : ICommandHandler<CloseQuestionCommand, GenericResult<GenericResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly ApplicationProperties _applicationProperties = applicationProperties.Value;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<GenericResponse>> Handle(CloseQuestionCommand request, CancellationToken cancellationToken)
@@ -22,7 +30,17 @@ public class CloseQuestionHandler(IQuestionRepository questionRepository, Authen
             return GenericResult<GenericResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND, request.QuestionId));
 
         if (!_authenticationContext.IsResourceOwnedByUser(existQuestion))
-            return GenericResult<GenericResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
+        {
+            var editorRep = await _userRepository.GetReputation(
+                _authenticationContext.UserId, cancellationToken);
+            var reqReq = _applicationProperties.ActionRepRequirement.CloseQuestion;
+
+            if (editorRep < reqReq)
+            {
+                return GenericResult<GenericResponse>.Failure(
+                    string.Format(EM.REP_NOT_MEET_REQ, reqReq));
+            }
+        }
 
         existQuestion.IsClosed = true;
 

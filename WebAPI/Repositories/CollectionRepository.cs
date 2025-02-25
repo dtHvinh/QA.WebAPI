@@ -11,6 +11,31 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
+    public async Task<List<Collection>> FindCollections(CollectionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
+    {
+        var query = Table.Where(e => e.IsPublic);
+        query = sortOrder switch
+        {
+            CollectionSortOrder.MostLiked => query.OrderByDescending(x => x.LikeCount),
+            CollectionSortOrder.Newest => query.OrderByDescending(x => x.CreatedAt),
+            _ => query.OrderByDescending(x => x.CreatedAt),
+        };
+        return await query.Skip(skip)
+                          .Take(take)
+                          .Include(e => e.Author)
+                          .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Collection>> SearchCollections(string searchTerm, int skip, int take, CancellationToken cancellationToken)
+    {
+        var query = Table.Where(e => e.IsPublic && e.Name.Contains(searchTerm));
+
+        return await query.Skip(skip)
+                          .Take(take)
+                          .Include(e => e.Author)
+                          .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Collection>> FindByAuthorId(int id, CollectionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
     {
         var query = Table.Where(x => x.AuthorId == id);

@@ -23,6 +23,12 @@ public class CollectionModule : IModule
     {
         var group = endpoints.MapGroup(EG.Collection);
 
+        group.MapGet("/", HandleGetCollection)
+                   .RequireAuthorization();
+
+        group.MapGet("/search/{searchTerm}", HandleSearchCollection)
+            .RequireAuthorization();
+
         group.MapGet("/with_question/{questionId}", HandleGetCollectionAndAddStatus)
             .RequireAuthorization();
 
@@ -49,6 +55,47 @@ public class CollectionModule : IModule
 
         group.MapDelete("/{id}", HandleDeleteCollection)
             .RequireAuthorization();
+    }
+
+    public static
+        async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleGetCollection(
+        [FromQuery] string orderBy,
+        [FromQuery] int pageIndex,
+        [FromQuery] int pageSize,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetCollectionsQuery(
+            PageArgs.From(pageIndex, pageSize), Enum.Parse<CollectionSortOrder>(orderBy, true));
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    public static
+        async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleSearchCollection(
+        string searchTerm,
+        [FromQuery] int pageIndex,
+        [FromQuery] int pageSize,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new SearchCollectionQuery(searchTerm, PageArgs.From(pageIndex, pageSize));
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
     }
 
     public static
