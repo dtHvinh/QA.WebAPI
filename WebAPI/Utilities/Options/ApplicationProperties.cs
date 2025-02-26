@@ -4,6 +4,12 @@ public class ApplicationProperties
 {
     public required ReputationRequirePerAction ActionRepRequirement { get; set; }
     public required ReputationAcquirePerAction ReputationAcquirePerAction { get; set; }
+    public required ReputationRequireForRole ReputationRequireForRole { get; set; }
+}
+
+public class ReputationRequireForRole
+{
+    public int Moderator { get; set; }
 }
 
 public class ReputationRequirePerAction

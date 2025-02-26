@@ -14,4 +14,5 @@ public class AuthenticationContext(IHttpContextAccessor hca)
     public string Role => _httpContext?.User?.FindFirst(ClaimTypes.Role)!.Value!;
 
     public bool IsAdmin() => Role == Roles.Admin;
+    public bool IsModerator() => Role == Roles.Moderator;
 }

@@ -258,6 +258,20 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             var b = await dbContext.SaveChangesAsync();
         }
     }
+    public static async Task InitUserRole(WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        dbContext.UserRoles.AddRange(dbContext.Users.Select(e => new IdentityUserRole<int>
+        {
+            UserId = e.Id,
+            RoleId = 2,
+        }));
+
+        var a = await dbContext.SaveChangesAsync();
+    }
     public static async Task InitQuestion(WebApplication app, bool run)
     {
         if (!run)
@@ -418,6 +432,20 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
            });
 
         var res2 = await es.IndexOrUpdateManyAsync(t, QuestionSearchService.QuestionIndexName);
+    }
+    public static async Task ResetReputation(WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var users = dbContext.Set<AppUser>();
+        dbContext.Database.SetCommandTimeout(300);
+        List<AppUser> t = await users.ToListAsync();
+        foreach (var user in t)
+        {
+            user.Reputation = 0;
+        }
+        dbContext.UpdateRange(t);
+        var a = await dbContext.SaveChangesAsync();
     }
 
     [GeneratedRegex("<([^>]+)>")]

@@ -7,6 +7,7 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(IsDeleted), nameof(IsBanned))]
+[Index(nameof(Reputation))]
 public class AppUser : IdentityUser<int>, ISoftDeleteEntity
 {
     [Column(TypeName = "nvarchar(50)")]

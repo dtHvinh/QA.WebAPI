@@ -5,5 +5,5 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record UpdateQuestionCommand(UpdateQuestionDto Question)
+public record UpdateQuestionCommand(UpdateQuestionDto UpdateObject)
     : ICommand<GenericResult<UpdateQuestionResponse>>;

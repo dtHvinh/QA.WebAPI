@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Options;
-using WebAPI.CommandQuery.Commands;
+﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Mappers;
-using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
@@ -13,34 +12,32 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateQuestionHandler(IQuestionRepository questionRepository,
-                                   IUserRepository userRepository,
+                                   IQuestionHistoryRepository questionHistoryRepository,
                                    ITagRepository tagRepository,
                                    AuthenticationContext authenticationContext,
-                                   IOptions<ApplicationProperties> applicationProperties,
                                    QuestionSearchService questionSearchService)
     : ICommandHandler<UpdateQuestionCommand, GenericResult<UpdateQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
-    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
-    private readonly ApplicationProperties _applicationProperties = applicationProperties.Value;
     private readonly QuestionSearchService _questionSearchService = questionSearchService;
 
     public async Task<GenericResult<UpdateQuestionResponse>> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
     {
         var existQuestion = await _questionRepository.FindFirstAsync(
-            e => e.Id.Equals(request.Question.Id), cancellationToken);
+            e => e.Id.Equals(request.UpdateObject.Id), cancellationToken);
 
         if (existQuestion == null)
         {
             return GenericResult<UpdateQuestionResponse>.Failure(string.Format(EM.QUESTION_ID_NOTFOUND
-                , request.Question.Id));
+                , request.UpdateObject.Id));
         }
 
-        if (!_authenticationContext.IsAdmin())
+        if (!_authenticationContext.IsModerator())
         {
-            return GenericResult<UpdateQuestionResponse>.Failure("Need admin role to delete this question");
+            return GenericResult<UpdateQuestionResponse>.Failure("Need moderator role to delete this question");
         }
 
         if (existQuestion.IsSolved)
@@ -48,9 +45,9 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<UpdateQuestionResponse>.Failure("Can not edit solved question");
         }
 
-        var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
+        var tags = await _tagRepository.FindAllTagByIds(request.UpdateObject.Tags, cancellationToken);
 
-        existQuestion.FromUpdateObject(request.Question);
+        existQuestion.FromUpdateObject(request.UpdateObject);
 
         await _questionRepository.SetQuestionTag(existQuestion, tags);
 
@@ -58,6 +55,8 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             existQuestion.IsDraft = false;
 
         _questionRepository.UpdateQuestion(existQuestion);
+
+        _questionHistoryRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryType.Edit, request.UpdateObject.Comment ?? string.Empty);
 
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 

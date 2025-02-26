@@ -1,5 +1,6 @@
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Reflection;
+using WebAPI.Utilities.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.WithConfiguration(builder.Configuration)
                 .ConfigureAuthentication()
                 .ConfigureAuthorization()
                 .ConfigureDependencies();
+
+builder.Services.AddHostedService<UserPrivilegeService>();
 
 builder.Services.AddCors(options =>
 {
