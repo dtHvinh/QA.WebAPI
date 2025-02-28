@@ -33,4 +33,6 @@ public class AppUser : IdentityUser<int>, ISoftDeleteEntity
     public ICollection<Vote> Votes { get; set; } = default!;
     [JsonIgnore]
     public ICollection<BookMark> BookMarks { get; set; } = default!;
+    [JsonIgnore]
+    public ICollection<ExternalLinks> ExternalLinks { get; set; } = default!;
 }

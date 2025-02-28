@@ -11,14 +11,18 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetCollectionDetailHandler(ICollectionRepository collectionRepository,
+public class GetCollectionDetailHandler(
+    ICollectionRepository collectionRepository,
+    ICollectionLikeRepository collectionLikeRepository,
     AuthenticationContext authenticationContext)
     : IQueryHandler<GetCollectionDetailQuery, GenericResult<GetCollectionDetailResponse>>
 {
     private readonly ICollectionRepository _collectionRepository = collectionRepository;
+    private readonly ICollectionLikeRepository _collectionLikeRepository = collectionLikeRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
-    public async Task<GenericResult<GetCollectionDetailResponse>> Handle(GetCollectionDetailQuery request, CancellationToken cancellationToken)
+    public async Task<GenericResult<GetCollectionDetailResponse>> Handle(GetCollectionDetailQuery request,
+        CancellationToken cancellationToken)
     {
         var qc = await _collectionRepository.FindDetailById(
             request.Id,
@@ -36,8 +40,8 @@ public class GetCollectionDetailHandler(ICollectionRepository collectionReposito
 
         var questionPaged = new PagedResponse<GetQuestionResponse>(
             qc.Questions.Take(request.PageArgs.PageSize)
-                        .Select(x => x.ToGetQuestionResponse())
-                        .ToList(),
+                .Select(x => x.ToGetQuestionResponse())
+                .ToList(),
             hasNext,
             request.PageArgs.Page,
             request.PageArgs.PageSize)
@@ -46,8 +50,10 @@ public class GetCollectionDetailHandler(ICollectionRepository collectionReposito
             TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
         };
 
+        var isLikedByUser = await _collectionLikeRepository.IsLikedByUser(qc.Id, _authenticationContext.UserId);
+
         return GenericResult<GetCollectionDetailResponse>.Success(
-            qc.ToCollectionDetailResponse(questionPaged)
-            .SetResourceRight(_authenticationContext.UserId));
+            qc.ToCollectionDetailResponse(isLikedByUser, questionPaged)
+                .SetResourceRight(_authenticationContext.UserId));
     }
 }

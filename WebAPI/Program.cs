@@ -1,6 +1,7 @@
+using Hangfire;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
-using WebAPI.Utilities.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,16 @@ builder.Services.WithConfiguration(builder.Configuration)
                 .ConfigureAuthorization()
                 .ConfigureDependencies();
 
-builder.Services.AddHostedService<UserPrivilegeService>();
+builder.Services.AddHangfire(configuration =>
+{
+    configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"));
+});
+
+builder.Services.AddHangfireServer();
 
 builder.Services.AddCors(options =>
 {
@@ -38,11 +48,14 @@ builder.Services.AddMediatR(
 
 var app = builder.Build();
 
+app.UseHangfireDashboard();
+
 app.UseCors("AllowOrigins");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.RegisterEndpoints();
+
+RecurringJob.AddOrUpdate<UserPrivilegeJob>(nameof(UserPrivilegeJob), (e) => e.ExecuteJob(), Cron.Minutely);
 
 await app.RunAsync();

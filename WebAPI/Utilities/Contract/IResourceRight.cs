@@ -1,7 +1,6 @@
-﻿
-namespace WebAPI.Utilities.Contract;
+﻿namespace WebAPI.Utilities.Contract;
 
-public interface IResourceRight<TResource>
+public interface IResourceRight<out TResource>
 {
     string ResourceRight { get; set; }
 
@@ -13,5 +12,3 @@ public enum ResourceRights
     Owner,
     Viewer
 }
-
-

@@ -479,6 +479,32 @@ namespace WebAPI.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("WebAPI.Model.ExternalLinks", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("ExternalLinks");
+                });
+
             modelBuilder.Entity("WebAPI.Model.Question", b =>
                 {
                     b.Property<int>("Id")
@@ -901,6 +927,17 @@ namespace WebAPI.Migrations
                     b.Navigation("Collection");
                 });
 
+            modelBuilder.Entity("WebAPI.Model.ExternalLinks", b =>
+                {
+                    b.HasOne("WebAPI.Model.AppUser", "Author")
+                        .WithMany("ExternalLinks")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
             modelBuilder.Entity("WebAPI.Model.Question", b =>
                 {
                     b.HasOne("WebAPI.Model.AppUser", "Author")
@@ -1036,6 +1073,8 @@ namespace WebAPI.Migrations
                     b.Navigation("Answers");
 
                     b.Navigation("BookMarks");
+
+                    b.Navigation("ExternalLinks");
 
                     b.Navigation("Questions");
 

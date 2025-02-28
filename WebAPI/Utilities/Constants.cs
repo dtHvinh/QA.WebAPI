@@ -4,6 +4,15 @@ public static class Constants
 {
     public const int StringContentMaxChar = 20000;
 
+    public static class CronExpressions
+    {
+        public const string Minutely = "* * * * *";
+        public const string Hourly = "0 * * * *";
+        public const string Daily = "0 0 * * *";
+        public const string Weekly = "0 0 * * 0";
+        public const string Monthly = "0 0 1 * *";
+    }
+
     public static class Roles
     {
         public const string Admin = "Admin";
@@ -51,6 +60,8 @@ public static class Constants
 
         public const string PasswordWrong = "Password is wrong";
         public const string TAG_NOTFOUND = "Tag not found";
+
+        public const string ROLE_NOT_MEET_REQ = "You need at least {0} role to do this";
 
         public const string ACTION_REQUIRE_RESOURCE_OWNER = "You are not allow to do this";
     }

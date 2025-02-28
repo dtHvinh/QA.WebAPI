@@ -215,6 +215,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         int id = 1;
         while (!parser.EndOfData)
         {
+
             string[] fields = parser.ReadFields();
 
             // Extract the three values
@@ -246,6 +247,8 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
             userClaims.Add(claim1);
             userClaims.Add(claim2);
+
+            id++;
         }
 
         userDb.AddRange(users);
@@ -257,6 +260,41 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             claimsDb.AddRange(userClaims);
             var b = await dbContext.SaveChangesAsync();
         }
+    }
+    public static async Task InitUserClaims(WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var claimsDb = dbContext.Set<IdentityUserClaim<int>>();
+
+        dbContext.Database.SetCommandTimeout(300);
+
+        List<IdentityUserClaim<int>> userClaims = [];
+        int id = 1;
+        var x = new List<int>() { 7, 4, 1, 10621, 10620 };
+        while (id <= 10625)
+        {
+            var claim1 = new IdentityUserClaim<int>()
+            {
+                UserId = id,
+                ClaimType = ClaimTypes.NameIdentifier,
+                ClaimValue = id.ToString(),
+            };
+
+            var claim2 = new IdentityUserClaim<int>()
+            {
+                UserId = id,
+                ClaimType = ClaimTypes.Role,
+                ClaimValue = x.Contains(id) ? "Moderator" : "User",
+            };
+            userClaims.Add(claim1);
+            userClaims.Add(claim2);
+
+            id++;
+        }
+        dbContext.AddRange(userClaims);
+        var a = await dbContext.SaveChangesAsync();
     }
     public static async Task InitUserRole(WebApplication app)
     {

@@ -38,15 +38,15 @@ public static class ServiceExtensions
         });
 
         services.AddIdentity<AppUser, IdentityRole<int>>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequiredLength = 8;
-        })
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddStackExchangeRedisCache(options =>
         {
@@ -60,29 +60,29 @@ public static class ServiceExtensions
     public static IServiceCollection ConfigureAuthentication(this IServiceCollection services)
     {
         var secretKey = Configuration["JwtOptions:SecretKey"]
-            ?? throw new ArgumentException("Secret key not found!");
+                        ?? throw new ArgumentException("Secret key not found!");
         var aud = Configuration["JwtOptions:Aud"]?.Split(',');
         var iss = Configuration["JwtOptions:Iss"]?.Split(',');
 
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new()
                 {
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateAudience = true,
-                        ValidAudiences = aud,
-                        ValidateIssuer = true,
-                        ValidIssuers = iss,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+                    ValidateAudience = true,
+                    ValidAudiences = aud,
+                    ValidateIssuer = true,
+                    ValidIssuers = iss,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
         return services;
     }
@@ -106,15 +106,15 @@ public static class ServiceExtensions
             var nodePool = new SingleNodePool(new Uri(Configuration["ElasticSearch:Uri"]!));
 
             var ess =
-            new ElasticsearchClientSettings(
-                nodePool: nodePool,
-                sourceSerializer: (defaultSerializer, settings) =>
-                    new DefaultSourceSerializer(settings,
-                    (e) => e.ReferenceHandler = ReferenceHandler.IgnoreCycles)
-            )
-            .CertificateFingerprint(Configuration["ElasticSearch:CertFingerprint"]!)
-            .Authentication(new BasicAuthentication(
-                Configuration["ElasticSearch:Username"]!, Configuration["ElasticSearch:Password"]!));
+                new ElasticsearchClientSettings(
+                        nodePool: nodePool,
+                        sourceSerializer: (defaultSerializer, settings) =>
+                            new DefaultSourceSerializer(settings,
+                                (e) => e.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+                    )
+                    .CertificateFingerprint(Configuration["ElasticSearch:CertFingerprint"]!)
+                    .Authentication(new BasicAuthentication(
+                        Configuration["ElasticSearch:Username"]!, Configuration["ElasticSearch:Password"]!));
 
             return ess;
         });
@@ -127,11 +127,11 @@ public static class ServiceExtensions
         services.AddSingleton(sp =>
         {
             var endpoint = new Uri(Configuration["OpenAI:Endpoint"]
-                ?? throw new InvalidOperationException("Endpoint not found"));
+                                   ?? throw new InvalidOperationException("Endpoint not found"));
             var model = Configuration["OpenAI:Model"]
-                ?? throw new InvalidOperationException("Model not found");
+                        ?? throw new InvalidOperationException("Model not found");
             var reasoningModel = Configuration["OpenAI:ReasoningModel"]
-                ?? throw new InvalidOperationException("Model not found");
+                                 ?? throw new InvalidOperationException("Model not found");
 
             return new AIService(endpoint, model, reasoningModel);
         });

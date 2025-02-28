@@ -1,5 +1,7 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Microsoft.AspNetCore.Identity;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AuthResponses;
 using WebAPI.Utilities.Mappers;
@@ -9,11 +11,13 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateUserHandler(IUserRepository userRepository,
-                               JwtTokenProvider tokenProvider)
+                               JwtTokenProvider tokenProvider,
+                               UserManager<AppUser> userManager)
     : ICommandHandler<CreateUserCommand, GenericResult<AuthResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
+    private readonly UserManager<AppUser> _userManager = userManager;
 
     public async Task<GenericResult<AuthResponse>> Handle(
         CreateUserCommand request, CancellationToken cancellationToken)
@@ -36,6 +40,6 @@ public class CreateUserHandler(IUserRepository userRepository,
         await _userRepository.SaveChangesAsync(cancellationToken);
 
         return GenericResult<AuthResponse>
-            .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, "User"));
+            .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, await _userManager.GetRolesAsync(newUser)));
     }
 }

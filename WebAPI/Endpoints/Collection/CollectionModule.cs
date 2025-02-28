@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.CommandQuery.CommandHandlers;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
@@ -24,18 +25,18 @@ public class CollectionModule : IModule
         var group = endpoints.MapGroup(EG.Collection);
 
         group.MapGet("/", HandleGetCollection)
-                   .RequireAuthorization();
+            .RequireAuthorization();
 
         group.MapGet("/search/{searchTerm}", HandleSearchCollection)
             .RequireAuthorization();
 
-        group.MapGet("/with_question/{questionId}", HandleGetCollectionAndAddStatus)
+        group.MapGet("/with_question/{questionId:int}", HandleGetCollectionAndAddStatus)
             .RequireAuthorization();
 
         group.MapGet("/{id}", HandleGetCollectionDetail)
             .RequireAuthorization();
 
-        group.MapGet("/{collectionId}/search/{searchTerm}", HandleSearchQuestionInCollection)
+        group.MapGet("/{collectionId:int}/search/{searchTerm}", HandleSearchQuestionInCollection)
             .RequireAuthorization();
 
         group.MapGet("/my-collections", HandleGetUserCollection)
@@ -45,8 +46,14 @@ public class CollectionModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCollectionDto>>();
 
-        group.MapPost("/{collectionId}/{action:regex(^(add|delete)$)}/{questionId}",
-            HandleQuestionCollectionOp)
+        group.MapPost("/{collectionId:int}/like", HandleLikeCollection)
+            .RequireAuthorization();
+
+        group.MapDelete("/{collectionId:int}/unlike", HandleUnlikeCollection)
+            .RequireAuthorization();
+
+        group.MapPost("/{collectionId:int}/{action:regex(^(add|delete)$)}/{questionId:int}",
+                HandleQuestionCollectionOp)
             .RequireAuthorization();
 
         group.MapPut("/", HandleUpdateCollection)
@@ -57,8 +64,41 @@ public class CollectionModule : IModule
             .RequireAuthorization();
     }
 
-    public static
-        async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleGetCollection(
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleLikeCollection(
+        int collectionId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new CreateCollectionLikeCommand(collectionId);
+
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUnlikeCollection(
+        int collectionId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteCollectionLikeCommand(collectionId);
+
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleGetCollection(
         [FromQuery] string orderBy,
         [FromQuery] int pageIndex,
         [FromQuery] int pageSize,
@@ -78,13 +118,13 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleSearchCollection(
-        string searchTerm,
-        [FromQuery] int pageIndex,
-        [FromQuery] int pageSize,
-        [FromServices] IMediator mediator,
-        CancellationToken cancellationToken)
+    private static async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>>
+        HandleSearchCollection(
+            string searchTerm,
+            [FromQuery] int pageIndex,
+            [FromQuery] int pageSize,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
     {
         var query = new SearchCollectionQuery(searchTerm, PageArgs.From(pageIndex, pageSize));
 
@@ -98,15 +138,15 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleQuestionCollectionOp(
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleQuestionCollectionOp(
         int questionId,
         int collectionId,
         string action,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = new CollectionQuestionOperationCommand(questionId, collectionId, Enum.Parse<Operations>(action, true));
+        var command =
+            new CollectionQuestionOperationCommand(questionId, collectionId, Enum.Parse<Operations>(action, true));
 
         var result = await mediator.Send(command, cancellationToken);
 
@@ -118,12 +158,12 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<List<GetQuestionResponse>>, ProblemHttpResult>> HandleSearchQuestionInCollection(
-        int collectionId,
-        string searchTerm,
-        [FromServices] IMediator mediator,
-        CancellationToken cancellationToken)
+    private static async Task<Results<Ok<List<GetQuestionResponse>>, ProblemHttpResult>>
+        HandleSearchQuestionInCollection(
+            int collectionId,
+            string searchTerm,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
     {
         var query = new SearchQuestionInCollectionQuery(collectionId, searchTerm);
 
@@ -137,11 +177,11 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-    async Task<Results<Ok<List<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>> HandleGetCollectionAndAddStatus(
-    int questionId,
-    [FromServices] IMediator mediator,
-    CancellationToken cancellationToken)
+    private static async Task<Results<Ok<List<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>>
+        HandleGetCollectionAndAddStatus(
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
     {
         var query = new GetUserCollectionAndAddStatusQuery(questionId);
 
@@ -151,12 +191,12 @@ public class CollectionModule : IModule
         {
             return ProblemResultExtensions.BadRequest(result.Message);
         }
+
         return TypedResults.Ok(result.Value);
     }
 
 
-    public static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleCreateCollection(
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleCreateCollection(
         [FromBody] CreateCollectionDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -173,8 +213,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUpdateCollection(
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUpdateCollection(
         [FromBody] UpdateCollectionDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -191,8 +230,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteCollection(
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteCollection(
         int id,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -209,8 +247,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<GetCollectionDetailResponse>, ProblemHttpResult>> HandleGetCollectionDetail(
+    private static async Task<Results<Ok<GetCollectionDetailResponse>, ProblemHttpResult>> HandleGetCollectionDetail(
         int id,
         [FromQuery] int pageIndex,
         [FromQuery] int pageSize,
@@ -229,13 +266,13 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-        async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>> HandleGetUserCollection(
-        string orderBy,
-        int pageIndex,
-        int pageSize,
-        [FromServices] IMediator mediator,
-        CancellationToken cancellationToken)
+    private static async Task<Results<Ok<PagedResponse<GetCollectionResponse>>, ProblemHttpResult>>
+        HandleGetUserCollection(
+            string orderBy,
+            int pageIndex,
+            int pageSize,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
     {
         var query = new GetUserCollectionQuery(
             PageArgs.From(pageIndex, pageSize), Enum.Parse<CollectionSortOrder>(orderBy, true));

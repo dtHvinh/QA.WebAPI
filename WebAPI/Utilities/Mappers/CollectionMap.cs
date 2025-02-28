@@ -21,23 +21,25 @@ public static class CollectionMap
     public static GetCollectionResponse ToGetCollectionResponse(this Collection obj)
     {
         return new(obj.Id,
-                   obj.Name,
-                   obj.Description,
-                   obj.LikeCount,
-                   obj.IsPublic,
-                   obj.CreatedAt,
-                   obj.Author.ToAuthorResponse()!);
+            obj.Name,
+            obj.Description,
+            obj.LikeCount,
+            obj.IsPublic,
+            obj.CreatedAt,
+            obj.Author.ToAuthorResponse()!);
     }
 
-    public static GetCollectionDetailResponse ToCollectionDetailResponse(this Collection obj, PagedResponse<GetQuestionResponse> questions)
+    public static GetCollectionDetailResponse ToCollectionDetailResponse(this Collection obj, bool isLikedByUser,
+        PagedResponse<GetQuestionResponse> questions)
     {
         return new(obj.Id,
-                   obj.Name,
-                   obj.Description,
-                   obj.LikeCount,
-                   obj.IsPublic,
-                   obj.CreatedAt,
-                   obj.Author.ToAuthorResponse()!,
-                   questions);
+            obj.Name,
+            obj.Description,
+            obj.LikeCount,
+            obj.IsPublic,
+            isLikedByUser,
+            obj.CreatedAt,
+            obj.Author.ToAuthorResponse()!,
+            questions);
     }
 }

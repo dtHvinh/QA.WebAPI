@@ -1,6 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 
 namespace ElasticSearch;
+
 public class ElasticServiceBase
     : IElasticSearchService
 {
@@ -10,7 +11,7 @@ public class ElasticServiceBase
     public ElasticsearchClientSettings ClientSettings => _clientSettings;
     protected ElasticsearchClient ElasticSearchClient => _elasticSearchClient;
 
-    public ElasticServiceBase(ElasticsearchClientSettings clientSettings)
+    protected ElasticServiceBase(ElasticsearchClientSettings clientSettings)
     {
         _clientSettings = clientSettings;
 
@@ -29,22 +30,24 @@ public class ElasticServiceBase
         return res.IsValidResponse;
     }
 
-    public async Task<bool> IndexOrUpdateAsync<T>(T document, IndexName indexName, CancellationToken cancellationToken = default) where T : class
+    public async Task<bool> IndexOrUpdateAsync<T>(T document, IndexName indexName,
+        CancellationToken cancellationToken = default) where T : class
     {
         var response = await _elasticSearchClient.IndexAsync(
             document: document,
             idx => idx.Index(indexName)
-                      .OpType(OpType.Index),
+                .OpType(OpType.Index),
             cancellationToken);
 
         return response.IsValidResponse;
     }
 
-    public async Task<bool> IndexOrUpdateManyAsync<T>(IEnumerable<T> documents, IndexName indexName, CancellationToken cancellationToken = default) where T : class
+    public async Task<bool> IndexOrUpdateManyAsync<T>(IEnumerable<T> documents, IndexName indexName,
+        CancellationToken cancellationToken = default) where T : class
     {
         var response = await _elasticSearchClient.BulkAsync(
             idx => idx.Index(indexName)
-                      .UpdateMany(documents, (e, u) => e.Doc(u).DocAsUpsert(true)),
+                .UpdateMany(documents, (e, u) => e.Doc(u).DocAsUpsert(true)),
             cancellationToken);
 
         return response.IsValidResponse;
@@ -63,15 +66,16 @@ public class ElasticServiceBase
         return response.IsValidResponse;
     }
 
-    public async Task<IEnumerable<T>> SearchAsync<T>(ElasticStringSearchParams<T> searchParam, IndexName indexName, CancellationToken cancellationToken = default) where T : class
+    public async Task<IEnumerable<T>> SearchAsync<T>(ElasticStringSearchParams<T> searchParam, IndexName indexName,
+        CancellationToken cancellationToken = default) where T : class
     {
         var response = await _elasticSearchClient.SearchAsync<T>(s => s
-            .Index(indexName)
-            .From(0)
-            .Size(10)
-            .Query(q => q
-                .Term(t => t.Field(searchParam.Selector).Value(searchParam.Value))),
-                cancellationToken);
+                .Index(indexName)
+                .From(0)
+                .Size(10)
+                .Query(q => q
+                    .Term(t => t.Field(searchParam.Selector).Value(searchParam.Value))),
+            cancellationToken);
 
         if (response.IsValidResponse)
         {
@@ -81,7 +85,8 @@ public class ElasticServiceBase
         return [];
     }
 
-    public Task<IEnumerable<T>> SearchAsync<T>(ElasticStringSearchParams<T> searchParam, IndexName indexName, string sortField, bool isDesc, CancellationToken cancellationToken = default) where T : class
+    public Task<IEnumerable<T>> SearchAsync<T>(ElasticStringSearchParams<T> searchParam, IndexName indexName,
+        string sortField, bool isDesc, CancellationToken cancellationToken = default) where T : class
     {
         throw new NotImplementedException();
     }

@@ -7,9 +7,9 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class AppUserMap
 {
-    public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken, string role)
+    public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken, IList<string> roles)
     {
-        return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture, role);
+        return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture, roles);
     }
 
     public static AppUser ToAppUser(this RegisterDto dto)

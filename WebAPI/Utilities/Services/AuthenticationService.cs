@@ -41,7 +41,7 @@ public class AuthenticationService(UserManager<AppUser> userManager,
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        var authResponse = new AuthResponse(at, rt, user.UserName!, user.ProfilePicture, userRoles[0]);
+        var authResponse = new AuthResponse(at, rt, user.UserName!, user.ProfilePicture, userRoles);
 
         return GenericResult<AuthResponse>.Success(authResponse);
     }
