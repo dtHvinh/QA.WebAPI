@@ -7,7 +7,8 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class AppUserMap
 {
-    public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken, IList<string> roles)
+    public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken,
+        IList<string> roles)
     {
         return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture, roles);
     }
@@ -23,15 +24,16 @@ public static class AppUserMap
 
     public static AuthorResponse? ToAuthorResponse(this AppUser? obj)
     {
-        return obj is null ? null :
-            new AuthorResponse
+        return obj is null
+            ? null
+            : new AuthorResponse
             {
                 Id = obj.Id,
-                Username = obj!.UserName,
+                Username = obj!.UserName!,
                 ProfilePicture = obj.ProfilePicture,
                 FirstName = obj.FirstName,
                 LastName = obj.LastName,
-                Reputation = obj.Reputation,
+                Reputation = obj.Reputation
             };
     }
 

@@ -34,13 +34,16 @@ public class CollectionQuestionOperationHandler(
         if (question is null)
             return GenericResult<GenericResponse>.Failure("Question not found");
 
-        if (request.Operation == Utilities.Operations.Add)
+        switch (request)
         {
-            _repository.AddToCollection(question, collection);
-        }
-        else if (request.Operation == Utilities.Operations.Delete)
-        {
-            _repository.RemoveFromCollection(question, collection);
+            case { Operation: Utilities.Operations.Add }:
+                _repository.AddToCollection(question, collection);
+                collection.QuestionCount++;
+                break;
+            case { Operation: Utilities.Operations.Delete }:
+                _repository.RemoveFromCollection(question, collection);
+                collection.QuestionCount--;
+                break;
         }
 
         var res = await _questionRepository.SaveChangesAsync(cancellationToken);

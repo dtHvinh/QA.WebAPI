@@ -14,14 +14,9 @@ public class ReputationRequireForRole
 
 public class ReputationRequirePerAction
 {
-    public int CreateTag { get; set; }
-    public int UpdateTag { get; set; }
-    public int DeleteTag { get; set; }
-    public int CloseQuestion { get; set; }
     public int CommentToQuestion { get; set; }
     public int AnswerQuestion { get; set; }
     public int UpvoteAndDownvote { get; set; }
-    public int EditQuestion { get; set; }
 }
 
 public class ReputationAcquirePerAction

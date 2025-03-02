@@ -11,10 +11,12 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.QueryHandlers;
 
 public class GetCollectionQueryHandler(
-    ICollectionRepository collectionRepository)
+    ICollectionRepository collectionRepository,
+    AuthenticationContext authenticationContext)
     : IQueryHandler<GetCollectionsQuery, GenericResult<PagedResponse<GetCollectionResponse>>>
 {
     private readonly ICollectionRepository _collectionRepository = collectionRepository;
+    private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
     public async Task<GenericResult<PagedResponse<GetCollectionResponse>>> Handle(GetCollectionsQuery request,
         CancellationToken cancellationToken)
@@ -31,7 +33,7 @@ public class GetCollectionQueryHandler(
         return GenericResult<PagedResponse<GetCollectionResponse>>.Success(
             new PagedResponse<GetCollectionResponse>(
                 collections.Take(request.Args.PageSize).Select(e =>
-                    e.ToGetCollectionResponse()).ToList(),
+                    e.ToGetCollectionResponse().SetResourceRight(_authenticationContext.UserId)).ToList(),
                 hasNext,
                 request.Args.Page,
                 request.Args.PageSize)

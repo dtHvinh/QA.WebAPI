@@ -66,7 +66,7 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
 
         group.MapDelete("/{id:int}", DeleteQuestionHandler)
-             .RequireAuthorization();
+            .RequireAuthorization();
 
         group.MapPut("/", UpdateQuestionHandler)
             .RequireAuthorization()
@@ -79,7 +79,7 @@ public sealed class QuestionModule : IModule
             .RequireAuthorization();
     }
 
-    public static
+    private static
         async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> QuestionYouMayLikeHandler(
             [FromQuery] int pageIndex,
             [FromQuery] int pageSize,
@@ -92,10 +92,11 @@ public sealed class QuestionModule : IModule
         {
             return ProblemResultExtensions.BadRequest(result.Message);
         }
+
         return TypedResults.Ok(result.Value);
     }
 
-    public static
+    private static
         async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> UpdateQuestionHandler(
             [FromBody] UpdateQuestionDto dto,
             [FromServices] IMediator mediator,
@@ -109,12 +110,12 @@ public sealed class QuestionModule : IModule
         {
             return ProblemResultExtensions.BadRequest(result.Message);
         }
+
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-
-            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> AcceptQuestionHandler(
+    private static
+        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> AcceptQuestionHandler(
             int questionId,
             int answerId,
             [FromServices] IMediator mediator,
@@ -128,12 +129,12 @@ public sealed class QuestionModule : IModule
         {
             return ProblemResultExtensions.BadRequest(result.Message);
         }
+
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-
-            async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> CloseQuestionHandler(
+    private static
+        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> CloseQuestionHandler(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -146,10 +147,11 @@ public sealed class QuestionModule : IModule
         {
             return ProblemResultExtensions.BadRequest(result.Message);
         }
+
         return TypedResults.Ok(result.Value);
     }
 
-    public static
+    private static
         async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> DeleteQuestionHandler(
             int id,
             [FromServices] IMediator mediator,
@@ -167,8 +169,8 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> VoteQuestionHandler(
+    private static
+        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> VoteQuestionHandler(
             int questionId,
             string action,
             [FromServices] IMediator mediator,
@@ -186,9 +188,8 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-
-            async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> AnswerToQuestionHandler(
+    private static
+        async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> AnswerToQuestionHandler(
             [FromBody] CreateAnswerDto dto,
             int questionId,
             [FromServices] IMediator mediator,
@@ -206,8 +207,8 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-            async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> CommentToQuestionHandler(
+    private static
+        async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> CommentToQuestionHandler(
             [FromBody] CreateCommentDto dto,
             int questionId,
             [FromServices] IMediator mediator,
@@ -225,11 +226,11 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestionHandler(
-            [FromBody] CreateQuestionDto dto,
-            [FromServices] IMediator mediator,
-            [FromQuery] bool isDraft = false,
-            CancellationToken cancellationToken = default)
+    private static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestionHandler(
+        [FromBody] CreateQuestionDto dto,
+        [FromServices] IMediator mediator,
+        [FromQuery] bool isDraft = false,
+        CancellationToken cancellationToken = default)
     {
         var cmd = new CreateQuestionCommand(dto, isDraft);
 
@@ -243,13 +244,13 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static async
+    private static async
         Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetUserQuestionHandler(
             int pageIndex,
             int pageSize,
             string orderBy,
             [FromServices] IMediator mediator,
-    CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
     {
         var cmd = new GetUserQuestionQuery(PageArgs.From(pageIndex, pageSize), orderBy);
 
@@ -263,13 +264,13 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static async
+    private static async
         Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetQuestionsHandler(
             int pageIndex,
             int pageSize,
             string orderBy,
             [FromServices] IMediator mediator,
-    CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
     {
         var cmd = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
 
@@ -283,11 +284,11 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static async
-         Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ViewQuestionDetailHandler(
-             int id,
-             [FromServices] IMediator mediator,
-             CancellationToken cancellationToken = default)
+    private static async
+        Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ViewQuestionDetailHandler(
+            int id,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
     {
         var cmd = new GetQuestionDetailQuery(id);
 
@@ -301,8 +302,8 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-            async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> SearchQuestionHandler(
+    private static
+        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> SearchQuestionHandler(
             [FromQuery] string searchTerm,
             [FromQuery] int tagId,
             [FromQuery] int pageIndex,
@@ -322,8 +323,8 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    public static
-            async Task<Results<Ok<List<QuestionHistoryResponse>>, ProblemHttpResult>> ViewQuestionHistory(
+    private static
+        async Task<Results<Ok<List<QuestionHistoryResponse>>, ProblemHttpResult>> ViewQuestionHistory(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -341,15 +342,13 @@ public sealed class QuestionModule : IModule
     }
 
 
-    public static async
+    private static async
         Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetSimilarQuestion(
-      int questionId,
-      int skip,
-      int take,
-
-
-      [FromServices] IMediator mediator,
-      CancellationToken cancellationToken = default)
+            int questionId,
+            int skip,
+            int take,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
     {
         var cmd = new GetSimilarQuestionQuery(questionId, skip, take);
 

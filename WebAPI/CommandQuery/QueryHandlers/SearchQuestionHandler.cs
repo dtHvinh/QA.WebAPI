@@ -19,8 +19,13 @@ public class SearchQuestionHandler(QuestionSearchService questionSearchService)
     {
         var skip = (request.Args.Page - 1) * request.Args.PageSize;
 
-        var questions = await _questionSearchService.SearchQuestionAsync(
-            request.Keyword, request.TagId, skip, request.Args.PageSize + 1, cancellationToken);
+        var questions =
+            request.TagId == 0
+                ? await _questionSearchService.SearchQuestionNoTagAsync(request.Keyword, skip,
+                    request.Args.PageSize + 1, cancellationToken)
+                : await _questionSearchService.SearchQuestionAsync(
+                    request.Keyword, request.TagId, skip, request.Args.PageSize + 1,
+                    cancellationToken);
 
         var hasNext = questions.Documents.Count == request.Args.PageSize + 1;
 

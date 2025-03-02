@@ -18,17 +18,16 @@ public class Collection : IEntityWithTime<int>, IOwnedByUser<int>
     public int AuthorId { get; set; }
     public AppUser? Author { get; set; }
 
-    [Required]
-    [Column("nvarchar(255)")]
-    public string Name { get; set; } = default!;
-    public string? Description { get; set; } = default!;
+    [Required] [Column("nvarchar(255)")] public string Name { get; set; } = null!;
+
+    public string? Description { get; set; } = null!;
 
     public bool IsPublic { get; set; } = false;
 
     public int QuestionCount { get; set; }
     public int LikeCount { get; set; }
 
-    public ICollection<Question> Questions { get; set; } = default!;
+    public ICollection<Question> Questions { get; set; } = null!;
 }
 
 public enum CollectionSortOrder

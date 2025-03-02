@@ -21,7 +21,8 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return await Table.FirstOrDefaultAsync(e => e.Id == questionId, cancellationToken);
     }
 
-    public async Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
+    public async Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder,
+        CancellationToken cancellationToken)
     {
         var query = Table.Where(e => e.AuthorId == userId)
             .EvaluateQuery(new ValidQuestionSpecification());
@@ -39,13 +40,15 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return await query
             .Skip(skip)
             .Take(take)
+            .Include(e => e.Author)
             .Include(e => e.Tags.Take(5))
             .ThenInclude(e => e.Description)
             .ToListAsync(cancellationToken);
     }
 
 
-    public async Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken)
+    public async Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder,
+        CancellationToken cancellationToken)
     {
         var query = Table.EvaluateQuery(new ValidQuestionSpecification());
 
@@ -62,6 +65,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         var q = await query
             .Skip(skip)
             .Take(take)
+            .Include(e => e.Author)
             .Include(e => e.Tags)
             .ThenInclude(e => e.Description)
             .ToListAsync(cancellationToken);
@@ -74,8 +78,8 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     {
         var specification = new QuestionFullDetailSpecification();
         var result = await Table.Where(e => e.Id == id)
-                    .EvaluateQuery(specification)
-                    .FirstOrDefaultAsync(cancellationToken);
+            .EvaluateQuery(specification)
+            .FirstOrDefaultAsync(cancellationToken);
 
         return result;
     }
@@ -109,8 +113,8 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     public async Task<Question?> FindQuestionWithAuthorByIdAsync(int id, CancellationToken cancellationToken)
     {
         var result = await Table.Where(e => e.Id == id)
-                    .Include(e => e.Author)
-                    .FirstOrDefaultAsync(cancellationToken);
+            .Include(e => e.Author)
+            .FirstOrDefaultAsync(cancellationToken);
 
         return result;
     }

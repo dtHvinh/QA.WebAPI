@@ -8,6 +8,20 @@ public record GetCollectionResponse(
     string Name,
     string? Description,
     int LikeCount,
+    int QuestionCount,
     bool IsPublic,
     DateTime CreatedAt,
-    AuthorResponse Author);
+    AuthorResponse Author) : IResourceRight<GetCollectionResponse>
+{
+    public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
+
+    public GetCollectionResponse SetResourceRight(int? requesterId)
+    {
+        if (requesterId != null && requesterId == Author.Id)
+        {
+            ResourceRight = nameof(ResourceRights.Owner);
+        }
+
+        return this;
+    }
+}

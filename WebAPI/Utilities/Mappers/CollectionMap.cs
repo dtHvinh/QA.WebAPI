@@ -24,6 +24,7 @@ public static class CollectionMap
             obj.Name,
             obj.Description,
             obj.LikeCount,
+            obj.QuestionCount,
             obj.IsPublic,
             obj.CreatedAt,
             obj.Author.ToAuthorResponse()!);

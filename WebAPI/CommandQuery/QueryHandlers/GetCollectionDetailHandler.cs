@@ -54,6 +54,7 @@ public class GetCollectionDetailHandler(
 
         return GenericResult<GetCollectionDetailResponse>.Success(
             qc.ToCollectionDetailResponse(isLikedByUser, questionPaged)
+                .SetResourceRight(_authenticationContext.UserId)
                 .SetResourceRight(_authenticationContext.UserId));
     }
 }

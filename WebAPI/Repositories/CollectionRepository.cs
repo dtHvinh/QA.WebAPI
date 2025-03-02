@@ -76,6 +76,7 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
     public async Task<List<bool>> GetAddStatusAsync(List<int> collectionIds, int questionId, CancellationToken cancellation)
     {
         return await Table.Where(x => collectionIds.Contains(x.Id))
+                          .OrderByDescending(e => e.CreatedAt)
                           .Select(x => x.Questions.Any(q => q.Id == questionId))
                           .ToListAsync(cancellation);
     }
