@@ -1,4 +1,5 @@
 using Hangfire;
+using Scalar.AspNetCore;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddLogging()
+                .AddOpenApi()
                 .AddHttpContextAccessor();
 
 builder.Services.WithConfiguration(builder.Configuration)
@@ -47,6 +49,12 @@ builder.Services.AddMediatR(
     configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.UseHangfireDashboard();
 

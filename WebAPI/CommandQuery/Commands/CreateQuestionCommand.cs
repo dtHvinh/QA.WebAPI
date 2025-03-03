@@ -5,9 +5,8 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public class CreateQuestionCommand(CreateQuestionDto dto, bool draftMode = false)
+public class CreateQuestionCommand(CreateQuestionDto dto)
     : ICommand<GenericResult<CreateQuestionResponse>>
 {
     public CreateQuestionDto Question { get; } = dto;
-    public bool DraftMode { get; } = draftMode;
 }

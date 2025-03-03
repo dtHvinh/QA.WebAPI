@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Dto;
-using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Response;
 using WebAPI.Response.AsnwerResponses;
@@ -39,8 +38,7 @@ public class AnswerModule : IModule
             return TypedResults.Ok(result.Value);
         })
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<UpdateAnswerDto>>()
-            .AddEndpointFilter<AnswerReputationRequirement>();
+            .AddEndpointFilter<FluentValidation<UpdateAnswerDto>>();
 
         group.MapDelete("/{answerId:int}",
             static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
@@ -59,8 +57,7 @@ public class AnswerModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
-            .RequireAuthorization()
-            .AddEndpointFilter<AnswerReputationRequirement>();
+            .RequireAuthorization();
 
         group.MapPost("/{answerId:int}/{action:regex(^(upvote|downvote)$)}",
             async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
@@ -80,7 +77,6 @@ public class AnswerModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
-            .RequireAuthorization()
-            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
+            .RequireAuthorization();
     }
 }

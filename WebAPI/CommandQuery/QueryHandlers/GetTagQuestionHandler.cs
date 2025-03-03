@@ -17,15 +17,7 @@ public class GetTagQuestionHandler(IQuestionRepository questionRepository) : IQu
     {
         var questions = await _questionRepository.FindQuestionsByTagId(
                         request.TagId,
-                        request.Order switch
-                        {
-                            "Newest" => QuestionSortOrder.Newest,
-                            "MostViewed" => QuestionSortOrder.MostViewed,
-                            "MostVoted" => QuestionSortOrder.MostVoted,
-                            "Solved" => QuestionSortOrder.Solved,
-                            "Draft" => QuestionSortOrder.Draft,
-                            _ => QuestionSortOrder.Newest
-                        },
+                        Enum.Parse<QuestionSortOrder>(request.Order),
                         (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
                         request.PageArgs.PageSize + 1,
                         cancellationToken);

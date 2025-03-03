@@ -33,7 +33,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes - e.Downvotes),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
-            QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
             _ => throw new InvalidOperationException(),
         };
 
@@ -58,7 +57,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
-            QuestionSortOrder.Draft => query.OrderByDescending(e => e.IsDraft),
             _ => throw new InvalidOperationException(),
         };
 
@@ -87,27 +85,21 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     public async Task<List<Question>> FindQuestionsByTagId(
         int tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken)
     {
-        Func<Question, object> orderByFunc;
+        var query = Table.Where(e => e.Tags.Any(t => t.Id == tagId))
+             .EvaluateQuery(new ValidQuestionSpecification());
 
-        orderByFunc = sortOrder switch
+        query = sortOrder switch
         {
-            QuestionSortOrder.Newest => (q => q.CreatedAt),
-            QuestionSortOrder.MostVoted => (q => q.Upvotes - q.Downvotes),
-            QuestionSortOrder.MostViewed => (q => q.ViewCount),
-            QuestionSortOrder.Solved => (q => q.IsSolved),
-            QuestionSortOrder.Draft => (q => q.IsDraft),
-            _ => (q => q.CreatedAt),
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes - e.Downvotes),
+            QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
+            _ => throw new InvalidOperationException(),
         };
 
-        var result = await _dbContext.Set<Tag>().Where(e => e.Id == tagId)
-            .Select(e => new Tag()
-            {
-                Name = e.Name,
-                Description = e.Description,
-                Questions = e.Questions.OrderByDescending(orderByFunc).Skip(skip).Take(take).ToList()
-            }).FirstAsync(cancellationToken);
+        return await query.Skip(skip)
+             .Take(take).ToListAsync(cancellationToken);
 
-        return [.. result.Questions];
     }
 
     public async Task<Question?> FindQuestionWithAuthorByIdAsync(int id, CancellationToken cancellationToken)
@@ -175,6 +167,12 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     public async Task<int> CountQuestionAskedByUser(int userId, CancellationToken cancellationToken)
     {
         return await Table.CountAsync(e => e.AuthorId == userId, cancellationToken);
+    }
+
+    public async Task<int> CountUserUpvote(int userId, CancellationToken cancellationToken)
+    {
+        return await Table.Where(e => e.AuthorId == userId)
+            .SumAsync(e => e.Upvotes, cancellationToken);
     }
 
     public void MarkAsView(int questionId)

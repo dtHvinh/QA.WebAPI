@@ -37,11 +37,12 @@ public class AuthenticationService(UserManager<AppUser> userManager,
         }
 
         var at = await _tokenProvider.CreateTokenAsync(user);
-        var rt = await _tokenProvider.GenerateRefreshToken(user);
+
+        var userRt = user.RefreshToken ?? await _tokenProvider.GenerateRefreshToken(user);
 
         var userRoles = await _userManager.GetRolesAsync(user);
 
-        var authResponse = new AuthResponse(at, rt, user.UserName!, user.ProfilePicture, userRoles);
+        var authResponse = new AuthResponse(at, userRt, user.UserName!, user.ProfilePicture, userRoles);
 
         return GenericResult<AuthResponse>.Success(authResponse);
     }

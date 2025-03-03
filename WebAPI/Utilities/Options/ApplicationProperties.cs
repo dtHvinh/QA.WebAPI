@@ -14,9 +14,13 @@ public class ReputationRequireForRole
 
 public class ReputationRequirePerAction
 {
-    public int CommentToQuestion { get; set; }
-    public int AnswerQuestion { get; set; }
-    public int UpvoteAndDownvote { get; set; }
+    public int CreateQuestion { get; set; }
+    public int Upvote { get; set; }
+    public int Comment { get; set; }
+    public int Downvote { get; set; }
+    public int CreateTags { get; set; }
+    public int EditQuestion { get; set; }
+    public int ProtectQuestion { get; set; }
 }
 
 public class ReputationAcquirePerAction
@@ -28,5 +32,4 @@ public class ReputationAcquirePerAction
     public int DownvoteAnswer { get; set; }
     public int DownvoteQuestion { get; set; }
     public int AnswerAccepted { get; set; }
-    public int MarkAsSpam { get; set; }
 }

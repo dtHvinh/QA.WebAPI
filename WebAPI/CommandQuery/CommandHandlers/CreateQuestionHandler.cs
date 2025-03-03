@@ -25,7 +25,7 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
         // Add question
-        var question = request.Question.ToQuestion(_authentcationContext.UserId, request.DraftMode);
+        var question = request.Question.ToQuestion(_authentcationContext.UserId);
 
         var tags = await _tagRepository.FindAllTagByIds(request.Question.Tags, cancellationToken);
         question.Tags = tags;

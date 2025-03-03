@@ -35,11 +35,6 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
                 , request.UpdateObject.Id));
         }
 
-        if (!_authenticationContext.IsModerator())
-        {
-            return GenericResult<UpdateQuestionResponse>.Failure("Need moderator role to delete this question");
-        }
-
         if (existQuestion.IsSolved)
         {
             return GenericResult<UpdateQuestionResponse>.Failure("Can not edit solved question");
@@ -50,9 +45,6 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         existQuestion.FromUpdateObject(request.UpdateObject);
 
         await _questionRepository.SetQuestionTag(existQuestion, tags);
-
-        if (existQuestion.IsDraft)
-            existQuestion.IsDraft = false;
 
         _questionRepository.UpdateQuestion(existQuestion);
 

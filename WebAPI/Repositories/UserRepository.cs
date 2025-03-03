@@ -88,6 +88,11 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
+    public async Task<AppUser?> FindUserWithLinks(int id, CancellationToken cancellationToken = default)
+    {
+        return await Table.Where(e => e.Id == id).Include(e => e.ExternalLinks).FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task ChangeReputationAsync(int id, int amount, CancellationToken cancellationToken = default)
     {
         var user = await Entities.FirstAsync(e => e.Id.Equals(id), cancellationToken);

@@ -18,6 +18,7 @@ public class GetUserHandler(
     ICommentRepository commentRepository,
     ICollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext,
+    IExternalLinkRepository externalLinkRepository,
     ICacheService cacheService)
     : IQueryHandler<GetUserQuery, GenericResult<UserResponse>>
 {
@@ -27,6 +28,7 @@ public class GetUserHandler(
     private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly ICollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authContext = authenticationContext;
+    private readonly IExternalLinkRepository _externalLinkRepository = externalLinkRepository;
     private readonly ICacheService _cacheService = cacheService;
 
     public async Task<GenericResult<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
@@ -51,12 +53,19 @@ public class GetUserHandler(
         int answerCount = await _answerRepository.CountUserAnswer(user.Id, cancellationToken);
         int commentCount = await _commentRepository.CountUserComment(user.Id, cancellationToken);
         int collectionCount = await _qcRepository.CountByAuthorId(user.Id, cancellationToken);
+        var userLinks = await _externalLinkRepository.GetUserLinks(user.Id, cancellationToken);
+
+        int totalUpvotes = await _questionRepository.CountUserUpvote(user.Id, cancellationToken);
+        int acceptedAnswerCount = await _answerRepository.CountUserAcceptedAnswer(user.Id, cancellationToken);
 
         var response = user.ToUserResponse();
         response.AnswerCount = answerCount;
         response.QuestionCount = questionCount;
         response.CommentCount = commentCount;
         response.CollectionCount = collectionCount;
+        response.TotalUpvotes = totalUpvotes;
+        response.AcceptedAnswerCount = acceptedAnswerCount;
+        response.ExternalLinks = userLinks.Select(x => x.ToExternalLinkResponse()).ToList();
 
         return user == null
             ? GenericResult<UserResponse>.Failure(string.Format(EM.USER_ID_NOTFOUND, _authContext.UserId))

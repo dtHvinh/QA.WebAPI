@@ -6,7 +6,7 @@ namespace WebAPI.Utilities.Mappers;
 
 public static class QuestionMap
 {
-    public static Question ToQuestion(this CreateQuestionDto dto, int authorId, bool isDraft)
+    public static Question ToQuestion(this CreateQuestionDto dto, int authorId)
     {
         return new Question
         {
@@ -14,7 +14,6 @@ public static class QuestionMap
             Content = dto.Content,
             Slug = dto.Title.GenerateSlug(),
             AuthorId = authorId,
-            IsDraft = isDraft
         };
     }
 
@@ -51,7 +50,6 @@ public static class QuestionMap
 
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
-            IsDraft = obj.IsDraft,
             IsSolved = obj.IsSolved,
 
             ViewCount = obj.ViewCount,
@@ -88,7 +86,6 @@ public static class QuestionMap
 
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
-            IsDraft = obj.IsDraft,
             IsSolved = obj.IsSolved,
 
             ViewCount = obj.ViewCount,

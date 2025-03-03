@@ -1,4 +1,6 @@
-﻿namespace WebAPI.Response.AppUserResponses;
+﻿using WebAPI.Response.ExternalLinkResponses;
+
+namespace WebAPI.Response.AppUserResponses;
 
 public class UserResponse
 {
@@ -14,4 +16,7 @@ public class UserResponse
     public int AnswerCount { get; set; }
     public int CommentCount { get; set; }
     public int CollectionCount { get; set; }
+    public List<ExternalLinkResponse> ExternalLinks { get; set; } = default!;
+    public int AcceptedAnswerCount { get; set; }
+    public int TotalUpvotes { get; set; }
 }

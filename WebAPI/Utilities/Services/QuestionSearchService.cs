@@ -86,8 +86,7 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
                 .Size(take)
                 .Query(q => q
                     .Bool(b =>
-                        b.Must(m => m.Term(t => t.Field(f => f.IsDraft).Value(false)),
-                                m => m.Term(t => t.Field(f => f.IsDeleted).Value(false)),
+                        b.Must(m => m.Term(t => t.Field(f => f.IsDeleted).Value(false)),
                                 m => m.MultiMatch(new MultiMatchQuery()
                                 {
                                     Fields = Field.FromExpression((Question fq) => fq.Title)!
@@ -130,7 +129,7 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
                 .Size(take)
                 .Query(q => q
                     .Bool(b =>
-                        b.Must(m => m.Term(t => t.Field(f => f.IsDraft).Value(false)),
+                        b.Must(
                             m => m.Term(t => t.Field(f => f.IsDeleted).Value(false)),
                             m => m.MultiMatch(new MultiMatchQuery()
                             {

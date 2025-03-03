@@ -9,7 +9,6 @@ namespace WebAPI.Model;
 [Index(nameof(CreatedAt), AllDescending = true)]
 [Index(nameof(ViewCount), AllDescending = true)]
 [Index(nameof(IsSolved))]
-[Index(nameof(IsDraft))]
 public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<int>
 {
     public int Id { get; set; }
@@ -32,7 +31,6 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
 
     public bool IsDuplicate { get; set; } = false; // When user or admin mark as duplicate
     public bool IsClosed { get; set; } = false; // Disable new answer
-    public bool IsDraft { get; set; } = false;// When user save current state of the Question
     public bool IsDeleted { get; set; } = false;
     public bool IsSolved { get; set; } = false; // When author accept one of the answers
 
@@ -54,5 +52,4 @@ public enum QuestionSortOrder
     MostVoted,
     MostViewed,
     Solved,
-    Draft,
 }

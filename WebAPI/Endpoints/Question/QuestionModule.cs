@@ -49,28 +49,33 @@ public sealed class QuestionModule : IModule
 
         group.MapPost("/", CreateQuestionHandler)
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateQuestionDto>>();
+            .AddEndpointFilter<FluentValidation<CreateQuestionDto>>()
+            .AddEndpointFilter<ForCreateQuestion>();
 
         group.MapPost("/{questionId:int}/comment", CommentToQuestionHandler)
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
-            .AddEndpointFilter<QuestionCommentReputationRequirement>();
+            .AddEndpointFilter<ForComment>();
 
         group.MapPost("/{questionId:int}/answer", AnswerToQuestionHandler)
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<CreateAnswerDto>>()
-            .AddEndpointFilter<AnswerReputationRequirement>();
+            .AddEndpointFilter<FluentValidation<CreateAnswerDto>>();
 
-        group.MapPost("/{questionId:int}/{action:regex(^(upvote|downvote)$)}", VoteQuestionHandler)
+        group.MapPost("/{questionId:int}/upvote", UpvoteQuestionHandler)
             .RequireAuthorization()
-            .AddEndpointFilter<UpvoteAndDownvoteReputationRequirement>();
+            .AddEndpointFilter<ForUpvote>();
+
+        group.MapPost("/{questionId:int}/downvote", DownvoteQuestionHandler)
+            .RequireAuthorization()
+            .AddEndpointFilter<ForDownVote>();
 
         group.MapDelete("/{id:int}", DeleteQuestionHandler)
             .RequireAuthorization();
 
         group.MapPut("/", UpdateQuestionHandler)
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
+            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>()
+            .AddEndpointFilter<ForEditQuestion>();
 
         group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestionHandler)
             .RequireAuthorization();
@@ -170,13 +175,30 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> VoteQuestionHandler(
+        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> UpvoteQuestionHandler(
             int questionId,
-            string action,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
     {
-        var cmd = new CreateQuestionVoteCommand(questionId, action == "upvote");
+        var cmd = new CreateQuestionVoteCommand(questionId, true);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static
+        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> DownvoteQuestionHandler(
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateQuestionVoteCommand(questionId, false);
 
         var result = await mediator.Send(cmd, cancellationToken);
 
@@ -229,10 +251,9 @@ public sealed class QuestionModule : IModule
     private static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestionHandler(
         [FromBody] CreateQuestionDto dto,
         [FromServices] IMediator mediator,
-        [FromQuery] bool isDraft = false,
         CancellationToken cancellationToken = default)
     {
-        var cmd = new CreateQuestionCommand(dto, isDraft);
+        var cmd = new CreateQuestionCommand(dto);
 
         var result = await mediator.Send(cmd, cancellationToken);
 

@@ -335,8 +335,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             parser.ReadLine();
         }
 
-        int i = 1;
-
         List<Question> q = [];
 
         while (!parser.EndOfData)

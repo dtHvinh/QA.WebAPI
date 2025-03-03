@@ -14,4 +14,5 @@ public interface IAnswerRepository : IRepository<Answer>
     Task<List<Answer>> GetAnswersAsync(int questionId, CancellationToken cancellation = default);
     Task<Answer?> FindAnswerWithAuthorById(int id, CancellationToken cancellationToken = default);
     Task<int> CountUserAnswer(int userId, CancellationToken cancellationToken = default);
+    Task<int> CountUserAcceptedAnswer(int userId, CancellationToken cancellationToken = default);
 }
