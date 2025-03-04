@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
@@ -70,8 +72,7 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
 
         var delOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 
-        if (delOp.IsSuccess)
-            _logger.Information("Question {QuestionId} deleted by {UserId}", questionToDelete.Id, _authContext.UserId);
+        _logger.UserAction(delOp.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Deleted, questionToDelete);
 
         await _questionSearchService.IndexOrUpdateAsync(questionToDelete, cancellationToken);
 

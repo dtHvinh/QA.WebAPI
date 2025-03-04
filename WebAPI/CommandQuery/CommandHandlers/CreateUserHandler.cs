@@ -41,7 +41,7 @@ public class CreateUserHandler(IUserRepository userRepository,
 
         await _userRepository.SaveChangesAsync(cancellationToken);
 
-        _logger.Information("User {Username} created a new account with id {UserId}", newUser.UserName, newUser.Id);
+        _logger.Information("User created");
 
         return GenericResult<AuthResponse>
             .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, await _userManager.GetRolesAsync(newUser)));

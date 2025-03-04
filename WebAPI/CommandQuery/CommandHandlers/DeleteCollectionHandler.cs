@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
@@ -20,25 +22,22 @@ public class DeleteCollectionHandler(
 
     public async Task<GenericResult<GenericResponse>> Handle(DeleteCollectionCommand request, CancellationToken cancellationToken)
     {
-        var questionCollection = await _qcRepository.FindByIdAsync(request.Id, cancellationToken);
-        if (questionCollection == null)
+        var collection = await _qcRepository.FindByIdAsync(request.Id, cancellationToken);
+        if (collection == null)
         {
             return GenericResult<GenericResponse>.Failure("Collection not found.");
         }
 
-        if (!_authenticationContext.IsResourceOwnedByUser(questionCollection))
+        if (!_authenticationContext.IsResourceOwnedByUser(collection))
         {
             return GenericResult<GenericResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
         }
 
-        _qcRepository.Remove(questionCollection);
+        _qcRepository.Remove(collection);
 
         var res = await _qcRepository.SaveChangesAsync(cancellationToken);
 
-        if (res.IsSuccess)
-        {
-            _logger.Information("Collection {CollectionId} deleted by {UserId}", questionCollection.Id, _authenticationContext.UserId);
-        }
+        _logger.UserAction(res.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Deleted, collection);
 
         return res.IsSuccess
             ? GenericResult<GenericResponse>.Success("Collection deleted successfully.")

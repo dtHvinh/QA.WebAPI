@@ -1,7 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.Search;
 using Elastic.Clients.Elasticsearch.QueryDsl;
-using ElasticSearch;
+using WebAPI.ElasticSearch;
 using WebAPI.Model;
 using WebAPI.Response;
 

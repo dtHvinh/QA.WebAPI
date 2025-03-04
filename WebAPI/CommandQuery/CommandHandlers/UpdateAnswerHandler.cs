@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 
@@ -38,8 +40,7 @@ public class UpdateAnswerHandler(IAnswerRepository answerRepository,
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
-        if (result.IsSuccess)
-            _logger.Information("Answer with id: {AnswerId} updated", answer.Id);
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Updated, answer);
 
         return result.IsSuccess
             ? GenericResult<AnswerResponse>.Success(answer.ToAnswerResponse())

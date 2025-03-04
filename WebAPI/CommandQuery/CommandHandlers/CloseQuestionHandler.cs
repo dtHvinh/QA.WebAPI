@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
@@ -44,14 +46,9 @@ public class CloseQuestionHandler(
         if (result.IsSuccess)
         {
             await _questionSearchService.IndexOrUpdateAsync(existQuestion, cancellationToken);
-            _logger.Information("Question with id {QuestionId} is closed by moderator {ModeratorId}",
-                existQuestion.Id, _authenticationContext.UserId);
         }
-        else
-        {
-            _logger.Information("Failed to close question with id {QuestionId} by moderator {ModeratorId}",
-                existQuestion.Id, _authenticationContext.UserId);
-        }
+
+        _logger.ModeratorAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Approved, existQuestion.Author!, LogOp.Created, existQuestion);
 
         return result.IsSuccess
             ? GenericResult<GenericResponse>.Success("Question closed")

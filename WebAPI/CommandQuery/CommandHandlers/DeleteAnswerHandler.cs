@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Serilog.Events;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -33,9 +35,7 @@ public class DeleteAnswerHandler(
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
-        if (!result.IsSuccess)
-            _logger.Information("Answer {AnswerId} deleted by {Who} {UserId}",
-                answer.Id, _authContext.IsModerator() ? "moderator" : "user", _authContext.UserId);
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Deleted, answer);
 
         return result.IsSuccess
             ? GenericResult<GenericResponse>.Success(new GenericResponse("Answer deleted successfully"))

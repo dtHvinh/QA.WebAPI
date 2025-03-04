@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
@@ -58,10 +60,9 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                                   Title: question.Title,
                                                   Slug: question.Slug,
                                                   Content: question.Content,
-                                                  Tags: request.Question.Tags);
+        Tags: request.Question.Tags);
 
-        if (opResult.IsSuccess)
-            _logger.Information("Question created by {UserId} with Id {QuestionId}", _authentcationContext.UserId, question.Id);
+        _logger.UserAction(opResult.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authentcationContext.UserId, LogOp.Created, question);
 
         return GenericResult<CreateQuestionResponse>.Success(response);
     }

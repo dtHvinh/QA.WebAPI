@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -33,14 +35,7 @@ public class CreateCollectionLikeHandler(
 
         var res = await _collectionLikeRepository.SaveChangesAsync(cancellationToken);
 
-        if (res.IsSuccess)
-        {
-            _logger.Information(
-                "User {UserId} liked collection {CollectionId}",
-                _authenticationContext.UserId,
-                request.CollectionId
-            );
-        }
+        _logger.UserAction(res.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Liked, collection);
 
         return res.IsSuccess
             ? GenericResult<GenericResponse>.Success("Done")

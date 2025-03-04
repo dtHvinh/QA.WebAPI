@@ -1,9 +1,11 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 
@@ -26,11 +28,9 @@ public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContex
         var newTag = request.Tag.ToTag();
 
         _tagRepository.Update(newTag);
-
         var result = await _tagRepository.SaveChangesAsync(cancellationToken);
 
-        if (result.IsSuccess)
-            _logger.Information("Tag with id: {TagId} updated", newTag.Id);
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, newTag);
 
         return !result.IsSuccess
             ? GenericResult<GenericResponse>.Failure(result.Message)

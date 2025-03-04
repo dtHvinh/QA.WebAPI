@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
+using Serilog.Events;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
@@ -61,14 +63,7 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
 
         await _questionSearchService.IndexOrUpdateAsync(question, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            _logger.Information("Answer with id {AnswerId} from question {QuestionId} is accepted by morderator {ModeratorId}", answer.Id, question.Id, _authenticationContext.UserId);
-        }
-        else
-        {
-            _logger.Information("Failed to accept answer with id {AnswerId} from question {QuestionId} by morderator {ModeratorId}", answer.Id, question.Id, _authenticationContext.UserId);
-        }
+        _logger.ModeratorAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Approved, answer.Author, LogOp.Created, answer);
 
         return result.IsSuccess
             ? GenericResult<GenericResponse>.Success(new("Done"))

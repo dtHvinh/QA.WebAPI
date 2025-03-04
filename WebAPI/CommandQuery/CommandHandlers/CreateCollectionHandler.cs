@@ -1,8 +1,10 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 
@@ -27,10 +29,7 @@ public class CreateCollectionHandler(
 
         var result = await _questionCollectionRepository.SaveChangesAsync(cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            _logger.Information("User Id {UserId} created collection with id {Id}", _authenticationContext.UserId, collection.Id);
-        }
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, collection);
 
         return result.IsSuccess
             ? GenericResult<GenericResponse>.Success("Done")

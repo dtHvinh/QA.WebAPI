@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using Serilog;
+using Serilog.Events;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,6 +30,28 @@ public static class ServiceExtensions
     public static IServiceCollection WithConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         Configuration = configuration;
+        return services;
+    }
+
+    public static IServiceCollection ConfigureLogging(this IServiceCollection services)
+    {
+        var mongoClient = new MongoClient(Configuration.GetConnectionString("MongoDb")!);
+        var mongoDatabase = mongoClient.GetDatabase(Configuration.GetConnectionString("MongoDb_Database"));
+
+        services.AddSerilog(e =>
+        {
+            e.WriteTo.Console();
+
+            e.WriteTo.Logger(e => e.Filter.ByIncludingOnly(e => e.Properties.ContainsKey("EntityType"))
+                         .WriteTo.MongoDB(mongoDatabase));
+
+            e.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Hour);
+            e.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+             .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+             .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+             .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
+        });
+
         return services;
     }
 

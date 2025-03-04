@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ElasticSearch;
+namespace WebAPI.ElasticSearch;
 
 public record ElasticStringSearchParams<T>(
     Expression<Func<T, object>> Selector,

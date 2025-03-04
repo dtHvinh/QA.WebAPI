@@ -1,8 +1,7 @@
 ﻿namespace WebAPI.Utilities.Contract;
 
-public interface IEntityWithTime<T> where T : allows ref struct
+public interface IEntityWithTime<T> : IEntity<T>
 {
-    public T Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

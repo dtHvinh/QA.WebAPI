@@ -1,7 +1,7 @@
 ﻿
 using Elastic.Clients.Elasticsearch;
 
-namespace ElasticSearch;
+namespace WebAPI.ElasticSearch;
 
 public interface IElasticSearchService
 {

@@ -1,9 +1,11 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AsnwerResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
@@ -14,13 +16,14 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
                                  IQuestionRepository questionRepository,
                                  AuthenticationContext authContext,
                                  IQuestionHistoryRepository questionHistoryRepository,
-                                 ILogger<CreateAnswerCommand> logger)
+                                 Serilog.ILogger logger)
     : ICommandHandler<CreateAnswerCommand, GenericResult<AnswerResponse>>
 {
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authContext = authContext;
     private readonly IQuestionHistoryRepository _questionHistoryRepository = questionHistoryRepository;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<AnswerResponse>> Handle(
         CreateAnswerCommand request, CancellationToken cancellationToken)
@@ -41,10 +44,7 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            logger.LogInformation("User {UserId} add answer with Id {AnswerId} for question with Id {QuestionId}", _authContext.UserId, newAnswer.Id, question.Id);
-        }
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Created, newAnswer);
 
         return result.IsSuccess
             ? GenericResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse().SetResourceRight(_authContext.UserId))

@@ -26,13 +26,15 @@
 		<PackageReference Include="Scalar.AspNetCore" Version="2.0.21" />
 		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.ElasticEcsLogstash" Version="1.6.1" />
+		<PackageReference Include="Serilog.Sinks.MongoDB" Version="7.0.0" />
 		<PackageReference Include="System.Text.Json" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Attribute\WebAPI.Attributes.csproj" />
 	  <ProjectReference Include="..\CQRS\WebAPI.CQRS.csproj" />
-	  <ProjectReference Include="..\ElasticSearch\ElasticSearch.csproj" />
+	  <ProjectReference Include="..\ElasticSearch\WebAPI.ElasticSearch.csproj" />
+	  <ProjectReference Include="..\WebAPI.DocumentDb\WebAPI.DocumentDb.csproj" />
 	  <ProjectReference Include="..\WebAPI.Libraries\WebAPI.Libraries.csproj" />
 	</ItemGroup>
 

@@ -1,9 +1,11 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
@@ -60,8 +62,7 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<UpdateQuestionResponse>.Failure(EM.ES_INDEX_OR_UPDATE_DOCUMENT_FAILED);
         }
 
-        if (updateOp.IsSuccess)
-            _logger.Information("Question with id: {QuestionId} updated", existQuestion.Id);
+        _logger.UserAction(updateOp.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Updated, existQuestion);
 
         return updateOp.IsSuccess
             ? GenericResult<UpdateQuestionResponse>.Success(

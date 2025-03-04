@@ -1,9 +1,11 @@
-﻿using WebAPI.CommandQuery.Commands;
+﻿using Serilog.Events;
+using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
@@ -22,7 +24,12 @@ public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContex
             return GenericResult<DeleteTagResponse>.Failure(string.Format(Constants.EM.ROLE_NOT_MEET_REQ,
                 nameof(Constants.Roles.Moderator)));
 
-        _tagRepository.DeleteTag(request.Id);
+        var tagToDel = await _tagRepository.FindFirstAsync(e => e.Id.Equals(request.Id), cancellationToken);
+
+        if (tagToDel == null)
+            return GenericResult<DeleteTagResponse>.Failure("Not found");
+
+        _tagRepository.Remove(tagToDel);
 
         var delTag = await _tagRepository.SaveChangesAsync(cancellationToken);
 
@@ -31,7 +38,8 @@ public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContex
             return GenericResult<DeleteTagResponse>.Failure(delTag.Message);
         }
 
-        _logger.Information("Tag {TagId} deleted by moderator {Moderator}", request.Id, _authenticationContext.UserId);
+        _logger.ModeratorNoEnityOwnerAction(delTag.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Delete, tagToDel);
+
         return GenericResult<DeleteTagResponse>.Success(new(request.Id));
     }
 }
