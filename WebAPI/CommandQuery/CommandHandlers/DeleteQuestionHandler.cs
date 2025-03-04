@@ -13,7 +13,8 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
                                    ITagRepository tagRepository,
                                    AuthenticationContext authContext,
                                    IAnswerRepository answerRepository,
-                                   QuestionSearchService questionSearchService) :
+                                   QuestionSearchService questionSearchService,
+                                   Serilog.ILogger logger) :
     ICommandHandler<DeleteQuestionCommand, GenericResult<DeleteQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
@@ -21,6 +22,7 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
     private readonly AuthenticationContext _authContext = authContext;
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly QuestionSearchService _questionSearchService = questionSearchService;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<DeleteQuestionResponse>> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
@@ -67,6 +69,9 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
         _questionRepository.SoftDeleteQuestion(questionToDelete);
 
         var delOp = await _questionRepository.SaveChangesAsync(cancellationToken);
+
+        if (delOp.IsSuccess)
+            _logger.Information("Question {QuestionId} deleted by {UserId}", questionToDelete.Id, _authContext.UserId);
 
         await _questionSearchService.IndexOrUpdateAsync(questionToDelete, cancellationToken);
 

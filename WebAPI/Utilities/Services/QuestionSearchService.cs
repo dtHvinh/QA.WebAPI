@@ -11,7 +11,7 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
     : ElasticServiceBase(clientSettings)
 
 {
-    public const string QuestionIndexName = "user_questions";
+    public const string QuestionIndexName = "user_questions_2";
 
     public async Task<bool> IndexOrUpdateAsync(Question question, CancellationToken cancellationToken)
     {

@@ -13,11 +13,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                    IQuestionRepository questionRepository,
                                    ITagRepository tagRepository,
-                                   QuestionSearchService questionSearchService)
+                                   QuestionSearchService questionSearchService,
+                                   Serilog.ILogger logger)
     : ICommandHandler<CreateQuestionCommand, GenericResult<CreateQuestionResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly QuestionSearchService questionSearchService = questionSearchService;
+    private readonly Serilog.ILogger _logger = logger;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authentcationContext = authentcationContext;
 
@@ -57,6 +59,9 @@ public class CreateQuestionHandler(AuthenticationContext authentcationContext,
                                                   Slug: question.Slug,
                                                   Content: question.Content,
                                                   Tags: request.Question.Tags);
+
+        if (opResult.IsSuccess)
+            _logger.Information("Question created by {UserId} with Id {QuestionId}", _authentcationContext.UserId, question.Id);
 
         return GenericResult<CreateQuestionResponse>.Success(response);
     }

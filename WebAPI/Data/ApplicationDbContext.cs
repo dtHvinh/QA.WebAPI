@@ -28,6 +28,31 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         }
 
         builder
+            .Entity<IdentityRole<int>>()
+            .HasData(
+            new IdentityRole<int>()
+            {
+                Id = 1,
+                ConcurrencyStamp = null,
+                Name = Constants.Roles.User,
+                NormalizedName = Constants.Roles.User.ToUpperInvariant()
+            },
+            new IdentityRole<int>()
+            {
+                Id = 2,
+                ConcurrencyStamp = null,
+                Name = Constants.Roles.Moderator,
+                NormalizedName = Constants.Roles.Moderator.ToUpperInvariant()
+            },
+             new IdentityRole<int>()
+             {
+                 Id = 3,
+                 ConcurrencyStamp = null,
+                 Name = Constants.Roles.Admin,
+                 NormalizedName = Constants.Roles.Admin.ToUpperInvariant()
+             });
+
+        builder
             .Entity<Vote>().HasDiscriminator(e => e.VoteType)
             .HasValue<QuestionVote>(nameof(VoteTypes.Question))
             .HasValue<AnswerVote>(nameof(VoteTypes.Answer));
@@ -56,11 +81,8 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
     }
 
-    public static async Task InitTag(WebApplication app, bool run)
+    public static async Task InitTag(WebApplication app)
     {
-        if (!run)
-            return;
-
         using var scope = app.Services.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

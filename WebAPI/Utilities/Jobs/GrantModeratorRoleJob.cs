@@ -8,14 +8,14 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Jobs;
 
-public class UserPrivilegeJob(
+public class GrantModeratorRoleJob(
     IServiceScopeFactory serviceScopeFactory,
     IOptions<ApplicationProperties> applicationProperties,
-    ILogger<UserPrivilegeJob> logger)
+    Serilog.ILogger logger)
 {
     private readonly ApplicationProperties _applicationProperties = applicationProperties.Value;
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
-    private readonly ILogger<UserPrivilegeJob> _logger = logger;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task ExecuteJob()
     {
@@ -59,7 +59,7 @@ public class UserPrivilegeJob(
 
         var res = await dbContext.SaveChangesAsync();
 
-        _logger.LogInformation("Updated {Res} user to moderator", res);
+        _logger.Information("Updated {Res} user to moderator", res);
     }
 
 }

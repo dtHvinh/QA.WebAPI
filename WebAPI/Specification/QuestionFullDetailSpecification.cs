@@ -39,11 +39,13 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
     {
         return base.EvaluateQuery(query)
                    .Include(e => e.Author)
+                   .AsSplitQuery()
                    .Include(e => e.Answers.Where(e => !e.IsDeleted)
                                           .OrderByDescending(e => e.IsAccepted)
                                           .ThenByDescending(e => e.Upvote)
                                           .ThenByDescending(e => e.CreatedAt))
                     .ThenInclude(e => e.Author)
+                   .AsSplitQuery()
                    .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt))
                     .ThenInclude(e => e.Author)
                    .Include(e => e.Tags)

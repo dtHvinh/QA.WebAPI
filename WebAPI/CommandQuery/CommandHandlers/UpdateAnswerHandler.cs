@@ -9,11 +9,13 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateAnswerHandler(IAnswerRepository answerRepository,
-                                 AuthenticationContext authContext)
+                                 AuthenticationContext authContext,
+                                 Serilog.ILogger logger)
     : ICommandHandler<UpdateAnswerCommand, GenericResult<AnswerResponse>>
 {
     private readonly IAnswerRepository _answerRepository = answerRepository;
     private readonly AuthenticationContext _authContext = authContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<AnswerResponse>> Handle(UpdateAnswerCommand request, CancellationToken cancellationToken)
     {
@@ -35,6 +37,10 @@ public class UpdateAnswerHandler(IAnswerRepository answerRepository,
             return GenericResult<AnswerResponse>.Failure(errMsg);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
+
+        if (result.IsSuccess)
+            _logger.Information("Answer with id: {AnswerId} updated", answer.Id);
+
         return result.IsSuccess
             ? GenericResult<AnswerResponse>.Success(answer.ToAnswerResponse())
             : GenericResult<AnswerResponse>.Failure(result.Message);

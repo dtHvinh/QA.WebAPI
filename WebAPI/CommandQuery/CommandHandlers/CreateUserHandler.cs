@@ -12,12 +12,14 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateUserHandler(IUserRepository userRepository,
                                JwtTokenProvider tokenProvider,
-                               UserManager<AppUser> userManager)
+                               UserManager<AppUser> userManager,
+                               Serilog.ILogger logger)
     : ICommandHandler<CreateUserCommand, GenericResult<AuthResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
     private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<AuthResponse>> Handle(
         CreateUserCommand request, CancellationToken cancellationToken)
@@ -38,6 +40,8 @@ public class CreateUserHandler(IUserRepository userRepository,
         var refreshToken = await _tokenProvider.GenerateRefreshToken(newUser);
 
         await _userRepository.SaveChangesAsync(cancellationToken);
+
+        _logger.Information("User {Username} created a new account with id {UserId}", newUser.UserName, newUser.Id);
 
         return GenericResult<AuthResponse>
             .Success(newUser.ToAuthResponseDto(jwtToken, refreshToken, await _userManager.GetRolesAsync(newUser)));

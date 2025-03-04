@@ -40,8 +40,8 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
 
     public ICollection<Answer> Answers { get; set; } = default!;
     public ICollection<QuestionVote> Votes { get; set; } = default!;
-    public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<Tag> Tags { get; set; } = default!;
+    public ICollection<QuestionComment> Comments { get; set; } = default!;
     public ICollection<QuestionHistory> QuestionHistories { get; set; } = default!;
     public ICollection<Collection> Collections { get; set; } = default!;
 }

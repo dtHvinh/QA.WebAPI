@@ -1,5 +1,7 @@
 using Hangfire;
 using Scalar.AspNetCore;
+using Serilog;
+using Serilog.Events;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
@@ -7,7 +9,16 @@ using WebAPI.Utilities.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer()
-                .AddLogging()
+                .AddSerilog(e =>
+                {
+                    e.WriteTo.Console();
+                    e.Enrich.WithProperty("Application", "WebAPI");
+                    e.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Hour);
+                    e.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+                     .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+                     .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+                     .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
+                })
                 .AddOpenApi()
                 .AddHttpContextAccessor();
 
@@ -26,8 +37,6 @@ builder.Services.AddHangfire(configuration =>
     .UseRecommendedSerializerSettings()
     .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"));
 });
-
-builder.Services.AddHangfireServer();
 
 builder.Services.AddCors(options =>
 {
@@ -64,6 +73,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.RegisterEndpoints();
 
-RecurringJob.AddOrUpdate<UserPrivilegeJob>(nameof(UserPrivilegeJob), (e) => e.ExecuteJob(), Cron.Minutely);
+RecurringJob.AddOrUpdate<GrantModeratorRoleJob>(nameof(GrantModeratorRoleJob), (e) => e.ExecuteJob(), Cron.Hourly);
 
 await app.RunAsync();

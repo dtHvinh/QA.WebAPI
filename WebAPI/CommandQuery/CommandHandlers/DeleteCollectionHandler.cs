@@ -10,11 +10,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class DeleteCollectionHandler(
     ICollectionRepository questionCollectionRepository,
-    AuthenticationContext authenticationContext)
+    AuthenticationContext authenticationContext,
+    Serilog.ILogger logger)
     : ICommandHandler<DeleteCollectionCommand, GenericResult<GenericResponse>>
 {
     private readonly ICollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<GenericResponse>> Handle(DeleteCollectionCommand request, CancellationToken cancellationToken)
     {
@@ -32,6 +34,11 @@ public class DeleteCollectionHandler(
         _qcRepository.Remove(questionCollection);
 
         var res = await _qcRepository.SaveChangesAsync(cancellationToken);
+
+        if (res.IsSuccess)
+        {
+            _logger.Information("Collection {CollectionId} deleted by {UserId}", questionCollection.Id, _authenticationContext.UserId);
+        }
 
         return res.IsSuccess
             ? GenericResult<GenericResponse>.Success("Collection deleted successfully.")

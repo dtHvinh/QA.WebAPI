@@ -7,10 +7,13 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class CreateTagHandler(ITagRepository tagRepository)
+public class CreateTagHandler(
+    ITagRepository tagRepository,
+    Serilog.ILogger logger)
     : ICommandHandler<CreateTagCommand, GenericResult<GenericResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<GenericResponse>> Handle(
         CreateTagCommand request, CancellationToken cancellationToken)
@@ -24,6 +27,8 @@ public class CreateTagHandler(ITagRepository tagRepository)
         {
             return GenericResult<GenericResponse>.Failure(createTag.Message);
         }
+
+        _logger.Information("Tag {TagName} created with Id {TagId}", newTag.Name, newTag.Id);
 
         return GenericResult<GenericResponse>.Success("Ok");
     }

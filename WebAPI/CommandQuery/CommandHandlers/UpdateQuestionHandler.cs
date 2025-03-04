@@ -15,7 +15,8 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
                                    IQuestionHistoryRepository questionHistoryRepository,
                                    ITagRepository tagRepository,
                                    AuthenticationContext authenticationContext,
-                                   QuestionSearchService questionSearchService)
+                                   QuestionSearchService questionSearchService,
+                                   Serilog.ILogger logger)
     : ICommandHandler<UpdateQuestionCommand, GenericResult<UpdateQuestionResponse>>
 {
     private readonly IQuestionRepository _questionRepository = questionRepository;
@@ -23,6 +24,7 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly QuestionSearchService _questionSearchService = questionSearchService;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<UpdateQuestionResponse>> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
     {
@@ -57,6 +59,9 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         {
             return GenericResult<UpdateQuestionResponse>.Failure(EM.ES_INDEX_OR_UPDATE_DOCUMENT_FAILED);
         }
+
+        if (updateOp.IsSuccess)
+            _logger.Information("Question with id: {QuestionId} updated", existQuestion.Id);
 
         return updateOp.IsSuccess
             ? GenericResult<UpdateQuestionResponse>.Success(

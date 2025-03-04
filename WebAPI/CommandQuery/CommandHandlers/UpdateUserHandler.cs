@@ -10,11 +10,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateUserHandler(
     IUserRepository userRepository,
-    AuthenticationContext authenticationContext)
+    AuthenticationContext authenticationContext,
+    Serilog.ILogger logger)
     : ICommandHandler<UpdateUserCommand, GenericResult<GenericResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<GenericResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -38,6 +40,9 @@ public class UpdateUserHandler(
         _userRepository.Update(user);
 
         var updateRes = await _userRepository.SaveChangesAsync(cancellationToken);
+
+        if (updateRes.IsSuccess)
+            _logger.Information("User with id: {UserId} updated", user.Id);
 
         return updateRes.IsSuccess
             ? GenericResult<GenericResponse>.Success("User updated")

@@ -9,11 +9,12 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContext authenticationContext)
+public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContext authenticationContext, Serilog.ILogger logger)
     : ICommandHandler<UpdateTagCommand, GenericResult<GenericResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<GenericResponse>> Handle(
         UpdateTagCommand request, CancellationToken cancellationToken)
@@ -27,6 +28,9 @@ public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContex
         _tagRepository.Update(newTag);
 
         var result = await _tagRepository.SaveChangesAsync(cancellationToken);
+
+        if (result.IsSuccess)
+            _logger.Information("Tag with id: {TagId} updated", newTag.Id);
 
         return !result.IsSuccess
             ? GenericResult<GenericResponse>.Failure(result.Message)

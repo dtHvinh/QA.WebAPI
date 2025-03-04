@@ -13,7 +13,8 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class CreateAnswerHandler(IAnswerRepository answerRepository,
                                  IQuestionRepository questionRepository,
                                  AuthenticationContext authContext,
-                                 IQuestionHistoryRepository questionHistoryRepository)
+                                 IQuestionHistoryRepository questionHistoryRepository,
+                                 ILogger<CreateAnswerCommand> logger)
     : ICommandHandler<CreateAnswerCommand, GenericResult<AnswerResponse>>
 {
     private readonly IAnswerRepository _answerRepository = answerRepository;
@@ -32,7 +33,6 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
         if (question.IsClosed)
             return GenericResult<AnswerResponse>.Failure(EM.QUESTION_CLOSED_COMMENT_RESTRICT);
 
-
         var newAnswer = request.Answer.ToAnswer(_authContext.UserId, request.QuestionId);
         _answerRepository.AddAnswer(newAnswer);
 
@@ -40,6 +40,11 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
             question.Id, _authContext.UserId, QuestionHistoryType.AddAnswer, request.Answer.Content);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            logger.LogInformation("User {UserId} add answer with Id {AnswerId} for question with Id {QuestionId}", _authContext.UserId, newAnswer.Id, question.Id);
+        }
 
         return result.IsSuccess
             ? GenericResult<AnswerResponse>.Success(newAnswer.ToAnswerResponse().SetResourceRight(_authContext.UserId))

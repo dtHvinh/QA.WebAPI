@@ -74,10 +74,22 @@ public class QuestionRepository(ApplicationDbContext dbContext)
     /// <inheritdoc/>
     public async Task<Question?> FindQuestionDetailByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var specification = new QuestionFullDetailSpecification();
+        var specification = new ValidQuestionSpecification();
+
         var result = await Table.Where(e => e.Id == id)
-            .EvaluateQuery(specification)
-            .FirstOrDefaultAsync(cancellationToken);
+                   .EvaluateQuery(specification)
+                   .Include(e => e.Author)
+                   .AsSplitQuery()
+                   .Include(e => e.Answers.Where(e => !e.IsDeleted)
+                                          .OrderByDescending(e => e.IsAccepted)
+                                          .ThenByDescending(e => e.Upvote)
+                                          .ThenByDescending(e => e.CreatedAt)
+                                          .Take(10))
+                   .ThenInclude(e => e.Author)
+                   .AsSplitQuery()
+                   .Include(e => e.Tags)
+                   .ThenInclude(e => e.Description)
+                   .FirstOrDefaultAsync(cancellationToken);
 
         return result;
     }

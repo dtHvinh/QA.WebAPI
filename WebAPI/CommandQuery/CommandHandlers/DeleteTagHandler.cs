@@ -1,7 +1,6 @@
 ﻿using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
-using WebAPI.Response;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
@@ -9,11 +8,12 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContext authenticationContext)
+public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContext authenticationContext, Serilog.ILogger logger)
     : ICommandHandler<DeleteTagCommand, GenericResult<DeleteTagResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<DeleteTagResponse>> Handle(DeleteTagCommand request,
         CancellationToken cancellationToken)
@@ -31,6 +31,7 @@ public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContex
             return GenericResult<DeleteTagResponse>.Failure(delTag.Message);
         }
 
+        _logger.Information("Tag {TagId} deleted by moderator {Moderator}", request.Id, _authenticationContext.UserId);
         return GenericResult<DeleteTagResponse>.Success(new(request.Id));
     }
 }
