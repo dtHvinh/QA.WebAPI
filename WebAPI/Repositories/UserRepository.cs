@@ -78,6 +78,9 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
+    public async Task<AppUser?> FindByUsername(string username, CancellationToken cancellationToken = default)
+        => await Table.Where(e => e.UserName!.Equals(username)).FirstOrDefaultAsync(cancellationToken);
+
     public async Task<AppUser?> FindUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

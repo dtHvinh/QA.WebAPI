@@ -1,8 +1,9 @@
 ﻿using WebAPI.Response.ExternalLinkResponses;
+using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Response.AppUserResponses;
 
-public class UserResponse
+public class UserResponse : IResourceRight<int>
 {
     public string Username { get; set; }
     public int Reputation { get; set; }
@@ -19,4 +20,10 @@ public class UserResponse
     public List<ExternalLinkResponse> ExternalLinks { get; set; } = default!;
     public int AcceptedAnswerCount { get; set; }
     public int TotalUpvotes { get; set; }
+    public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
+
+    public int SetResourceRight(int? requesterId)
+    {
+        throw new NotImplementedException();
+    }
 }

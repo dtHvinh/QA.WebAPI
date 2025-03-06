@@ -30,8 +30,8 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
 
     public async Task<GenericResult<UpdateQuestionResponse>> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
     {
-        var existQuestion = await _questionRepository.FindFirstAsync(
-            e => e.Id.Equals(request.UpdateObject.Id), cancellationToken);
+        // Check conditions
+        var existQuestion = await _questionRepository.FindQuestionWithTags(request.UpdateObject.Id, cancellationToken);
 
         if (existQuestion == null)
         {
@@ -39,20 +39,42 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
                 , request.UpdateObject.Id));
         }
 
+        if (!_authenticationContext.IsResourceOwnedByUser(existQuestion))
+        {
+            return GenericResult<UpdateQuestionResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
+        }
+
+        if (existQuestion.Upvotes != 0 || existQuestion.Downvotes != 0)
+        {
+            return GenericResult<UpdateQuestionResponse>.Failure("Can not edit question with votes");
+        }
+
         if (existQuestion.IsSolved)
         {
             return GenericResult<UpdateQuestionResponse>.Failure("Can not edit solved question");
         }
 
-        var tags = await _tagRepository.FindAllTagByIds(request.UpdateObject.Tags, cancellationToken);
+        // Logic
+        var tagsToUpdate = await _tagRepository.FindAllTagByIds(request.UpdateObject.Tags, cancellationToken);
 
         existQuestion.FromUpdateObject(request.UpdateObject);
 
-        await _questionRepository.SetQuestionTag(existQuestion, tags);
+        foreach (var tag in tagsToUpdate.Except(existQuestion.Tags))
+        {
+            tag.QuestionCount++;
+        }
+
+        foreach (var tag in existQuestion.Tags.Except(tagsToUpdate))
+        {
+            tag.QuestionCount--;
+        }
+
+        existQuestion.Tags = tagsToUpdate;
 
         _questionRepository.UpdateQuestion(existQuestion);
+        _tagRepository.UpdateRange(tagsToUpdate);
 
-        _questionHistoryRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryType.Edit, request.UpdateObject.Comment ?? string.Empty);
+        _questionHistoryRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryType.Edit, request.UpdateObject.Comment);
 
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 

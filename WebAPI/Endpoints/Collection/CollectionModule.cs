@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.CommandQuery.CommandHandlers;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
@@ -177,13 +176,16 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<List<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>>
+    private static async
+        Task<Results<Ok<PagedResponse<GetCollectionWithAddStatusResponse>>, ProblemHttpResult>>
         HandleGetCollectionAndAddStatus(
             int questionId,
+            [FromQuery] int pageIndex,
+            [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken)
     {
-        var query = new GetUserCollectionAndAddStatusQuery(questionId);
+        var query = new GetUserCollectionAndAddStatusQuery(questionId, PageArgs.From(pageIndex, pageSize));
 
         var result = await mediator.Send(query, cancellationToken);
 

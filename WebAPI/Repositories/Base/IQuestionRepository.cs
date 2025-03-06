@@ -25,4 +25,5 @@ public interface IQuestionRepository : IRepository<Question>
     Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken);
     Task<int> CountUserUpvote(int userId, CancellationToken cancellationToken);
+    Task<Question?> FindQuestionWithTags(int questionId, CancellationToken cancellationToken);
 }

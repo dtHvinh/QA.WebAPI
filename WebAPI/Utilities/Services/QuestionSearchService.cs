@@ -79,6 +79,9 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
     public async Task<SearchResult<Question>> SearchQuestionAsync(
         string keyword, int tagId, int skip, int take, CancellationToken cancellationToken)
     {
+        if (tagId == default)
+            throw new ArgumentException("TagId must be provided");
+
         var response = await ElasticSearchClient.SearchAsync<Question>(s => s
                 .Index(QuestionIndexName)
                 .TrackTotalHits(new TrackHits(true))
@@ -96,10 +99,7 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
                                     Boost = 1.5F,
                                     Slop = 2,
                                     Fuzziness = new Fuzziness("auto"),
-                                    PrefixLength = 2,
-                                    MaxExpansions = 2,
                                     Operator = Operator.Or,
-                                    MinimumShouldMatch = 2,
                                     Lenient = true,
                                     ZeroTermsQuery = ZeroTermsQuery.All,
                                     QueryName = "search_question",
@@ -140,10 +140,7 @@ public sealed class QuestionSearchService(ElasticsearchClientSettings clientSett
                                 Boost = 1.5F,
                                 Slop = 2,
                                 Fuzziness = new Fuzziness("auto"),
-                                PrefixLength = 2,
-                                MaxExpansions = 2,
                                 Operator = Operator.Or,
-                                MinimumShouldMatch = 2,
                                 Lenient = true,
                                 ZeroTermsQuery = ZeroTermsQuery.All,
                                 QueryName = "search_question",

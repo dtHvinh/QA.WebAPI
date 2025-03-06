@@ -42,9 +42,13 @@ public class TagRepository(ApplicationDbContext dbContext)
 
     public Task<Tag?> FindTagWithQuestionById(int tagId, QuestionSortOrder orderBy, int questionSkip, int questionTake, CancellationToken cancellationToken = default)
     {
+        var q = Entities.Where(e => e.Id.Equals(tagId))
+                    .Include(e => e.WikiBody)
+                    .Include(e => e.Description);
+
         return orderBy switch
         {
-            QuestionSortOrder.Newest => Entities.Where(e => e.Id.Equals(tagId))
+            QuestionSortOrder.Newest => q
                        .Include(e => e.Questions.OrderByDescending(e => e.CreatedAt)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
@@ -57,7 +61,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
-            QuestionSortOrder.MostVoted => Entities.Where(e => e.Id.Equals(tagId))
+            QuestionSortOrder.MostVoted => q
                        .Include(e => e.Questions.OrderByDescending(e => e.Upvotes - e.Downvotes)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
@@ -70,7 +74,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
-            QuestionSortOrder.MostViewed => Entities.Where(e => e.Id.Equals(tagId))
+            QuestionSortOrder.MostViewed => q
                        .Include(e => e.Questions.OrderByDescending(e => e.ViewCount)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
@@ -83,7 +87,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
-            QuestionSortOrder.Solved => Entities.Where(e => e.Id.Equals(tagId))
+            QuestionSortOrder.Solved => q
                        .Include(e => e.Questions.OrderByDescending(e => e.IsSolved)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
@@ -96,7 +100,7 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
-            _ => Entities.Where(e => e.Id.Equals(tagId))
+            _ => q
                        .Include(e => e.Questions.Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Author)
@@ -107,7 +111,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
         };
-
     }
 
     /// <summary>
@@ -115,43 +118,26 @@ public class TagRepository(ApplicationDbContext dbContext)
     /// </summary>
     public Task<List<Tag>> FindTagsAsync(string orderBy, int skip, int take, CancellationToken cancellationToken = default)
     {
-        return orderBy.ToLowerInvariant() switch
+        var normalizedOrder = orderBy?.ToLowerInvariant() ?? "";
+
+        var q = normalizedOrder switch
         {
-            "popular" => Entities.OrderByDescending(e => e.QuestionCount)
-                                .Skip(skip)
-                                .Take(take)
-                                .Select(e => new Tag()
-                                {
-                                    Id = e.Id,
-                                    Name = e.Name,
-                                    Description = e.Description,
-                                    QuestionCount = e.QuestionCount
-                                })
-                                .ToListAsync(cancellationToken),
-
-            "name" => Entities.OrderBy(e => e.Name)
-                            .Skip(skip)
-                            .Take(take)
-                            .Select(e => new Tag()
-                            {
-                                Id = e.Id,
-                                Name = e.Name,
-                                Description = e.Description,
-                                QuestionCount = e.QuestionCount
-                            })
-                            .ToListAsync(cancellationToken),
-
-            _ => Entities.Skip(skip)
-                        .Take(take)
-                        .Select(e => new Tag()
-                        {
-                            Id = e.Id,
-                            Name = e.Name,
-                            Description = e.Description,
-                            QuestionCount = e.QuestionCount
-                        })
-                        .ToListAsync(cancellationToken),
+            "popular" => Table.OrderByDescending(e => e.QuestionCount),
+            "name" => Table.OrderBy(e => e.Name),
+            "newest" => Table.OrderByDescending(e => e.CreatedAt),
+            _ => Table.AsNoTracking()
         };
+
+        return q.Skip(skip)
+                .Take(take)
+                .Select(e => new Tag
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Description = e.Description,
+                    QuestionCount = e.QuestionCount
+                })
+                .ToListAsync(cancellationToken);
     }
 
     public async Task<List<Tag>> FindAllTagByIds(List<int> ids, CancellationToken cancellationToken = default)

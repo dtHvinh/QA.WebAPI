@@ -1,6 +1,5 @@
 ﻿using WebAPI.CommandQuery.Queries;
 using WebAPI.CQRS;
-using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AppUserResponses;
 using WebAPI.Utilities.Context;
@@ -18,8 +17,7 @@ public class GetUserHandler(
     ICommentRepository commentRepository,
     ICollectionRepository questionCollectionRepository,
     AuthenticationContext authenticationContext,
-    IExternalLinkRepository externalLinkRepository,
-    ICacheService cacheService)
+    IExternalLinkRepository externalLinkRepository)
     : IQueryHandler<GetUserQuery, GenericResult<UserResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
@@ -29,25 +27,15 @@ public class GetUserHandler(
     private readonly ICollectionRepository _qcRepository = questionCollectionRepository;
     private readonly AuthenticationContext _authContext = authenticationContext;
     private readonly IExternalLinkRepository _externalLinkRepository = externalLinkRepository;
-    private readonly ICacheService _cacheService = cacheService;
 
     public async Task<GenericResult<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        AppUser? user = null;
+        var user = request.Username is not null
+            ? await _userRepository.FindByUsername(request.Username, cancellationToken)
+            : await _userRepository.FindUserByIdAsync(_authContext.UserId, cancellationToken);
 
-        if (!request.NoCache)
-        {
-            user = await _cacheService.GetAppUserAsync(_authContext.UserId);
-        }
-
-        if (user is null)
-        {
-            user = await _userRepository.FindUserByIdAsync(_authContext.UserId, cancellationToken);
-
-            ArgumentNullException.ThrowIfNull(user);
-
-            await _cacheService.SetAppUserAsync(user);
-        }
+        if (user == null)
+            return GenericResult<UserResponse>.Failure(string.Format(EM.USERNAME_NOTFOUND, request.Username));
 
         int questionCount = await _questionRepository.CountUserQuestion(user.Id, cancellationToken);
         int answerCount = await _answerRepository.CountUserAnswer(user.Id, cancellationToken);
@@ -67,8 +55,9 @@ public class GetUserHandler(
         response.AcceptedAnswerCount = acceptedAnswerCount;
         response.ExternalLinks = userLinks.Select(x => x.ToExternalLinkResponse()).ToList();
 
-        return user == null
-            ? GenericResult<UserResponse>.Failure(string.Format(EM.USER_ID_NOTFOUND, _authContext.UserId))
-            : GenericResult<UserResponse>.Success(response);
+        if (request.Username == null)
+            response.ResourceRight = nameof(ResourceRights.Owner);
+
+        return GenericResult<UserResponse>.Success(response);
     }
 }

@@ -18,7 +18,7 @@ public class Collection : IEntityWithTime<int>, IOwnedByUser<int>
     public int AuthorId { get; set; }
     public AppUser? Author { get; set; }
 
-    [Required] [Column("nvarchar(255)")] public string Name { get; set; } = null!;
+    [Required][Column("nvarchar(255)")] public string Name { get; set; } = null!;
 
     public string? Description { get; set; } = null!;
 

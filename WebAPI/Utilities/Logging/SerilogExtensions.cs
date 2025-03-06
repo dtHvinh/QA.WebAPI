@@ -61,7 +61,8 @@ public enum LogOp
     Liked,
     Created,
     Updated,
-    Deleted
+    Deleted,
+    Search
 }
 
 public enum LogModeratorOp

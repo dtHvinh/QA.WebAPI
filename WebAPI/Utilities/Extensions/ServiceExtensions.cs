@@ -16,6 +16,7 @@ using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Reflection;
@@ -42,14 +43,14 @@ public static class ServiceExtensions
         {
             e.WriteTo.Console();
 
-            e.WriteTo.Logger(e => e.Filter.ByIncludingOnly(e => e.Properties.ContainsKey("EntityType"))
+            e.WriteTo.Logger(e => e.Filter.ByIncludingOnly(e => e.Properties.ContainsKey(SerilogExtensions.PropertyEntityId))
                          .WriteTo.MongoDB(mongoDatabase));
 
             e.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Hour);
             e.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
-             .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
-             .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
-             .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
+            .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
         });
 
         return services;

@@ -108,8 +108,8 @@ public class TagModule : IModule
         group.MapPost("/",
                 async Task<Results<Ok<GenericResponse>, ProblemHttpResult>>
                 ([FromBody] CreateTagDto dto,
-                    [FromServices] IMediator mediator,
-                    CancellationToken cancellationToken) =>
+                [FromServices] IMediator mediator,
+                CancellationToken cancellationToken) =>
                 {
                     var command = new CreateTagCommand(dto);
                     var result = await mediator.Send(command, cancellationToken);

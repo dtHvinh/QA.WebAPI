@@ -74,8 +74,7 @@ public sealed class QuestionModule : IModule
 
         group.MapPut("/", UpdateQuestionHandler)
             .RequireAuthorization()
-            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>()
-            .AddEndpointFilter<ForEditQuestion>();
+            .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
 
         group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestionHandler)
             .RequireAuthorization();

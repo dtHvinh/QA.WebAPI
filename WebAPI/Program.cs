@@ -1,5 +1,6 @@
 using Hangfire;
 using Scalar.AspNetCore;
+using Serilog;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
@@ -23,6 +24,7 @@ builder.Services.AddHangfire(configuration =>
     configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
+    .UseSerilogLogProvider()
     .UseRecommendedSerializerSettings()
     .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"));
 });
@@ -53,6 +55,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHangfireDashboard();
 

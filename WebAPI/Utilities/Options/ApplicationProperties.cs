@@ -19,7 +19,6 @@ public class ReputationRequirePerAction
     public int Comment { get; set; }
     public int Downvote { get; set; }
     public int CreateTags { get; set; }
-    public int EditQuestion { get; set; }
     public int ProtectQuestion { get; set; }
 }
 

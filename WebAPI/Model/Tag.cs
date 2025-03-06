@@ -7,7 +7,7 @@ namespace WebAPI.Model;
 
 [Index(nameof(NormalizedName), IsUnique = true)]
 [Index(nameof(QuestionCount), IsDescending = [true])]
-public class Tag : IEntity<int>
+public class Tag : IEntityWithTime<int>
 {
     public int Id { get; set; }
 
@@ -22,4 +22,7 @@ public class Tag : IEntity<int>
 
     [JsonIgnore]
     public ICollection<Question> Questions { get; set; } = default!;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; }
 }

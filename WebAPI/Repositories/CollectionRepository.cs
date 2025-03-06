@@ -53,6 +53,18 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
                           .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<CollectionWithAddStatus>> FindWithAddStatusByAuthorId(int id, int questionId, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await Table.Where(x => x.AuthorId == id)
+                          .Select(x => new CollectionWithAddStatus(x)
+                          {
+                              IsAdded = x.Questions.Any(q => q.Id == questionId)
+                          })
+                          .Skip(skip)
+                          .Take(take)
+                          .ToListAsync(cancellationToken);
+    }
+
     public async Task<Collection?> FindDetailById(int id, int skip, int take, CancellationToken cancellationToken)
     {
         return await Table.Include(e => e.Author)
@@ -105,5 +117,41 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
     public async Task<int> CountByAuthorId(int id, CancellationToken cancellationToken)
     {
         return await Table.CountAsync(x => x.AuthorId == id, cancellationToken);
+    }
+
+    /// <summary>
+    /// The IsAdded property is used to determine if the question is already in the collection.
+    /// </summary>
+    public sealed class CollectionWithAddStatus
+    {
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public int AuthorId { get; set; }
+        public AppUser? Author { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public bool IsPublic { get; set; } = false;
+        public int QuestionCount { get; set; }
+        public int LikeCount { get; set; }
+
+        public ICollection<Question> Questions { get; set; }
+
+        public CollectionWithAddStatus(Collection collection)
+        {
+            Id = collection.Id;
+            CreatedAt = collection.CreatedAt;
+            UpdatedAt = collection.UpdatedAt;
+            AuthorId = collection.AuthorId;
+            Author = collection.Author;
+            Name = collection.Name;
+            Description = collection.Description;
+            IsPublic = collection.IsPublic;
+            QuestionCount = collection.QuestionCount;
+            LikeCount = collection.LikeCount;
+            Questions = collection.Questions;
+        }
+
+        public bool IsAdded { get; set; }
     }
 }

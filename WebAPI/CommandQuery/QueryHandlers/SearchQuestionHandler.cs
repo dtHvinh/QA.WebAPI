@@ -9,10 +9,11 @@ using WebAPI.Utilities.Services;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class SearchQuestionHandler(QuestionSearchService questionSearchService)
+public class SearchQuestionHandler(QuestionSearchService questionSearchService, Serilog.ILogger logger)
     : IQueryHandler<SearchQuestionQuery, GenericResult<PagedResponse<GetQuestionResponse>>>
 {
     private readonly QuestionSearchService _questionSearchService = questionSearchService;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<PagedResponse<GetQuestionResponse>>> Handle(
         SearchQuestionQuery request, CancellationToken cancellationToken)
@@ -41,6 +42,9 @@ public class SearchQuestionHandler(QuestionSearchService questionSearchService)
             TotalCount = (int)questions.Total,
             TotalPage = NumericCalcHelper.GetTotalPage((int)questions.Total, request.Args.PageSize)
         };
+
+        _logger.Information("Question search with {SearchKeyword} and tag id {EntityId} returned {Count} results",
+            request.Keyword, request.TagId, response.Items.Count());
 
         return GenericResult<PagedResponse<GetQuestionResponse>>.Success(response);
     }

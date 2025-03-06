@@ -45,6 +45,12 @@ public class QuestionRepository(ApplicationDbContext dbContext)
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Question?> FindQuestionWithTags(int questionId, CancellationToken cancellationToken)
+    {
+        return await Table.Where(e => e.Id == questionId)
+            .Include(e => e.Tags)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
     public async Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder,
         CancellationToken cancellationToken)
@@ -143,7 +149,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
                 if (value == 1)
                     question.Upvotes += value;
                 else if (value == -1)
-                    question.Downvotes -= value; // - plus - eq +
+                    question.Downvotes -= value;
 
                 Entities.Update(question);
                 break;
