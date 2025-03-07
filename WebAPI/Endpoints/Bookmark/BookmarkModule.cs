@@ -16,7 +16,7 @@ public class BookmarkModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Bookmark);
+        var group = endpoints.MapGroup(EG.Bookmark).WithTags(nameof(BookmarkModule));
 
 
         group.MapGet("/", async Task<Results<Ok<PagedResponse<BookmarkResponse>>, ProblemHttpResult>> (

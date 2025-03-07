@@ -40,7 +40,7 @@ public class GetUserQuestionHandler(
                 request.PageArgs.PageSize)
             {
                 TotalCount = count,
-                TotalPage = NumericCalcHelper.GetTotalPage(count, request.PageArgs.PageSize)
+                TotalPage = MathHelper.GetTotalPage(count, request.PageArgs.PageSize)
             });
     }
 }

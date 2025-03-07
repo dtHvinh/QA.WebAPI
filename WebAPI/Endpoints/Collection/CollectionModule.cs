@@ -21,7 +21,8 @@ public class CollectionModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Collection);
+        var group = endpoints.MapGroup(EG.Collection)
+            .WithTags(nameof(CollectionModule));
 
         group.MapGet("/", HandleGetCollection)
             .RequireAuthorization();

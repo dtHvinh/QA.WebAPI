@@ -17,7 +17,7 @@ public sealed class AuthModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Auth);
+        var group = endpoints.MapGroup(EG.Auth).WithTags(nameof(AuthModule));
 
         group.MapGet("/", () =>
         {

@@ -37,7 +37,7 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
             return GenericResult<AnswerResponse>.Failure(EM.QUESTION_CLOSED_COMMENT_RESTRICT);
 
         var newAnswer = request.Answer.ToAnswer(_authContext.UserId, request.QuestionId);
-        _answerRepository.AddAnswer(newAnswer);
+        await _answerRepository.AddAnswerAndLoadAuthor(newAnswer);
 
         _questionHistoryRepository.AddHistory(
             question.Id, _authContext.UserId, QuestionHistoryType.AddAnswer, request.Answer.Content);

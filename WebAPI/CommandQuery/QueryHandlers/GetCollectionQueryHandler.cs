@@ -39,7 +39,7 @@ public class GetCollectionQueryHandler(
                 request.Args.PageSize)
             {
                 TotalCount = totalCount,
-                TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.Args.PageSize)
+                TotalPage = MathHelper.GetTotalPage(totalCount, request.Args.PageSize)
             });
     }
 }

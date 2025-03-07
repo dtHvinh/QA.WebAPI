@@ -11,7 +11,7 @@ public class AIModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.AI);
+        var group = endpoints.MapGroup(EG.AI).WithTags(nameof(AIModule));
 
         group.MapPost("/chat", SendMessage)
             .RequireAuthorization();

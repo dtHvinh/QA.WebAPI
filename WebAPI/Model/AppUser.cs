@@ -8,7 +8,7 @@ namespace WebAPI.Model;
 
 [Index(nameof(IsDeleted), nameof(IsBanned))]
 [Index(nameof(Reputation))]
-public class AppUser : IdentityUser<int>, ISoftDeleteEntity
+public class AppUser : IdentityUser<int>, IEntityWithTime<int>, ISoftDeleteEntity
 {
     [Column(TypeName = "nvarchar(50)")]
     public string? FirstName { get; set; }
@@ -17,8 +17,8 @@ public class AppUser : IdentityUser<int>, ISoftDeleteEntity
     public string? RefreshToken { get; set; }
     public int Reputation { get; set; }
     public bool IsBanned { get; set; }
-    public DateTime DateJoined { get; set; } = DateTime.UtcNow;
-    public DateTime LastActive { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; }
     [Column(TypeName = "nvarchar(255)")]
     public string ProfilePicture { get; set; } = default!;
     [Column(TypeName = "nvarchar(255)")]

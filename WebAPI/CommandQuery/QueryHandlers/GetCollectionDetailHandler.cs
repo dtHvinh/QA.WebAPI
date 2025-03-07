@@ -47,7 +47,7 @@ public class GetCollectionDetailHandler(
             request.PageArgs.PageSize)
         {
             TotalCount = totalCount,
-            TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
+            TotalPage = MathHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
         };
 
         var isLikedByUser = await _collectionLikeRepository.IsLikedByUser(qc.Id, _authenticationContext.UserId);

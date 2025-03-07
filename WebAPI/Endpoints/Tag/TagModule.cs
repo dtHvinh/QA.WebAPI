@@ -20,7 +20,8 @@ public class TagModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Tag);
+        var group = endpoints.MapGroup(EG.Tag)
+            .WithTags(nameof(TagModule));
 
         group.MapGet("/{id:int}",
                 async Task<Results<Ok<TagWithQuestionResponse>, ProblemHttpResult>> (

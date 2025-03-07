@@ -40,7 +40,7 @@ public class SearchQuestionHandler(QuestionSearchService questionSearchService, 
             request.Args.PageSize)
         {
             TotalCount = (int)questions.Total,
-            TotalPage = NumericCalcHelper.GetTotalPage((int)questions.Total, request.Args.PageSize)
+            TotalPage = MathHelper.GetTotalPage((int)questions.Total, request.Args.PageSize)
         };
 
         _logger.Information("Question search with {SearchKeyword} and tag id {EntityId} returned {Count} results",

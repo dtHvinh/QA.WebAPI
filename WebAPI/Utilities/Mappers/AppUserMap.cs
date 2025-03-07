@@ -45,8 +45,8 @@ public static class AppUserMap
             Username = obj!.UserName!,
             Reputation = obj.Reputation,
             Bio = obj.Bio,
-            DateJoined = obj.DateJoined,
-            LastActive = obj.LastActive
+            DateJoined = obj.CreatedAt,
+            LastActive = obj.UpdatedAt
         };
     }
 }

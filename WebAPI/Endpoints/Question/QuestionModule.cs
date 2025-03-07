@@ -24,7 +24,8 @@ public sealed class QuestionModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Question);
+        var group = endpoints.MapGroup(EG.Question)
+            .WithTags(nameof(QuestionModule));
 
         group.MapGet("/user", GetUserQuestionHandler)
             .RequireAuthorization();

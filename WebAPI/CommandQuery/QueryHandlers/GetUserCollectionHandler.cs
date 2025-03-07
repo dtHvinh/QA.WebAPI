@@ -34,7 +34,7 @@ public class GetUserCollectionHandler(ICollectionRepository qcr, AuthenticationC
             request.PageArgs.PageSize)
             {
                 TotalCount = totalCount,
-                TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
+                TotalPage = MathHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
             });
     }
 }

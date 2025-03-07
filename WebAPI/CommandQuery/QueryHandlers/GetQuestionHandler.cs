@@ -39,7 +39,7 @@ public class GetQuestionHandler(IQuestionRepository questionRepository) : IQuery
                 request.PageArgs.PageSize)
             {
                 TotalCount = totalCount,
-                TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
+                TotalPage = MathHelper.GetTotalPage(totalCount, request.PageArgs.PageSize)
             });
     }
 }

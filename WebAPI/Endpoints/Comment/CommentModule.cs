@@ -15,7 +15,8 @@ public class CommentModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Comment);
+        var group = endpoints.MapGroup(EG.Comment)
+            .WithTags(nameof(CommentModule));
 
         group.MapPut("/{id:int}", async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> (
             int id,

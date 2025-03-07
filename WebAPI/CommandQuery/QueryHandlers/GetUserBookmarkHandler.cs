@@ -39,7 +39,7 @@ public class GetUserBookmarkHandler(
                 request.PageArgs.PageSize)
             {
                 TotalCount = userBookmarkCount,
-                TotalPage = NumericCalcHelper.GetTotalPage(userBookmarkCount, request.PageArgs.PageSize)
+                TotalPage = MathHelper.GetTotalPage(userBookmarkCount, request.PageArgs.PageSize)
             });
     }
 }

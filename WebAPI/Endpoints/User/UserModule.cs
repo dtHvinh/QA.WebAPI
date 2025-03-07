@@ -20,11 +20,12 @@ public class UserModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.User);
+        var group = endpoints.MapGroup(EG.User)
+            .WithTags(nameof(UserModule));
 
         group.MapGet(
             "/{username?}",
-            async Task<Results<Ok<UserResponse>, ProblemHttpResult>> (
+        async Task<Results<Ok<UserResponse>, ProblemHttpResult>> (
                 [FromServices] IMediator mediator,
                 string? username,
                 CancellationToken cancellationToken = default) =>

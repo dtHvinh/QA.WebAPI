@@ -17,10 +17,10 @@ public class AnswerModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Answer);
+        var group = endpoints.MapGroup(EG.Answer)
+                           .WithTags(nameof(AnswerModule));
 
-        group.MapPut("/{answerId:int}",
-            static async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
+        group.MapPut("/{answerId:int}", static async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> (
             [FromBody] UpdateAnswerDto dto,
             int answerId,
             [FromServices] IMediator mediator,
@@ -37,11 +37,13 @@ public class AnswerModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .WithName("UpdateAnswer")
+            .WithSummary("Update an existing answer")
+            .WithDescription("Updates the content of an existing answer. Only the answer owner can perform this operation.")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateAnswerDto>>();
 
-        group.MapDelete("/{answerId:int}",
-            static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
+        group.MapDelete("/{answerId:int}", static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
             int answerId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default) =>
@@ -57,10 +59,12 @@ public class AnswerModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .WithName("DeleteAnswer")
+            .WithSummary("Delete an answer")
+            .WithDescription("Removes an answer from the system. Only the answer owner or moderators can perform this operation.")
             .RequireAuthorization();
 
-        group.MapPost("/{answerId:int}/{action:regex(^(upvote|downvote)$)}",
-            async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
+        group.MapPost("/{answerId:int}/{action:regex(^(upvote|downvote)$)}", async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> (
             int answerId,
             string action,
             [FromServices] IMediator mediator,
@@ -77,6 +81,9 @@ public class AnswerModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .WithName("VoteAnswer")
+            .WithSummary("Vote on an answer")
+            .WithDescription("Allows users to upvote or downvote an answer. Users can only vote once, but can change their vote.")
             .RequireAuthorization();
     }
 }

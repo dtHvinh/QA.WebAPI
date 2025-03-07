@@ -38,7 +38,7 @@ public class GetTagWithQuestionHandler(ITagRepository tagRepository)
             request.PageArgs.PageSize)
         {
             TotalCount = tag.QuestionCount,
-            TotalPage = NumericCalcHelper.GetTotalPage(tag.QuestionCount, request.PageArgs.PageSize)
+            TotalPage = MathHelper.GetTotalPage(tag.QuestionCount, request.PageArgs.PageSize)
         };
 
         return GenericResult<TagWithQuestionResponse>.Success(tag.ToTagWithQuestionResponse(pagedQuestion));

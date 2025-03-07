@@ -34,7 +34,7 @@ public class GetTagHandler(ITagRepository tagRepository) : IQueryHandler<GetTagQ
             new(tagResponses, hasNext, request.Skip / request.Take + 1, request.Take)
             {
                 TotalCount = totalCount,
-                TotalPage = NumericCalcHelper.GetTotalPage(totalCount, request.Take)
+                TotalPage = MathHelper.GetTotalPage(totalCount, request.Take)
             });
     }
 }

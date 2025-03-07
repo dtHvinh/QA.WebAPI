@@ -16,6 +16,12 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         Entities.Add(answer);
     }
 
+    public Task AddAnswerAndLoadAuthor(Answer answer, CancellationToken cancellationToken = default)
+    {
+        Entities.Add(answer);
+        return dbContext.Entry(answer).Reference(e => e.Author).LoadAsync(cancellationToken);
+    }
+
     public void TryEditAnswer(Answer answer, out string? errMsg)
     {
         if (answer.IsAccepted)

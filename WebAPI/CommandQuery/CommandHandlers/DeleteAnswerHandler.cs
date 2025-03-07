@@ -23,22 +23,42 @@ public class DeleteAnswerHandler(
         if (answer is null)
             return GenericResult<GenericResponse>.Failure("Answer not found");
 
-        if (!_authContext.IsResourceOwnedByUser(answer) && !_authContext.IsModerator())
+        if (!_authContext.IsResourceOwnedByUser(answer))
         {
-            return GenericResult<GenericResponse>.Failure("You are not authorized to delete this answer");
+            if (!_authContext.IsModerator()) // Moderator delete
+            {
+                _answerRepository.TrySoftDeleteAnswer(answer, out var morderatorDelErr);
+                if (morderatorDelErr is not null)
+                    return GenericResult<GenericResponse>.Failure(morderatorDelErr);
+
+                var morderatorDelRes = await _answerRepository.SaveChangesAsync(cancellationToken);
+
+                _logger.ModeratorNoEnityOwnerAction(morderatorDelRes.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogModeratorOp.Delete, answer);
+
+                return morderatorDelRes.IsSuccess
+                    ? GenericResult<GenericResponse>.Success(new GenericResponse("Answer deleted successfully"))
+                    : GenericResult<GenericResponse>.Failure(morderatorDelRes.Message);
+            }
+            else
+            {
+                return GenericResult<GenericResponse>.Failure("You are not authorized to delete this answer");
+            }
+        }
+        else // Answer owner delete
+        {
+            _answerRepository.TrySoftDeleteAnswer(answer, out var errMsg);
+
+            if (errMsg is not null)
+                return GenericResult<GenericResponse>.Failure(errMsg);
+
+            var result = await _answerRepository.SaveChangesAsync(cancellationToken);
+
+            _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Deleted, answer);
+
+            return result.IsSuccess
+                ? GenericResult<GenericResponse>.Success(new GenericResponse("Answer deleted successfully"))
+                : GenericResult<GenericResponse>.Failure(result.Message);
         }
 
-        _answerRepository.TrySoftDeleteAnswer(answer, out var errMsg);
-
-        if (errMsg is not null)
-            return GenericResult<GenericResponse>.Failure(errMsg);
-
-        var result = await _answerRepository.SaveChangesAsync(cancellationToken);
-
-        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Deleted, answer);
-
-        return result.IsSuccess
-            ? GenericResult<GenericResponse>.Success(new GenericResponse("Answer deleted successfully"))
-            : GenericResult<GenericResponse>.Failure(result.Message);
     }
 }
