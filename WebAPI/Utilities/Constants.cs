@@ -24,6 +24,7 @@ public static class Constants
     {
         private const string _prefix = "/api";
         public const string Auth = _prefix + "/auth";
+        public const string Admin = _prefix + "/admin";
         public const string Collection = _prefix + "/collection";
         public const string AI = _prefix + "/ai";
         public const string Question = _prefix + "/question";

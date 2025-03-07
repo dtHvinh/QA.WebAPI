@@ -20,8 +20,7 @@ public class Answer : IEntityWithTime<int>, IOwnedByUser<int>, ISoftDeleteEntity
     public AppUser? Author { get; set; } = default!;
     [Column(TypeName = "nvarchar(max)")]
     public required string Content { get; set; }
-    public int Upvote { get; set; }
-    public int Downvote { get; set; }
+    public int Score { get; set; }
 
     public bool IsDeleted { get; set; } = false;
     public bool IsAccepted { get; set; } = false;

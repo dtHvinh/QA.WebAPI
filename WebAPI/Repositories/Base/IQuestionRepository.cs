@@ -1,5 +1,4 @@
 ﻿using WebAPI.Model;
-using WebAPI.Utilities;
 
 namespace WebAPI.Repositories.Base;
 
@@ -17,13 +16,12 @@ public interface IQuestionRepository : IRepository<Question>
     /// </summary>
     /// <param name="question"></param>
     void UpdateQuestion(Question question);
-    void VoteChange(Question question, Enums.VoteUpdateTypes updateType, int value);
     Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     void SoftDeleteQuestion(Question question);
     Task<int> CountUserQuestion(int userId, CancellationToken cancellationToken);
     Task<List<Question>> FindQuestionsByTagId(int tagId, QuestionSortOrder sortOrder, int skip, int take, CancellationToken cancellationToken);
     Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken);
-    Task<int> CountUserUpvote(int userId, CancellationToken cancellationToken);
+    Task<int> CountUserScore(int userId, CancellationToken cancellationToken);
     Task<Question?> FindQuestionWithTags(int questionId, CancellationToken cancellationToken);
 }

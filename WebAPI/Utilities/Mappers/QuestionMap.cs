@@ -56,8 +56,7 @@ public static class QuestionMap
             AnswerCount = obj.AnswerCount,
             CommentCount = obj.CommentCount,
 
-            Upvote = obj.Upvotes,
-            Downvote = obj.Downvotes,
+            Score = obj.Score,
             CreatedAt = obj.CreatedAt,
             UpdatedAt = obj.UpdatedAt,
         };
@@ -92,8 +91,7 @@ public static class QuestionMap
             AnswerCount = obj.AnswerCount,
             CommentCount = obj.CommentCount,
 
-            Upvote = obj.Upvotes,
-            Downvote = obj.Downvotes,
+            Score = obj.Score,
             CreatedAt = obj.CreatedAt,
             UpdatedAt = obj.UpdatedAt,
         };

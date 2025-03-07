@@ -45,14 +45,14 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
             errMessage = "Can not delete solved question";
         }
 
-        if (questionToDelete.Upvotes - questionToDelete.Downvotes > 0)
+        if (questionToDelete.Score > 0)
         {
             errMessage = "Can not delete question people may find it valuable";
         }
 
         var allAnswer = await _answerRepository.GetAnswersAsync(questionToDelete.Id, cancellationToken);
 
-        if (allAnswer.Any(e => e.Upvote > e.Downvote))
+        if (allAnswer.Any(e => e.Score > 0))
         {
             errMessage = "Can not delete question people may find it valuable";
         }

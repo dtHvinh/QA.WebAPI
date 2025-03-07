@@ -43,7 +43,7 @@ public class GetUserHandler(
         int collectionCount = await _qcRepository.CountByAuthorId(user.Id, cancellationToken);
         var userLinks = await _externalLinkRepository.GetUserLinks(user.Id, cancellationToken);
 
-        int totalUpvotes = await _questionRepository.CountUserUpvote(user.Id, cancellationToken);
+        int totalScore = await _questionRepository.CountUserScore(user.Id, cancellationToken);
         int acceptedAnswerCount = await _answerRepository.CountUserAcceptedAnswer(user.Id, cancellationToken);
 
         var response = user.ToUserResponse();
@@ -51,7 +51,7 @@ public class GetUserHandler(
         response.QuestionCount = questionCount;
         response.CommentCount = commentCount;
         response.CollectionCount = collectionCount;
-        response.TotalUpvotes = totalUpvotes;
+        response.TotalScore = totalScore;
         response.AcceptedAnswerCount = acceptedAnswerCount;
         response.ExternalLinks = userLinks.Select(x => x.ToExternalLinkResponse()).ToList();
 

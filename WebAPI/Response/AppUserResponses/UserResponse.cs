@@ -19,7 +19,7 @@ public class UserResponse : IResourceRight<int>
     public int CollectionCount { get; set; }
     public List<ExternalLinkResponse> ExternalLinks { get; set; } = default!;
     public int AcceptedAnswerCount { get; set; }
-    public int TotalUpvotes { get; set; }
+    public int TotalScore { get; set; }
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
     public int SetResourceRight(int? requesterId)

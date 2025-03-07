@@ -62,12 +62,12 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.MostVoted => q
-                       .Include(e => e.Questions.OrderByDescending(e => e.Upvotes - e.Downvotes)
+                       .Include(e => e.Questions.OrderByDescending(e => e.Score)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Author)
                        .AsSplitQuery()
-                       .Include(e => e.Questions.OrderByDescending(e => e.Upvotes - e.Downvotes)
+                       .Include(e => e.Questions.OrderByDescending(e => e.Score)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)

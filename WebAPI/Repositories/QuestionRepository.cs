@@ -6,7 +6,6 @@ using WebAPI.Repositories.Base;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
 using WebAPI.Utilities.Extensions;
-using static WebAPI.Utilities.Enums;
 
 namespace WebAPI.Repositories;
 
@@ -31,7 +30,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
-            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes - e.Downvotes),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             _ => throw new InvalidOperationException(),
         };
@@ -61,7 +60,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
-            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             _ => throw new InvalidOperationException(),
         };
@@ -88,7 +87,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
                    .AsSplitQuery()
                    .Include(e => e.Answers.Where(e => !e.IsDeleted)
                                           .OrderByDescending(e => e.IsAccepted)
-                                          .ThenByDescending(e => e.Upvote)
+                                          .ThenByDescending(e => e.Score)
                                           .ThenByDescending(e => e.CreatedAt)
                                           .Take(10))
                    .ThenInclude(e => e.Author)
@@ -110,7 +109,7 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         {
             QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
-            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Upvotes - e.Downvotes),
+            QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
             _ => throw new InvalidOperationException(),
         };
@@ -141,35 +140,6 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         Entities.Update(question);
     }
 
-    public void VoteChange(Question question, VoteUpdateTypes updateType, int value)
-    {
-        switch (updateType)
-        {
-            case VoteUpdateTypes.CreateNew:
-                if (value == 1)
-                    question.Upvotes += value;
-                else if (value == -1)
-                    question.Downvotes -= value;
-
-                Entities.Update(question);
-                break;
-
-            case VoteUpdateTypes.ChangeVote:
-                question.Upvotes += value;
-                question.Downvotes -= value;
-                Entities.Update(question);
-                break;
-
-            case VoteUpdateTypes.NoChange:
-                break;
-
-            default:
-                throw new InvalidOperationException();
-        }
-
-        Entities.Update(question);
-    }
-
     public void SoftDeleteQuestion(Question question)
     {
         question.SolftDelete();
@@ -187,10 +157,10 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         return await Table.CountAsync(e => e.AuthorId == userId, cancellationToken);
     }
 
-    public async Task<int> CountUserUpvote(int userId, CancellationToken cancellationToken)
+    public async Task<int> CountUserScore(int userId, CancellationToken cancellationToken)
     {
         return await Table.Where(e => e.AuthorId == userId)
-            .SumAsync(e => e.Upvotes, cancellationToken);
+            .SumAsync(e => e.Score, cancellationToken);
     }
 
     public void MarkAsView(int questionId)

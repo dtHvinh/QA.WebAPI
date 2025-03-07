@@ -42,7 +42,7 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
                    .AsSplitQuery()
                    .Include(e => e.Answers.Where(e => !e.IsDeleted)
                                           .OrderByDescending(e => e.IsAccepted)
-                                          .ThenByDescending(e => e.Upvote)
+                                          .ThenByDescending(e => e.Score)
                                           .ThenByDescending(e => e.CreatedAt))
                     .ThenInclude(e => e.Author)
                    .AsSplitQuery()

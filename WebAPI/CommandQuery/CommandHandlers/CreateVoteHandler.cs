@@ -3,7 +3,6 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.VoteResponses;
-using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Options;
 using WebAPI.Utilities.Result.Base;
@@ -30,11 +29,6 @@ public class CreateVoteHandler(
 
     public async Task<GenericResult<VoteResponse>> Handle(CreateQuestionVoteCommand request, CancellationToken cancellationToken)
     {
-        var requester = await _userRepository.FindUserByIdAsync(_authContext.UserId, cancellationToken);
-
-        if (request == null)
-            return GenericResult<VoteResponse>.Failure("Invalid requester");
-
         var question = await questionRepository.FindQuestionWithAuthorByIdAsync(request.QuestionId, cancellationToken);
 
         if (question == null)
@@ -47,43 +41,39 @@ public class CreateVoteHandler(
             return GenericResult<VoteResponse>.Failure("You can't vote for your own question");
         }
 
-        var type = request.IsUpvote
-            ? await _voteRepository.UpvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken)
-            : await _voteRepository.DownvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken);
-
-        switch (type)
+        if (request.IsUpvote)
         {
-            case Enums.VoteUpdateTypes.NoChange:
-                return GenericResult<VoteResponse>.Failure("You already done this");
+            var res = await _voteRepository.UpvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken);
 
-            case Enums.VoteUpdateTypes.CreateNew:
-                if (request.IsUpvote)
-                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
-                else
-                {
-                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
-                    requester!.Reputation += _applicationProperties.ReputationAcquirePerAction.DownvoteQuestion;
-                }
-                break;
+            if (res)
+            {
+                question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
 
-            case Enums.VoteUpdateTypes.ChangeVote:
-                if (request.IsUpvote)
-                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
-                else
-                {
-                    question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
-                    requester!.Reputation += _applicationProperties.ReputationAcquirePerAction.DownvoteAnswer;
-                }
-                break;
+                question.Score++;
+            }
+            else
+                GenericResult<VoteResponse>.Failure("You have already done this");
+        }
+        else
+        {
+            var res = await _voteRepository.DownvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken);
+
+            if (res)
+            {
+                question.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
+
+                question.Score--;
+            }
+            else
+                GenericResult<VoteResponse>.Failure("You have already done this");
         }
 
         _userRepository.Update(question.Author!);
-        questionRepository.VoteChange(question, type, request.IsUpvote ? 1 : -1);
 
         var result = await questionRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? GenericResult<VoteResponse>.Success(new(question.Upvotes, question.Downvotes))
+            ? GenericResult<VoteResponse>.Success(new(question.Score))
             : GenericResult<VoteResponse>.Failure(result.Message);
     }
 
@@ -102,37 +92,39 @@ public class CreateVoteHandler(
             return GenericResult<VoteResponse>.Failure("You can't vote for your own answer");
         }
 
-        var type = request.IsUpvote
-            ? await _voteRepository.UpvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken)
-            : await _voteRepository.DownvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken);
-
-        switch (type)
+        if (request.IsUpvote)
         {
-            case Enums.VoteUpdateTypes.NoChange:
-                return GenericResult<VoteResponse>.Failure("You already done this");
+            var res = await _voteRepository.UpvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken);
 
-            case Enums.VoteUpdateTypes.CreateNew:
-                if (request.IsUpvote)
-                    answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
-                else
-                    answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
-                break;
+            if (res)
+            {
+                answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
 
-            case Enums.VoteUpdateTypes.ChangeVote:
-                if (request.IsUpvote)
-                    answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
-                else
-                    answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
-                break;
+                answer.Score++;
+            }
+            else
+                GenericResult<VoteResponse>.Failure("You have already done this");
+        }
+        else
+        {
+            var res = await _voteRepository.DownvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken);
+
+            if (res)
+            {
+                answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
+
+                answer.Score--;
+            }
+            else
+                GenericResult<VoteResponse>.Failure("You have already done this");
         }
 
         _userRepository.Update(answer.Author!);
-        answerRepository.VoteChange(answer, type, request.IsUpvote ? 1 : -1);
 
         var result = await answerRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? GenericResult<VoteResponse>.Success(new(answer.Upvote, answer.Downvote))
+            ? GenericResult<VoteResponse>.Success(new(answer.Score))
             : GenericResult<VoteResponse>.Failure(result.Message);
     }
 }

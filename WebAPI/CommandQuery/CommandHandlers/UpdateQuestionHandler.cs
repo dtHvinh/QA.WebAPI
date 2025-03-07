@@ -44,7 +44,7 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<UpdateQuestionResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
         }
 
-        if (existQuestion.Upvotes != 0 || existQuestion.Downvotes != 0)
+        if (existQuestion.Score > 0)
         {
             return GenericResult<UpdateQuestionResponse>.Failure("Can not edit question with votes");
         }

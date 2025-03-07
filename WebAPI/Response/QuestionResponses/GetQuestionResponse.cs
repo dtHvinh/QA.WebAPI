@@ -26,8 +26,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public int ViewCount { get; set; }
     public int AnswerCount { get; set; }
     public int CommentCount { get; set; }
-    public int Upvote { get; set; }
-    public int Downvote { get; set; }
+    public int Score { get; set; }
 
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 

@@ -4,7 +4,6 @@ using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Utilities.Extensions;
-using static WebAPI.Utilities.Enums;
 
 namespace WebAPI.Repositories;
 
@@ -69,7 +68,7 @@ public class AnswerRepository(ApplicationDbContext dbContext)
             return;
         }
 
-        if (answer.Upvote - answer.Downvote > 0)
+        if (answer.Score > 0)
         {
             errMsg = "Can not delete answer people may find it valuable";
             return;
@@ -77,35 +76,6 @@ public class AnswerRepository(ApplicationDbContext dbContext)
 
         errMsg = null;
         answer.SolftDelete();
-        Entities.Update(answer);
-    }
-
-    public void VoteChange(Answer answer, VoteUpdateTypes updateType, int value)
-    {
-        switch (updateType)
-        {
-            case VoteUpdateTypes.CreateNew:
-                if (value == 1)
-                    answer.Upvote += value;
-                else if (value == -1)
-                    answer.Downvote -= value; // - plus - eq +
-
-                Entities.Update(answer);
-                break;
-
-            case VoteUpdateTypes.ChangeVote:
-                answer.Upvote += value;
-                answer.Downvote -= value;
-                Entities.Update(answer);
-                break;
-
-            case VoteUpdateTypes.NoChange:
-                break;
-
-            default:
-                throw new InvalidOperationException();
-        }
-
         Entities.Update(answer);
     }
 }

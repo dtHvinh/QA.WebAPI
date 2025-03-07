@@ -10,8 +10,7 @@ public class AnswerResponse : IResourceRight<AnswerResponse>
     public DateTime UpdatedAt { get; set; }
     public AuthorResponse? Author { get; set; } = default!;
     public required string Content { get; set; }
-    public int Upvote { get; set; }
-    public int Downvote { get; set; }
+    public int Score { get; set; }
     public bool IsAccepted { get; set; }
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
