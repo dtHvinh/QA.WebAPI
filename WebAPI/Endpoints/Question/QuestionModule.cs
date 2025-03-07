@@ -25,62 +25,111 @@ public sealed class QuestionModule : IModule
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup(EG.Question)
-            .WithTags(nameof(QuestionModule));
+            .WithTags(nameof(QuestionModule))
+            .WithOpenApi();
 
         group.MapGet("/user", GetUserQuestionHandler)
+            .WithName("GetUserQuestions")
+            .WithSummary("Get user's questions")
+            .WithDescription("Retrieves a paginated list of questions created by the authenticated user")
             .RequireAuthorization();
 
         group.MapGet("/", GetQuestionsHandler)
+            .WithName("GetQuestions")
+            .WithSummary("Get all questions")
+            .WithDescription("Retrieves a paginated list of all questions with sorting options")
             .RequireAuthorization();
 
         group.MapGet("/view/{id:int}", ViewQuestionDetailHandler)
+            .WithName("GetQuestionDetail")
+            .WithSummary("Get question details")
+            .WithDescription("Retrieves detailed information about a specific question including answers and comments")
             .RequireAuthorization();
 
         group.MapGet("/search", SearchQuestionHandler)
+            .WithName("SearchQuestions")
+            .WithSummary("Search questions")
+            .WithDescription("Search questions by keyword and tag with pagination support")
             .RequireAuthorization();
 
         group.MapGet("/you_may_like", QuestionYouMayLikeHandler)
+            .WithName("GetRecommendedQuestions")
+            .WithSummary("Get recommended questions")
+            .WithDescription("Retrieves personalized question recommendations for the user")
             .RequireAuthorization();
 
         group.MapGet("/{questionId:int}/history", ViewQuestionHistory)
+            .WithName("GetQuestionHistory")
+            .WithSummary("Get question history")
+            .WithDescription("Retrieves the edit history of a specific question")
             .RequireAuthorization();
 
         group.MapGet("/{questionId:int}/similar", GetSimilarQuestion)
+            .WithName("GetSimilarQuestions")
+            .WithSummary("Get similar questions")
+            .WithDescription("Finds questions that are similar to the specified question")
             .RequireAuthorization();
 
         group.MapPost("/", CreateQuestionHandler)
+            .WithName("CreateQuestion")
+            .WithSummary("Create new question")
+            .WithDescription("Creates a new question with specified title, content, and tags")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>()
             .AddEndpointFilter<ForCreateQuestion>();
 
         group.MapPost("/{questionId:int}/comment", CommentToQuestionHandler)
+            .WithName("AddQuestionComment")
+            .WithSummary("Add comment to question")
+            .WithDescription("Adds a new comment to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
             .AddEndpointFilter<ForComment>();
 
         group.MapPost("/{questionId:int}/answer", AnswerToQuestionHandler)
+            .WithName("AddAnswer")
+            .WithSummary("Answer question")
+            .WithDescription("Submits an answer to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateAnswerDto>>();
 
         group.MapPost("/{questionId:int}/upvote", UpvoteQuestionHandler)
+            .WithName("UpvoteQuestion")
+            .WithSummary("Upvote question")
+            .WithDescription("Adds an upvote to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<ForUpvote>();
 
         group.MapPost("/{questionId:int}/downvote", DownvoteQuestionHandler)
+            .WithName("DownvoteQuestion")
+            .WithSummary("Downvote question")
+            .WithDescription("Adds a downvote to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<ForDownVote>();
 
         group.MapDelete("/{id:int}", DeleteQuestionHandler)
+            .WithName("DeleteQuestion")
+            .WithSummary("Delete question")
+            .WithDescription("Removes a question and all its associated content")
             .RequireAuthorization();
 
         group.MapPut("/", UpdateQuestionHandler)
+            .WithName("UpdateQuestion")
+            .WithSummary("Update question")
+            .WithDescription("Updates the content of an existing question")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
 
         group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestionHandler)
+            .WithName("AcceptAnswer")
+            .WithSummary("Accept answer")
+            .WithDescription("Marks an answer as the accepted solution for the question")
             .RequireAuthorization();
 
         group.MapPut("/{questionId:int}/close", CloseQuestionHandler)
+            .WithName("CloseQuestion")
+            .WithSummary("Close question")
+            .WithDescription("Marks a question as closed, preventing new answers and comments")
             .RequireAuthorization();
     }
 

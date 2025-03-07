@@ -16,57 +16,70 @@ public class BookmarkModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Bookmark).WithTags(nameof(BookmarkModule));
+        var group = endpoints.MapGroup(EG.Bookmark)
+                           .WithTags(nameof(BookmarkModule))
+                           .WithOpenApi();
 
+        group.MapGet("/", HandleGetBookmarks)
+             .WithName("GetUserBookmarks")
+             .WithSummary("Get user's bookmarked questions")
+             .WithDescription("Retrieves a paginated list of questions that the authenticated user has bookmarked")
+             .RequireAuthorization();
 
-        group.MapGet("/", async Task<Results<Ok<PagedResponse<BookmarkResponse>>, ProblemHttpResult>> (
-            string orderBy,
-            int pageIndex,
-            int pageSize,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+        group.MapPost("/{questionId:int}", HandleCreateBookmark)
+             .WithName("CreateBookmark")
+             .WithSummary("Bookmark a question")
+             .WithDescription("Adds the specified question to the user's bookmarks for later reference")
+             .RequireAuthorization();
+
+        group.MapDelete("/{bookmarkId:int}", HandleDeleteBookmark)
+             .WithName("DeleteBookmark")
+             .WithSummary("Remove a bookmark")
+             .WithDescription("Removes the specified bookmark from the user's bookmarked questions")
+             .RequireAuthorization();
+    }
+
+    private static async Task<Results<Ok<PagedResponse<BookmarkResponse>>, ProblemHttpResult>> HandleGetBookmarks(
+        string orderBy,
+        int pageIndex,
+        int pageSize,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetUserBookmarkQuery(orderBy, PageArgs.From(pageIndex, pageSize));
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
         {
-            var cmd = new GetUserBookmarkQuery(orderBy, PageArgs.From(pageIndex, pageSize));
-            var result = await mediator.Send(cmd, cancellationToken);
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
 
-            return TypedResults.Ok(result.Value);
-        })
-        .RequireAuthorization();
-
-        group.MapPost("/{questionId:int}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            int questionId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleCreateBookmark(
+        int questionId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var cmd = new CreateBookmarkCommand(questionId);
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
         {
-            var cmd = new CreateBookmarkCommand(questionId);
-            var result = await mediator.Send(cmd, cancellationToken);
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
 
-            return TypedResults.Ok(result.Value);
-        })
-        .RequireAuthorization();
-
-        group.MapDelete("/{bookmarkId:int}", async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> (
-            int bookmarkId,
-            [FromServices] IMediator mediator,
-            CancellationToken cancellationToken = default) =>
+    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteBookmark(
+        int bookmarkId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var cmd = new DeleteBookmarkCommand(bookmarkId);
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
         {
-            var cmd = new DeleteBookmarkCommand(bookmarkId);
-            var result = await mediator.Send(cmd, cancellationToken);
-            if (!result.IsSuccess)
-            {
-                return ProblemResultExtensions.BadRequest(result.Message);
-            }
-
-            return TypedResults.Ok(result.Value);
-        })
-        .RequireAuthorization();
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
     }
 }

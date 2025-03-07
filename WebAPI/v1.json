@@ -16,7 +16,7 @@
     "/api/user/{username}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "UserModule"
         ],
         "parameters": [
           {
@@ -45,7 +45,7 @@
     "/api/user/is_allow_to/{action}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "UserModule"
         ],
         "parameters": [
           {
@@ -74,7 +74,7 @@
     "/api/user": {
       "put": {
         "tags": [
-          "WebAPI"
+          "UserModule"
         ],
         "requestBody": {
           "content": {
@@ -103,7 +103,7 @@
     "/api/tag/{id}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -157,7 +157,7 @@
       },
       "delete": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -187,7 +187,7 @@
     "/api/tag/wiki/{id}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -217,7 +217,7 @@
     "/api/tag/{tagId}/questions": {
       "get": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -273,7 +273,7 @@
     "/api/tag/search/{keyword}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -302,7 +302,7 @@
     "/api/tag/{orderBy}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "parameters": [
           {
@@ -349,7 +349,7 @@
     "/api/tag": {
       "post": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "requestBody": {
           "content": {
@@ -376,7 +376,7 @@
       },
       "put": {
         "tags": [
-          "WebAPI"
+          "TagModule"
         ],
         "requestBody": {
           "content": {
@@ -998,7 +998,7 @@
     "/api/comment/{id}": {
       "put": {
         "tags": [
-          "WebAPI"
+          "CommentModule"
         ],
         "parameters": [
           {
@@ -1036,7 +1036,7 @@
       },
       "delete": {
         "tags": [
-          "WebAPI"
+          "CommentModule"
         ],
         "parameters": [
           {
@@ -1534,7 +1534,7 @@
     "/api/bookmark": {
       "get": {
         "tags": [
-          "WebAPI"
+          "BookmarkModule"
         ],
         "parameters": [
           {
@@ -1581,7 +1581,7 @@
     "/api/bookmark/{questionId}": {
       "post": {
         "tags": [
-          "WebAPI"
+          "BookmarkModule"
         ],
         "parameters": [
           {
@@ -1611,7 +1611,7 @@
     "/api/bookmark/{bookmarkId}": {
       "delete": {
         "tags": [
-          "WebAPI"
+          "BookmarkModule"
         ],
         "parameters": [
           {
@@ -1641,7 +1641,7 @@
     "/api/auth": {
       "get": {
         "tags": [
-          "WebAPI"
+          "AuthModule"
         ],
         "responses": {
           "200": {
@@ -1653,7 +1653,7 @@
     "/api/auth/refresh": {
       "post": {
         "tags": [
-          "WebAPI"
+          "AuthModule"
         ],
         "requestBody": {
           "content": {
@@ -1682,7 +1682,7 @@
     "/api/auth/login": {
       "post": {
         "tags": [
-          "WebAPI"
+          "AuthModule"
         ],
         "requestBody": {
           "content": {
@@ -1711,7 +1711,7 @@
     "/api/auth/register": {
       "post": {
         "tags": [
-          "WebAPI"
+          "AuthModule"
         ],
         "requestBody": {
           "content": {
@@ -1740,8 +1740,11 @@
     "/api/answer/{answerId}": {
       "put": {
         "tags": [
-          "WebAPI"
+          "AnswerModule"
         ],
+        "summary": "Update an existing answer",
+        "description": "Updates the content of an existing answer. Only the answer owner can perform this operation.",
+        "operationId": "UpdateAnswer",
         "parameters": [
           {
             "name": "answerId",
@@ -1778,8 +1781,11 @@
       },
       "delete": {
         "tags": [
-          "WebAPI"
+          "AnswerModule"
         ],
+        "summary": "Delete an answer",
+        "description": "Removes an answer from the system. Only the answer owner or moderators can perform this operation.",
+        "operationId": "DeleteAnswer",
         "parameters": [
           {
             "name": "answerId",
@@ -1808,8 +1814,11 @@
     "/api/answer/{answerId}/{action}": {
       "post": {
         "tags": [
-          "WebAPI"
+          "AnswerModule"
         ],
+        "summary": "Vote on an answer",
+        "description": "Allows users to upvote or downvote an answer. Users can only vote once, but can change their vote.",
+        "operationId": "VoteAnswer",
         "parameters": [
           {
             "name": "answerId",
@@ -1879,8 +1888,11 @@
     "/api/admin/analytic/{what}": {
       "get": {
         "tags": [
-          "WebAPI"
+          "AdminModule"
         ],
+        "summary": "Get system analytics data",
+        "description": "Retrieves various system analytics based on the specified category",
+        "operationId": "GetAnalytics",
         "parameters": [
           {
             "name": "what",
@@ -3130,16 +3142,34 @@
   },
   "tags": [
     {
-      "name": "WebAPI"
+      "name": "UserModule"
+    },
+    {
+      "name": "TagModule"
     },
     {
       "name": "QuestionModule"
     },
     {
+      "name": "CommentModule"
+    },
+    {
       "name": "CollectionModule"
     },
     {
+      "name": "BookmarkModule"
+    },
+    {
+      "name": "AuthModule"
+    },
+    {
+      "name": "AnswerModule"
+    },
+    {
       "name": "AIModule"
+    },
+    {
+      "name": "AdminModule"
     }
   ]
 }

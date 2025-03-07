@@ -17,12 +17,17 @@ public sealed class AuthModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Auth).WithTags(nameof(AuthModule));
+        var group = endpoints.MapGroup(EG.Auth)
+                           .WithTags(nameof(AuthModule))
+                           .WithOpenApi();
 
         group.MapGet("/", () =>
         {
             return Results.Ok("Hello");
-        });
+        })
+            .WithName("HealthCheck")
+            .WithSummary("API Health Check")
+            .WithDescription("Simple endpoint to verify the auth service is running");
 
         group.MapPost("/refresh",
             async Task<Results<Ok<AuthRefreshResponse>, ProblemHttpResult>> (
@@ -38,6 +43,9 @@ public sealed class AuthModule : IModule
             }
             return TypedResults.Ok(result.Value);
         })
+            .WithName("RefreshToken")
+            .WithSummary("Refresh authentication token")
+            .WithDescription("Generates a new access token using a valid refresh token")
             .RequireAuthorization()
             .AllowAnonymous();
 
@@ -64,6 +72,9 @@ public sealed class AuthModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .WithName("Register")
+            .WithSummary("Register new user")
+            .WithDescription("Creates a new user account with the provided credentials and returns authentication tokens")
             .AllowAnonymous()
             .AddEndpointFilter<FluentValidation<RegisterDto>>();
     }
@@ -87,6 +98,9 @@ public sealed class AuthModule : IModule
 
             return TypedResults.Ok(result.Value);
         })
+            .WithName("Login")
+            .WithSummary("User login")
+            .WithDescription("Authenticates user credentials and returns access and refresh tokens")
             .AllowAnonymous()
             .AddEndpointFilter<FluentValidation<LoginDto>>();
     }

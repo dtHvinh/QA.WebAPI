@@ -22,45 +22,82 @@ public class CollectionModule : IModule
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup(EG.Collection)
-            .WithTags(nameof(CollectionModule));
+            .WithTags(nameof(CollectionModule))
+            .WithOpenApi();
 
         group.MapGet("/", HandleGetCollection)
+            .WithName("GetCollections")
+            .WithSummary("Get all collections")
+            .WithDescription("Retrieves a paginated list of all public collections")
             .RequireAuthorization();
 
         group.MapGet("/search/{searchTerm}", HandleSearchCollection)
+            .WithName("SearchCollections")
+            .WithSummary("Search collections")
+            .WithDescription("Search for collections by name or description")
             .RequireAuthorization();
 
         group.MapGet("/with_question/{questionId:int}", HandleGetCollectionAndAddStatus)
+            .WithName("GetCollectionsWithQuestionStatus")
+            .WithSummary("Get collections with question status")
+            .WithDescription("Get collections with information about whether a specific question is included in each collection")
             .RequireAuthorization();
 
         group.MapGet("/{id}", HandleGetCollectionDetail)
+            .WithName("GetCollectionDetail")
+            .WithSummary("Get collection details")
+            .WithDescription("Retrieves detailed information about a specific collection including its questions")
             .RequireAuthorization();
 
         group.MapGet("/{collectionId:int}/search/{searchTerm}", HandleSearchQuestionInCollection)
+            .WithName("SearchQuestionsInCollection")
+            .WithSummary("Search questions in collection")
+            .WithDescription("Search for questions within a specific collection")
             .RequireAuthorization();
 
         group.MapGet("/my-collections", HandleGetUserCollection)
+            .WithName("GetUserCollections")
+            .WithSummary("Get user's collections")
+            .WithDescription("Retrieves all collections created by the authenticated user")
             .RequireAuthorization();
 
         group.MapPost("/", HandleCreateCollection)
+            .WithName("CreateCollection")
+            .WithSummary("Create new collection")
+            .WithDescription("Creates a new question collection for the authenticated user")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCollectionDto>>();
 
         group.MapPost("/{collectionId:int}/like", HandleLikeCollection)
+            .WithName("LikeCollection")
+            .WithSummary("Like a collection")
+            .WithDescription("Adds the collection to user's liked collections")
             .RequireAuthorization();
 
         group.MapDelete("/{collectionId:int}/unlike", HandleUnlikeCollection)
+            .WithName("UnlikeCollection")
+            .WithSummary("Unlike a collection")
+            .WithDescription("Removes the collection from user's liked collections")
             .RequireAuthorization();
 
         group.MapPost("/{collectionId:int}/{action:regex(^(add|delete)$)}/{questionId:int}",
                 HandleQuestionCollectionOp)
+            .WithName("ManageCollectionQuestions")
+            .WithSummary("Manage collection questions")
+            .WithDescription("Add or remove questions from a collection")
             .RequireAuthorization();
 
         group.MapPut("/", HandleUpdateCollection)
+            .WithName("UpdateCollection")
+            .WithSummary("Update collection")
+            .WithDescription("Update an existing collection's details")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateCollectionDto>>();
 
         group.MapDelete("/{id}", HandleDeleteCollection)
+            .WithName("DeleteCollection")
+            .WithSummary("Delete collection")
+            .WithDescription("Permanently removes a collection and its associations")
             .RequireAuthorization();
     }
 
