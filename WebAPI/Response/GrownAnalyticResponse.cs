@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Response;
 
-public record GrownAnalyticResponse(int LastWeekCount, int CurrentWeekCount, double GrowthPercentage);
+public record GrownAnalyticResponse(int PreviousCount, int CurrentCount, double GrowthPercentage);

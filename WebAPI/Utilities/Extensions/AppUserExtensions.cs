@@ -3,9 +3,9 @@ using WebAPI.Model;
 using WebAPI.Response.AppUserResponses;
 using WebAPI.Response.AuthResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class AppUserMap
+public static class AppUserExtensions
 {
     public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken,
         IList<string> roles)
@@ -44,9 +44,8 @@ public static class AppUserMap
             ProfilePicture = obj!.ProfilePicture,
             Username = obj!.UserName!,
             Reputation = obj.Reputation,
-            Bio = obj.Bio,
-            DateJoined = obj.CreatedAt,
-            LastActive = obj.UpdatedAt
+            CreatedAt = obj.CreatedAt,
+            UpdatedAt = obj.UpdatedAt
         };
     }
 }

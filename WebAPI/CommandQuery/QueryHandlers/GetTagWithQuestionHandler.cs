@@ -6,7 +6,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
@@ -22,7 +22,7 @@ public class GetTagWithQuestionHandler(ITagRepository tagRepository)
         var tag = await _tagRepository.FindTagWithQuestionById(
                 request.TagId,
                 Enum.Parse<QuestionSortOrder>(request.OrderBy, true),
-                (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+                (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
                 request.PageArgs.PageSize + 1,
                 cancellationToken);
 
@@ -34,7 +34,7 @@ public class GetTagWithQuestionHandler(ITagRepository tagRepository)
         var pagedQuestion = new PagedResponse<GetQuestionResponse>(
             tag.Questions.Select(e => e.ToGetQuestionResponse()).Take(request.PageArgs.PageSize),
             hasNext,
-            request.PageArgs.Page,
+            request.PageArgs.PageIndex,
             request.PageArgs.PageSize)
         {
             TotalCount = tag.QuestionCount,

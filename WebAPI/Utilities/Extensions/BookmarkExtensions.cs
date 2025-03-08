@@ -1,9 +1,9 @@
 ﻿using WebAPI.Model;
 using WebAPI.Response.BookmarkResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class BookmarkMap
+public static class BookmarkExtensions
 {
     public static BookmarkResponse ToBookmarkResponse(this BookMark bookMark)
     {

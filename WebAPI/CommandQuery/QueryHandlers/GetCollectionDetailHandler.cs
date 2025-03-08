@@ -6,7 +6,7 @@ using WebAPI.Response.CollectionResponses;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -43,7 +43,7 @@ public class GetCollectionDetailHandler(
                 .Select(x => x.ToGetQuestionResponse())
                 .ToList(),
             hasNext,
-            request.PageArgs.Page,
+            request.PageArgs.PageIndex,
             request.PageArgs.PageSize)
         {
             TotalCount = totalCount,

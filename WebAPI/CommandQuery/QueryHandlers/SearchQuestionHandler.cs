@@ -3,7 +3,7 @@ using WebAPI.CQRS;
 using WebAPI.Pagination;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
 
@@ -18,7 +18,7 @@ public class SearchQuestionHandler(QuestionSearchService questionSearchService, 
     public async Task<GenericResult<PagedResponse<GetQuestionResponse>>> Handle(
         SearchQuestionQuery request, CancellationToken cancellationToken)
     {
-        var skip = (request.Args.Page - 1) * request.Args.PageSize;
+        var skip = (request.Args.PageIndex - 1) * request.Args.PageSize;
 
         var questions =
             request.TagId == 0
@@ -36,7 +36,7 @@ public class SearchQuestionHandler(QuestionSearchService questionSearchService, 
                 .Take(request.Args.PageSize)
                 .Select(e => e.ToGetQuestionResponse()),
             hasNext,
-            request.Args.Page,
+            request.Args.PageIndex,
             request.Args.PageSize)
         {
             TotalCount = (int)questions.Total,

@@ -10,7 +10,7 @@ using WebAPI.Data.Configurations;
 using WebAPI.Model;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Contract;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Services;
 
 namespace WebAPI.Data;

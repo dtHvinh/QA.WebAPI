@@ -2,9 +2,9 @@
 using WebAPI.Model;
 using WebAPI.Response.QuestionResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class QuestionMap
+public static class QuestionExtensions
 {
     public static Question ToQuestion(this CreateQuestionDto dto, int authorId)
     {

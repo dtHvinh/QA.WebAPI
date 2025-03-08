@@ -64,6 +64,12 @@ public sealed class QuestionModule : IModule
             .WithDescription("Retrieves the edit history of a specific question")
             .RequireAuthorization();
 
+        group.MapGet("/{questionId:int}/comments", GetQuestionComments)
+            .WithName("Get Question Comment")
+            .WithSummary("Get question comment")
+            .WithDescription("Retrieves the comments a specific question")
+            .RequireAuthorization();
+
         group.MapGet("/{questionId:int}/similar", GetSimilarQuestion)
             .WithName("GetSimilarQuestions")
             .WithSummary("Get similar questions")
@@ -131,6 +137,22 @@ public sealed class QuestionModule : IModule
             .WithSummary("Close question")
             .WithDescription("Marks a question as closed, preventing new answers and comments")
             .RequireAuthorization();
+    }
+
+    private static
+        async Task<Results<Ok<List<CommentResponse>>, ProblemHttpResult>> GetQuestionComments(
+            int questionId,
+            [AsParameters] PageArgs pageArgs,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new GetQuestionCommentQuery(questionId, pageArgs);
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
     }
 
     private static

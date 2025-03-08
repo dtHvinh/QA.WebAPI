@@ -2,11 +2,23 @@
 using WebAPI.Model;
 using WebAPI.Response.CommentResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class CommentMap
+public static class CommentExtensions
 {
     public static CommentResponse ToCommentResponse(this Comment comment)
+    {
+        return new CommentResponse()
+        {
+            Id = comment.Id,
+            Content = comment.Content,
+            CreatedAt = comment.CreatedAt,
+            UpdatedAt = comment.UpdatedAt,
+            Author = comment.Author.ToAuthorResponse()
+        };
+    }
+
+    public static CommentResponse ToCommentResponse(this QuestionComment comment)
     {
         return new CommentResponse()
         {

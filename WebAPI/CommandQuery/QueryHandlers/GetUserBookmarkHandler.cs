@@ -5,7 +5,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.BookmarkResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -22,7 +22,7 @@ public class GetUserBookmarkHandler(
         var bookmarks = await _bookmarkRepository.FindUserBookmark(
             _authenticationContext.UserId,
             Model.QuestionSortOrder.Newest,
-            (request.PageArgs.Page - 1) * request.PageArgs.Page,
+            (request.PageArgs.PageIndex - 1) * request.PageArgs.PageIndex,
             request.PageArgs.PageSize + 1,
             cancellationToken);
 
@@ -35,7 +35,7 @@ public class GetUserBookmarkHandler(
             new PagedResponse<BookmarkResponse>(
                 bookmarks.Take(request.PageArgs.PageSize).Select(e => e.ToBookmarkResponse()).ToList(),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize)
             {
                 TotalCount = userBookmarkCount,

@@ -4,7 +4,7 @@ using WebAPI.Model;
 using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -18,7 +18,7 @@ public class GetTagQuestionHandler(IQuestionRepository questionRepository) : IQu
         var questions = await _questionRepository.FindQuestionsByTagId(
                         request.TagId,
                         Enum.Parse<QuestionSortOrder>(request.Order),
-                        (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+                        (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
                         request.PageArgs.PageSize + 1,
                         cancellationToken);
 
@@ -28,7 +28,7 @@ public class GetTagQuestionHandler(IQuestionRepository questionRepository) : IQu
             new PagedResponse<GetQuestionResponse>(
                 questions.Take(request.PageArgs.PageSize).Select(e => e.ToGetQuestionResponse()),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize)
         );
     }

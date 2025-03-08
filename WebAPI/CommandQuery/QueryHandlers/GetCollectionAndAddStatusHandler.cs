@@ -32,7 +32,7 @@ public class GetCollectionAndAddStatusHandler(
                 IsPublic = e.IsPublic
             }).Take(request.PageArgs.PageSize).ToList(),
             hasNext,
-            request.PageArgs.Page,
+            request.PageArgs.PageIndex,
             request.PageArgs.PageSize));
     }
 }

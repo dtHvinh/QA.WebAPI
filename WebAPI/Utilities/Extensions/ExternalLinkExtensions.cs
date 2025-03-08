@@ -1,9 +1,9 @@
 ﻿using WebAPI.Model;
 using WebAPI.Response.ExternalLinkResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class ExternalLinkMap
+public static class ExternalLinkExtensions
 {
     public static ExternalLinkResponse ToExternalLinkResponse(this ExternalLinks obj)
     {

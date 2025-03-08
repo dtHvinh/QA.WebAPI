@@ -1,9 +1,9 @@
 ﻿using WebAPI.Model;
 using WebAPI.Response.HistoryResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class QuestionHistoryMap
+public static class QuestionHistoryExtensions
 {
     public static QuestionHistoryResponse ToResponse(this QuestionHistory obj)
     {

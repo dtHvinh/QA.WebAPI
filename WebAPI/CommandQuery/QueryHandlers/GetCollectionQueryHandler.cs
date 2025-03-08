@@ -5,7 +5,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.CollectionResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -24,7 +24,7 @@ public class GetCollectionQueryHandler(
         var collections = await _collectionRepository.FindCollections(
             request.SortOrder,
             request.Args.CalculateSkip(),
-            request.Args.Page + 1, cancellationToken);
+            request.Args.PageIndex + 1, cancellationToken);
 
         var hasNext = collections.Count == request.Args.PageSize + 1;
 
@@ -35,7 +35,7 @@ public class GetCollectionQueryHandler(
                 collections.Take(request.Args.PageSize).Select(e =>
                     e.ToGetCollectionResponse().SetResourceRight(_authenticationContext.UserId)).ToList(),
                 hasNext,
-                request.Args.Page,
+                request.Args.PageIndex,
                 request.Args.PageSize)
             {
                 TotalCount = totalCount,

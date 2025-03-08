@@ -4,9 +4,9 @@ using WebAPI.Pagination;
 using WebAPI.Response.CollectionResponses;
 using WebAPI.Response.QuestionResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class CollectionMap
+public static class CollectionExtensions
 {
     public static Collection ToCollection(this CreateCollectionDto dto)
     {

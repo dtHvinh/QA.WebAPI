@@ -3,7 +3,7 @@ using WebAPI.CQRS;
 using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.CollectionResponses;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -18,7 +18,7 @@ public class SearchCollectionHandler(ICollectionRepository collectionRepository)
         var collections = await _collectionRepository.SearchCollections(
             request.SearchTerm,
             request.PageArgs.CalculateSkip(),
-            request.PageArgs.Page + 1,
+            request.PageArgs.PageIndex + 1,
             cancellationToken);
 
         var hasNext = collections.Count == request.PageArgs.PageSize + 1;
@@ -26,7 +26,7 @@ public class SearchCollectionHandler(ICollectionRepository collectionRepository)
             new PagedResponse<GetCollectionResponse>(
                 collections.Take(request.PageArgs.PageSize).Select(e => e.ToGetCollectionResponse()).ToList(),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize));
     }
 }

@@ -4,7 +4,7 @@ using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AuthResponses;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Provider;
 using WebAPI.Utilities.Result.Base;
 

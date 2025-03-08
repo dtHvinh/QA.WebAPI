@@ -6,7 +6,7 @@ using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
-[Index(nameof(IsDeleted), nameof(IsBanned))]
+[Index(nameof(IsDeleted))]
 [Index(nameof(Reputation))]
 public class AppUser : IdentityUser<int>, IEntityWithTime<int>, ISoftDeleteEntity
 {
@@ -16,13 +16,10 @@ public class AppUser : IdentityUser<int>, IEntityWithTime<int>, ISoftDeleteEntit
     public string? LastName { get; set; }
     public string? RefreshToken { get; set; }
     public int Reputation { get; set; }
-    public bool IsBanned { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     [Column(TypeName = "nvarchar(255)")]
     public string ProfilePicture { get; set; } = default!;
-    [Column(TypeName = "nvarchar(255)")]
-    public string Bio { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
 
     [JsonIgnore]

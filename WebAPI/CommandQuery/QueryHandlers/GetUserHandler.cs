@@ -4,7 +4,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.AppUserResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 

@@ -58,7 +58,7 @@ public class UserRepository(ApplicationDbContext dbContext,
             ]);
 
             // Cache the user's email for fast look up
-            await _cache.SetUsedEmail(user.Email!);
+            await _cache.SetUsedEmail(user.Email!, cancellationToken);
 
             return GenericResult<AppUser>.Success(user);
         }
@@ -72,7 +72,7 @@ public class UserRepository(ApplicationDbContext dbContext,
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null || user.IsDeleted || user.IsBanned)
+        if (user == null || user.IsDeleted)
             return null;
 
         return user;
@@ -85,7 +85,7 @@ public class UserRepository(ApplicationDbContext dbContext,
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByIdAsync(id.ToString());
-        if (user == null || user.IsDeleted || user.IsBanned)
+        if (user == null || user.IsDeleted)
             return null;
 
         return user;

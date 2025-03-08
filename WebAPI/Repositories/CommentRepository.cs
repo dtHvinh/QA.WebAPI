@@ -17,6 +17,12 @@ public class CommentRepository(ApplicationDbContext dbContext)
         Entities.Add(comment);
     }
 
+    public async Task AddAndLoadAuthor(Comment comment)
+    {
+        Entities.Add(comment);
+        await _dbContext.Entry(comment).Reference(e => e.Author).LoadAsync();
+    }
+
     public int CountQuestionComment(int questionId)
     {
         return _dbContext.Set<QuestionComment>().Where(e => e.QuestionId.Equals(questionId))
@@ -36,5 +42,15 @@ public class CommentRepository(ApplicationDbContext dbContext)
     public async Task<Comment?> GetCommentByIdAsync(int commentId)
     {
         return await Entities.FindAsync(commentId);
+    }
+
+    public async Task<List<QuestionComment>> GetQuestionCommentWithAuthor(int questionId, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<QuestionComment>().Where(e => e.QuestionId.Equals(questionId))
+            .OrderByDescending(e => e.CreatedAt)
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Author)
+            .ToListAsync(cancellationToken: cancellationToken);
     }
 }

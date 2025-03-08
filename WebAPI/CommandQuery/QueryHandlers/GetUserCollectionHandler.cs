@@ -5,7 +5,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.CollectionResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -30,7 +30,7 @@ public class GetUserCollectionHandler(ICollectionRepository qcr, AuthenticationC
         return GenericResult<PagedResponse<GetCollectionResponse>>.Success(
             new(query.Take(request.PageArgs.PageSize).Select(e => e.ToGetCollectionResponse()).ToList(),
             hasNext,
-            request.PageArgs.Page,
+            request.PageArgs.PageIndex,
             request.PageArgs.PageSize)
             {
                 TotalCount = totalCount,

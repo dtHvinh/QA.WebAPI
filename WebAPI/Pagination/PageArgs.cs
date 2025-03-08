@@ -2,20 +2,20 @@
 
 public class PageArgs
 {
-    public int Page { get; set; }
+    public int PageIndex { get; set; }
     public int PageSize { get; set; }
 
-    public static PageArgs From(int page, int pageSize)
+    public static PageArgs From(int pageIndex, int pageSize)
     {
         return new PageArgs
         {
-            Page = page,
+            PageIndex = pageIndex,
             PageSize = pageSize
         };
     }
 
     public int CalculateSkip()
     {
-        return (Page - 1) * PageSize;
+        return (PageIndex - 1) * PageSize;
     }
 }

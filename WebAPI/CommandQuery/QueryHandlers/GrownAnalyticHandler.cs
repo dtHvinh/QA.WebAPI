@@ -16,18 +16,19 @@ public class GrownAnalyticHandler(IAdminRepository adminRepository) : IQueryHand
     public async Task<GenericResult<GrownAnalyticResponse>> Handle(AdminAnalyticQuery request, CancellationToken cancellationToken)
     {
         GrownAnalytic grownAnalytic;
+        var analyticPeriod = Enum.Parse<AnalyticPeriod>(request.Period, true);
 
         if (string.Equals(request.What, "question", StringComparison.InvariantCultureIgnoreCase))
         {
-            grownAnalytic = await _adminRepository.GetGrownAnalytic<Question>(AnalyticPeriod.Weekly);
+            grownAnalytic = await _adminRepository.GetGrownAnalytic<Question>(analyticPeriod);
         }
         else if (string.Equals(request.What, "answer", StringComparison.InvariantCultureIgnoreCase))
         {
-            grownAnalytic = await _adminRepository.GetGrownAnalytic<Answer>(AnalyticPeriod.Weekly);
+            grownAnalytic = await _adminRepository.GetGrownAnalytic<Answer>(analyticPeriod);
         }
         else if (string.Equals(request.What, "user", StringComparison.InvariantCultureIgnoreCase))
         {
-            grownAnalytic = await _adminRepository.GetGrownAnalytic<Comment>(AnalyticPeriod.Weekly);
+            grownAnalytic = await _adminRepository.GetGrownAnalytic<AppUser>(analyticPeriod);
         }
         else
         {

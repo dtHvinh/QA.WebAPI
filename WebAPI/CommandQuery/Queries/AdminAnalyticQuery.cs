@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Queries;
 
-public record AdminAnalyticQuery(string What) : IQuery<GenericResult<GrownAnalyticResponse>>;
+public record AdminAnalyticQuery(string What, string Period) : IQuery<GenericResult<GrownAnalyticResponse>>;

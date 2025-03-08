@@ -1,6 +1,7 @@
 using Hangfire;
 using Scalar.AspNetCore;
 using Serilog;
+using WebAPI.Middleware;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
@@ -65,6 +66,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.RegisterEndpoints();
+
+app.UseMiddleware<BanMiddleware>();
 
 RecurringJob.AddOrUpdate<GrantModeratorRoleJob>(nameof(GrantModeratorRoleJob), (e) => e.ExecuteJob(), Cron.Hourly);
 

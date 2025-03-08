@@ -85,5 +85,10 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         };
     }
 
+    public async Task<List<AppUser>> GetUsers(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Users.Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
     public record struct GrownAnalytic(int PerviousCount, int CurrentCount, double PercentageDifferent);
 }

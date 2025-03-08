@@ -2,7 +2,7 @@
 using WebAPI.CQRS;
 using WebAPI.Pagination;
 using WebAPI.Response.QuestionResponses;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 using WebAPI.Utilities.Services;
 
@@ -16,7 +16,7 @@ public class GetQuestionYouMayLikeHandler(QuestionSearchService questionSearchSe
     public async Task<GenericResult<PagedResponse<GetQuestionResponse>>> Handle(GetQuestionYouMayLikeQuery request, CancellationToken cancellationToken)
     {
         var result = await _questionSearchService.SearchQuestionYouMayLikeAsync(
-            (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+            (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
             request.PageArgs.PageSize + 1, cancellationToken);
 
         var hasNext = result.Documents.Count == request.PageArgs.PageSize + 1;
@@ -26,7 +26,7 @@ public class GetQuestionYouMayLikeHandler(QuestionSearchService questionSearchSe
                 result.Documents
                     .Take(request.PageArgs.PageSize).Select(e => e.ToGetQuestionResponse()).ToList(),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize));
     }
 }

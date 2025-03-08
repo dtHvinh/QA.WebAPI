@@ -5,7 +5,7 @@ using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -17,7 +17,7 @@ public class GetQuestionHandler(IQuestionRepository questionRepository) : IQuery
     public async Task<GenericResult<PagedResponse<GetQuestionResponse>>> Handle(GetQuestionQuery request, CancellationToken cancellationToken)
     {
         var questions = await _questionRepository.FindQuestion(
-            (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+            (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
             request.PageArgs.PageSize + 1,
             Enum.Parse<QuestionSortOrder>(request.OrderBy, true)
             , cancellationToken);
@@ -35,7 +35,7 @@ public class GetQuestionHandler(IQuestionRepository questionRepository) : IQuery
             new PagedResponse<GetQuestionResponse>(
                 questions.Select(q => q.ToGetQuestionResponse()).Take(request.PageArgs.PageSize).ToList(),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize)
             {
                 TotalCount = totalCount,

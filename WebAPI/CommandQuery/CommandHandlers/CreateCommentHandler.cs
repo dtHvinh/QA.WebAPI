@@ -5,8 +5,8 @@ using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.CommentResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Logging;
-using WebAPI.Utilities.Mappers;
 using WebAPI.Utilities.Result.Base;
 using static WebAPI.Utilities.Constants;
 
@@ -39,10 +39,13 @@ public class CreateCommentHandler(ICommentRepository commentRepository,
 
             _questionHistoryRepository.AddHistory(
                 question.Id, _authContext.UserId, QuestionHistoryType.AddComment, request.Comment.Content);
+
+            question.CommentCount++;
         }
 
         var newComment = request.Comment.ToComment(request.CommentType, _authContext.UserId, request.ObjectId);
-        _commentRepository.Add(newComment);
+        await _commentRepository.AddAndLoadAuthor(newComment);
+
         var res = await _commentRepository.SaveChangesAsync(cancellationToken);
 
         _logger.UserAction(res.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authContext.UserId, LogOp.Created, newComment);

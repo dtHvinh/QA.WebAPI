@@ -6,7 +6,7 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -23,7 +23,7 @@ public class GetUserQuestionHandler(
     {
         var question = await _questionRepository.FindQuestionByUserId(
             _authenticationContext.UserId,
-            (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+            (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
             request.PageArgs.PageSize + 1,
             Enum.Parse<QuestionSortOrder>(request.Order, true),
             cancellationToken);
@@ -36,7 +36,7 @@ public class GetUserQuestionHandler(
             new PagedResponse<GetQuestionResponse>(
                 question.Select(q => q.ToGetQuestionResponse()).Take(request.PageArgs.PageSize).ToList(),
                 hasNext,
-                request.PageArgs.Page,
+                request.PageArgs.PageIndex,
                 request.PageArgs.PageSize)
             {
                 TotalCount = count,

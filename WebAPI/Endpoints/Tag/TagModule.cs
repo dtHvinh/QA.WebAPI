@@ -80,7 +80,7 @@ public class TagModule : IModule
                     [FromServices] IMediator mediator,
                     CancellationToken cancellationToken) =>
                 {
-                    var query = new SearchTagByKeywordQuery(keyword, new() { Page = 1, PageSize = 8 });
+                    var query = new SearchTagByKeywordQuery(keyword, new() { PageIndex = 1, PageSize = 8 });
                     var result = await mediator.Send(query, cancellationToken);
 
                     return result.IsSuccess

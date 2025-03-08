@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Utilities.Mappers;
+﻿namespace WebAPI.Utilities.Extensions;
 
 public static class MapExtensions
 {

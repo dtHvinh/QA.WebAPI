@@ -4,7 +4,7 @@ using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;

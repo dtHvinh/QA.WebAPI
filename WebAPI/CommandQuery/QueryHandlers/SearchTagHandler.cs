@@ -3,7 +3,7 @@ using WebAPI.CommandQuery.Queries;
 using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.TagResponses;
-using WebAPI.Utilities.Mappers;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -23,7 +23,7 @@ public class SearchTagHandler(ITagRepository tagRepository)
 
         var tags = await tagRepository.FindTagsByKeyword(
             request.Keyword,
-            (request.PageArgs.Page - 1) * request.PageArgs.PageSize,
+            (request.PageArgs.PageIndex - 1) * request.PageArgs.PageSize,
             request.PageArgs.PageSize,
             cancellationToken);
 

@@ -4,9 +4,9 @@ using WebAPI.Pagination;
 using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class TagMap
+public static class TagExtensions
 {
     public static Tag ToTag(this CreateTagDto dto)
     {

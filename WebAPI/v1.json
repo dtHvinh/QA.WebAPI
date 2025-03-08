@@ -18,6 +18,9 @@
         "tags": [
           "UserModule"
         ],
+        "summary": "Get user profile",
+        "description": "Retrieves user profile information. If username is not provided, returns the current user's profile",
+        "operationId": "GetUserProfile",
         "parameters": [
           {
             "name": "username",
@@ -47,6 +50,9 @@
         "tags": [
           "UserModule"
         ],
+        "summary": "Check user permissions",
+        "description": "Checks if the user has enough reputation to perform specific actions (createTag, comment, upvote, downvote)",
+        "operationId": "CheckUserPermission",
         "parameters": [
           {
             "name": "action",
@@ -76,6 +82,9 @@
         "tags": [
           "UserModule"
         ],
+        "summary": "Update user profile",
+        "description": "Updates the current user's profile information",
+        "operationId": "UpdateUserProfile",
         "requestBody": {
           "content": {
             "application/json": {
@@ -407,6 +416,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get user's questions",
+        "description": "Retrieves a paginated list of questions created by the authenticated user",
+        "operationId": "GetUserQuestions",
         "parameters": [
           {
             "name": "pageIndex",
@@ -454,6 +466,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get all questions",
+        "description": "Retrieves a paginated list of all questions with sorting options",
+        "operationId": "GetQuestions",
         "parameters": [
           {
             "name": "pageIndex",
@@ -499,6 +514,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Create new question",
+        "description": "Creates a new question with specified title, content, and tags",
+        "operationId": "CreateQuestion",
         "requestBody": {
           "content": {
             "application/json": {
@@ -526,6 +544,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Update question",
+        "description": "Updates the content of an existing question",
+        "operationId": "UpdateQuestion",
         "requestBody": {
           "content": {
             "application/json": {
@@ -555,6 +576,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get question details",
+        "description": "Retrieves detailed information about a specific question including answers and comments",
+        "operationId": "GetQuestionDetail",
         "parameters": [
           {
             "name": "id",
@@ -585,6 +609,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Search questions",
+        "description": "Search questions by keyword and tag with pagination support",
+        "operationId": "SearchQuestions",
         "parameters": [
           {
             "name": "searchTerm",
@@ -641,6 +668,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get recommended questions",
+        "description": "Retrieves personalized question recommendations for the user",
+        "operationId": "GetRecommendedQuestions",
         "parameters": [
           {
             "name": "pageIndex",
@@ -680,6 +710,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get question history",
+        "description": "Retrieves the edit history of a specific question",
+        "operationId": "GetQuestionHistory",
         "parameters": [
           {
             "name": "questionId",
@@ -713,6 +746,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Get similar questions",
+        "description": "Finds questions that are similar to the specified question",
+        "operationId": "GetSimilarQuestions",
         "parameters": [
           {
             "name": "questionId",
@@ -761,6 +797,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Add comment to question",
+        "description": "Adds a new comment to the specified question",
+        "operationId": "AddQuestionComment",
         "parameters": [
           {
             "name": "questionId",
@@ -801,6 +840,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Answer question",
+        "description": "Submits an answer to the specified question",
+        "operationId": "AddAnswer",
         "parameters": [
           {
             "name": "questionId",
@@ -841,6 +883,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Upvote question",
+        "description": "Adds an upvote to the specified question",
+        "operationId": "UpvoteQuestion",
         "parameters": [
           {
             "name": "questionId",
@@ -871,6 +916,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Downvote question",
+        "description": "Adds a downvote to the specified question",
+        "operationId": "DownvoteQuestion",
         "parameters": [
           {
             "name": "questionId",
@@ -901,6 +949,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Delete question",
+        "description": "Removes a question and all its associated content",
+        "operationId": "DeleteQuestion",
         "parameters": [
           {
             "name": "id",
@@ -931,6 +982,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Accept answer",
+        "description": "Marks an answer as the accepted solution for the question",
+        "operationId": "AcceptAnswer",
         "parameters": [
           {
             "name": "questionId",
@@ -970,6 +1024,9 @@
         "tags": [
           "QuestionModule"
         ],
+        "summary": "Close question",
+        "description": "Marks a question as closed, preventing new answers and comments",
+        "operationId": "CloseQuestion",
         "parameters": [
           {
             "name": "questionId",
@@ -1000,6 +1057,9 @@
         "tags": [
           "CommentModule"
         ],
+        "summary": "Update a comment",
+        "description": "Updates the content of an existing comment. Only the comment owner can perform this operation.",
+        "operationId": "UpdateComment",
         "parameters": [
           {
             "name": "id",
@@ -1038,6 +1098,9 @@
         "tags": [
           "CommentModule"
         ],
+        "summary": "Delete a comment",
+        "description": "Removes a comment from the system. Only the comment owner or moderators can perform this operation.",
+        "operationId": "DeleteComment",
         "parameters": [
           {
             "name": "id",
@@ -1068,6 +1131,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Get all collections",
+        "description": "Retrieves a paginated list of all public collections",
+        "operationId": "GetCollections",
         "parameters": [
           {
             "name": "orderBy",
@@ -1113,6 +1179,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Create new collection",
+        "description": "Creates a new question collection for the authenticated user",
+        "operationId": "CreateCollection",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1140,6 +1209,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Update collection",
+        "description": "Update an existing collection's details",
+        "operationId": "UpdateCollection",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1169,6 +1241,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Search collections",
+        "description": "Search for collections by name or description",
+        "operationId": "SearchCollections",
         "parameters": [
           {
             "name": "searchTerm",
@@ -1216,6 +1291,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Get collections with question status",
+        "description": "Get collections with information about whether a specific question is included in each collection",
+        "operationId": "GetCollectionsWithQuestionStatus",
         "parameters": [
           {
             "name": "questionId",
@@ -1264,6 +1342,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Get collection details",
+        "description": "Retrieves detailed information about a specific collection including its questions",
+        "operationId": "GetCollectionDetail",
         "parameters": [
           {
             "name": "id",
@@ -1310,6 +1391,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Delete collection",
+        "description": "Permanently removes a collection and its associations",
+        "operationId": "DeleteCollection",
         "parameters": [
           {
             "name": "id",
@@ -1340,6 +1424,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Search questions in collection",
+        "description": "Search for questions within a specific collection",
+        "operationId": "SearchQuestionsInCollection",
         "parameters": [
           {
             "name": "collectionId",
@@ -1381,6 +1468,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Get user's collections",
+        "description": "Retrieves all collections created by the authenticated user",
+        "operationId": "GetUserCollections",
         "parameters": [
           {
             "name": "orderBy",
@@ -1428,6 +1518,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Like a collection",
+        "description": "Adds the collection to user's liked collections",
+        "operationId": "LikeCollection",
         "parameters": [
           {
             "name": "collectionId",
@@ -1458,6 +1551,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Unlike a collection",
+        "description": "Removes the collection from user's liked collections",
+        "operationId": "UnlikeCollection",
         "parameters": [
           {
             "name": "collectionId",
@@ -1488,6 +1584,9 @@
         "tags": [
           "CollectionModule"
         ],
+        "summary": "Manage collection questions",
+        "description": "Add or remove questions from a collection",
+        "operationId": "ManageCollectionQuestions",
         "parameters": [
           {
             "name": "questionId",
@@ -1536,6 +1635,9 @@
         "tags": [
           "BookmarkModule"
         ],
+        "summary": "Get user's bookmarked questions",
+        "description": "Retrieves a paginated list of questions that the authenticated user has bookmarked",
+        "operationId": "GetUserBookmarks",
         "parameters": [
           {
             "name": "orderBy",
@@ -1583,6 +1685,9 @@
         "tags": [
           "BookmarkModule"
         ],
+        "summary": "Bookmark a question",
+        "description": "Adds the specified question to the user's bookmarks for later reference",
+        "operationId": "CreateBookmark",
         "parameters": [
           {
             "name": "questionId",
@@ -1613,6 +1718,9 @@
         "tags": [
           "BookmarkModule"
         ],
+        "summary": "Remove a bookmark",
+        "description": "Removes the specified bookmark from the user's bookmarked questions",
+        "operationId": "DeleteBookmark",
         "parameters": [
           {
             "name": "bookmarkId",
@@ -1643,6 +1751,9 @@
         "tags": [
           "AuthModule"
         ],
+        "summary": "API Health Check",
+        "description": "Simple endpoint to verify the auth service is running",
+        "operationId": "HealthCheck",
         "responses": {
           "200": {
             "description": "OK"
@@ -1655,6 +1766,9 @@
         "tags": [
           "AuthModule"
         ],
+        "summary": "Refresh authentication token",
+        "description": "Generates a new access token using a valid refresh token",
+        "operationId": "RefreshToken",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1684,6 +1798,9 @@
         "tags": [
           "AuthModule"
         ],
+        "summary": "User login",
+        "description": "Authenticates user credentials and returns access and refresh tokens",
+        "operationId": "Login",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1713,6 +1830,9 @@
         "tags": [
           "AuthModule"
         ],
+        "summary": "Register new user",
+        "description": "Creates a new user account with the provided credentials and returns authentication tokens",
+        "operationId": "Register",
         "requestBody": {
           "content": {
             "application/json": {

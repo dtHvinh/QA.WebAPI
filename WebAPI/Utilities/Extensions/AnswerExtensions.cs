@@ -2,9 +2,9 @@
 using WebAPI.Model;
 using WebAPI.Response.AsnwerResponses;
 
-namespace WebAPI.Utilities.Mappers;
+namespace WebAPI.Utilities.Extensions;
 
-public static class AnswerMap
+public static class AnswerExtensions
 {
     public static AnswerResponse ToAnswerResponse(this Answer answer)
     {
