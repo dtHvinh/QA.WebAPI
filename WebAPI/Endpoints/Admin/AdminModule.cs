@@ -66,6 +66,13 @@ public class AdminModule : IModule
            .WithDescription("Retrieves all users in the system")
            .WithOpenApi();
 
+        group.MapGet("/users/{userId}", GetUserById)
+           .RequireAuthorization()
+           .WithName("GetUserById")
+           .WithSummary("Get single user by id")
+           .WithDescription("Retrieves a user by id")
+           .WithOpenApi();
+
         group.MapPost("/ban/{userId}", BanUser)
            .RequireAuthorization()
            .AddEndpointFilter<FluentValidation<BanUserDto>>()
@@ -79,6 +86,12 @@ public class AdminModule : IModule
            .WithName("UnbanUser")
            .WithSummary("Unban a user")
            .WithDescription("Revoke a ban of an user");
+
+        group.MapDelete("/roles/{userId:int}/{role}", RemoveFromRole)
+           .RequireAuthorization()
+           .WithName("RemoveFromRole")
+           .WithSummary("Remove user from role")
+           .WithOpenApi();
     }
 
     private static async Task<Results<Ok<List<RoleResponse>>, ProblemHttpResult>> GetUserRole(
@@ -117,6 +130,25 @@ public class AdminModule : IModule
       CancellationToken cancellationToken = default)
     {
         var command = new AddUserToRoleCommand(userId, role);
+
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> RemoveFromRole(
+        int userId,
+        string role,
+
+      [FromServices] IMediator mediator,
+      CancellationToken cancellationToken = default)
+    {
+        var command = new RemoveFromRoleCommand(userId, role);
 
         var result = await mediator.Send(command, cancellationToken);
 
@@ -170,6 +202,23 @@ public class AdminModule : IModule
       CancellationToken cancellationToken = default)
     {
         var query = new AdminGetUserQuery(pageArgs);
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<GetUserResponse>, ProblemHttpResult>> GetUserById(
+        int userId,
+      [FromServices] IMediator mediator,
+      CancellationToken cancellationToken = default)
+    {
+        var query = new AdminGetUserByIdQuery(userId);
 
         var result = await mediator.Send(query, cancellationToken);
 

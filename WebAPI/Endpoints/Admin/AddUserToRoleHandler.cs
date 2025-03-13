@@ -3,19 +3,33 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Response;
+using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Endpoints.Admin;
 
-public class AddUserToRoleHandler(UserManager<AppUser> userManager, Serilog.ILogger logger)
+public class AddUserToRoleHandler(UserManager<AppUser> userManager, AuthenticationContext authenticationContext, Serilog.ILogger logger)
     : ICommandHandler<AddUserToRoleCommand, GenericResult<TextResponse>>
 {
     private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<TextResponse>> Handle(AddUserToRoleCommand request, CancellationToken cancellationToken)
     {
-        var res = await _userManager.AddToRoleAsync(new AppUser { Id = request.UserId }, request.Role);
+        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+
+        if (user is null)
+        {
+            return GenericResult<TextResponse>.Failure("User not found");
+        }
+
+        if (_authenticationContext.UserId == request.UserId)
+        {
+            return GenericResult<TextResponse>.Failure("Cannot add yourself to a role");
+        }
+
+        var res = await _userManager.AddToRoleAsync(user, request.Role);
 
         if (res.Succeeded)
         {
