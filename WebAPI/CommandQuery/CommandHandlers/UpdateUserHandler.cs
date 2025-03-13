@@ -12,19 +12,19 @@ public class UpdateUserHandler(
     IUserRepository userRepository,
     AuthenticationContext authenticationContext,
     Serilog.ILogger logger)
-    : ICommandHandler<UpdateUserCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<UpdateUserCommand, GenericResult<TextResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TextResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindUserWithLinks(_authenticationContext.UserId, cancellationToken);
 
         if (user is null)
         {
-            return GenericResult<GenericResponse>.Failure("User not found");
+            return GenericResult<TextResponse>.Failure("User not found");
         }
 
         if (request.UpdateUserDto.Username is not null)
@@ -45,7 +45,7 @@ public class UpdateUserHandler(
             _logger.Information("User with id: {UserId} updated", user.Id);
 
         return updateRes.IsSuccess
-            ? GenericResult<GenericResponse>.Success("User updated")
-            : GenericResult<GenericResponse>.Failure(updateRes.Message);
+            ? GenericResult<TextResponse>.Success("User updated")
+            : GenericResult<TextResponse>.Failure(updateRes.Message);
     }
 }

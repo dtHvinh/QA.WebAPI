@@ -6,4 +6,4 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.Commands;
 
 public record CreateCollectionCommand(CreateCollectionDto Dto)
-    : ICommand<GenericResult<GenericResponse>>;
+    : ICommand<GenericResult<TextResponse>>;

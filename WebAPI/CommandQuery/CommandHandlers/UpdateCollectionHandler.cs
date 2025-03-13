@@ -10,21 +10,21 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class UpdateCollectionHandler(ICollectionRepository repository, AuthenticationContext authenticationContext, Serilog.ILogger logger) : ICommandHandler<UpdateCollectionCommand, GenericResult<GenericResponse>>
+public class UpdateCollectionHandler(ICollectionRepository repository, AuthenticationContext authenticationContext, Serilog.ILogger logger) : ICommandHandler<UpdateCollectionCommand, GenericResult<TextResponse>>
 {
     private readonly ICollectionRepository _qcr = repository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(UpdateCollectionCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TextResponse>> Handle(UpdateCollectionCommand request, CancellationToken cancellationToken)
     {
         var collection = await _qcr.FindByIdAsync(request.Dto.Id, cancellationToken);
 
         if (collection == null)
-            return GenericResult<GenericResponse>.Failure("Not found");
+            return GenericResult<TextResponse>.Failure("Not found");
 
         if (!_authenticationContext.IsResourceOwnedByUser(collection))
-            return GenericResult<GenericResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
+            return GenericResult<TextResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
 
         collection.IsPublic = request.Dto.IsPublic;
         collection.Name = request.Dto.Name;
@@ -36,7 +36,7 @@ public class UpdateCollectionHandler(ICollectionRepository repository, Authentic
         _logger.UserAction(res.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Updated, collection);
 
         return res.IsSuccess
-        ? GenericResult<GenericResponse>.Success("Updated")
-        : GenericResult<GenericResponse>.Failure(res.Message);
+        ? GenericResult<TextResponse>.Success("Updated")
+        : GenericResult<TextResponse>.Failure(res.Message);
     }
 }

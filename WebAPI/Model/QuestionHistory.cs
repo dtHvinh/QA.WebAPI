@@ -21,11 +21,11 @@ public class QuestionHistory : IEntityWithTime<int>, IOwnedByUser<int>
     public string Comment { get; set; } = default!;
 }
 
-public static class QuestionHistoryType
+public static class QuestionHistoryTypes
 {
     public const string Edit = "Edit";
-    public const string Close = "Close";
-    public const string Reopen = "Reopen";
+    public const string Close = "Close Question";
+    public const string Reopen = "Re-open Question";
     public const string AddComment = "Add Comment";
     public const string AddAnswer = "Add Answer";
     public const string AcceptAnswer = "Accept Answer";

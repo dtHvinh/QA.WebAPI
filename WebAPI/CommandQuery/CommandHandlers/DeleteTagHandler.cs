@@ -20,7 +20,7 @@ public class DeleteTagHandler(ITagRepository tagRepository, AuthenticationContex
     public async Task<GenericResult<DeleteTagResponse>> Handle(DeleteTagCommand request,
         CancellationToken cancellationToken)
     {
-        if (!_authenticationContext.IsModerator())
+        if (!await _authenticationContext.IsModerator())
             return GenericResult<DeleteTagResponse>.Failure(string.Format(Constants.EM.ROLE_NOT_MEET_REQ,
                 nameof(Constants.Roles.Moderator)));
 

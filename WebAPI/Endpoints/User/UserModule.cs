@@ -71,13 +71,14 @@ public class UserModule : IModule
             "comment" => req.Comment,
             "upvote" => req.Upvote,
             "downvote" => req.Downvote,
+            "editTag" => req.EditTagWiki,
             _ => 9999
         };
         var userRep = await userRepository.GetReputation(authContext.UserId, cancellationToken);
         return TypedResults.Ok(new PermissionResponse(userRep >= reqRep, reqRep));
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUpdateUser(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleUpdateUser(
         [FromBody] UpdateUserDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)

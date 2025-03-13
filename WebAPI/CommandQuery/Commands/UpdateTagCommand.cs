@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record UpdateTagCommand(UpdateTagDto Tag) : ICommand<GenericResult<GenericResponse>>;
+public record UpdateTagCommand(UpdateTagDto Tag) : ICommand<GenericResult<TextResponse>>;

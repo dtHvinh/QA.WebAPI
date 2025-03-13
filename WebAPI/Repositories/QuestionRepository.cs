@@ -3,17 +3,98 @@ using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
+using WebAPI.Response;
 using WebAPI.Specification;
 using WebAPI.Specification.Base;
 using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Services;
 
 namespace WebAPI.Repositories;
 
 [RepositoryImpl(typeof(IQuestionRepository))]
-public class QuestionRepository(ApplicationDbContext dbContext)
+public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchService questionSearchService)
     : RepositoryBase<Question>(dbContext), IQuestionRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly QuestionSearchService _questionSearchService = questionSearchService;
+
+    public async Task<SearchResult<Question>> SearchQuestionWithNoTagAsync(string keyword, int skip, int take,
+        CancellationToken cancellationToken)
+    {
+        var query = Table
+            .Where(e => e.Title.Contains(keyword) || e.Content.Contains(keyword))
+            .EvaluateQuery(new ValidQuestionSpecification());
+
+        var result = await query
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        var total = await query.CountAsync(cancellationToken);
+
+        return new SearchResult<Question>(result, total);
+    }
+
+    public async Task<SearchResult<Question>> SearchQuestionWithTagAsync(string keyword, int tagId, int skip, int take,
+    CancellationToken cancellationToken)
+    {
+        var query = Table
+            .Where(e => e.Tags.Any(t => t.Id == tagId))
+            .Where(e => e.Title.Contains(keyword) || e.Content.Contains(keyword))
+            .EvaluateQuery(new ValidQuestionSpecification());
+
+        var result = await query
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        var total = await query.CountAsync(cancellationToken);
+
+        return new SearchResult<Question>(result, total);
+    }
+
+    public async Task<SearchResult<Question>> SearchSimilarQuestionAsync(int questionId, int skip, int take, CancellationToken cancellationToken)
+    {
+        var question = await Table.FirstOrDefaultAsync(e => e.Id == questionId, cancellationToken);
+        if (question == null)
+        {
+            return new SearchResult<Question>([], 0);
+        }
+
+        var tokens = question.Title
+                             .Split([' '], StringSplitOptions.RemoveEmptyEntries)
+                             .Select(t => t.Trim().ToLowerInvariant())
+                             .Distinct()
+                             .ToList();
+
+        if (tokens.Count == 0)
+        {
+            return new SearchResult<Question>([], 0);
+        }
+
+        var query = Table.Where(q => q.Id != questionId &&
+                                    tokens.Any(token => EF.Functions.Like(q.Title.ToLower(), $"%{token}%")));
+
+        var results = await query.OrderBy(q => Guid.NewGuid())
+                                 .Skip(skip)
+                                 .Take(take)
+                                 .ToListAsync(cancellationToken);
+
+        return new SearchResult<Question>(results, -1);
+    }
+
+    public async Task<SearchResult<Question>> SearchQuestionYouMayLikeAsync(int skip, int take,
+    CancellationToken cancellationToken)
+    {
+        var response = await Table
+            .OrderBy(q => Guid.NewGuid())
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        return new SearchResult<Question>(response, -1);
+    }
+
 
     public async Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken)
     {
@@ -138,9 +219,10 @@ public class QuestionRepository(ApplicationDbContext dbContext)
         question.Tags = tags;
     }
 
-    public void UpdateQuestion(Question question)
+    public async Task UpdateQuestion(Question question)
     {
         question.UpdatedAt = DateTime.UtcNow;
+        await _questionSearchService.IndexOrUpdateAsync(question, default);
         Entities.Update(question);
     }
 

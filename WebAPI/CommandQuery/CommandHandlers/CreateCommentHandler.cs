@@ -38,7 +38,7 @@ public class CreateCommentHandler(ICommentRepository commentRepository,
                 return GenericResult<CommentResponse>.Failure(EM.QUESTION_CLOSED_COMMENT_RESTRICT);
 
             _questionHistoryRepository.AddHistory(
-                question.Id, _authContext.UserId, QuestionHistoryType.AddComment, request.Comment.Content);
+                question.Id, _authContext.UserId, QuestionHistoryTypes.AddComment, request.Comment.Content);
 
             question.CommentCount++;
         }

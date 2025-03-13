@@ -12,17 +12,17 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContext authenticationContext, Serilog.ILogger logger)
-    : ICommandHandler<UpdateTagCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<UpdateTagCommand, GenericResult<TextResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(
+    public async Task<GenericResult<TextResponse>> Handle(
         UpdateTagCommand request, CancellationToken cancellationToken)
     {
-        if (!_authenticationContext.IsModerator())
-            return GenericResult<GenericResponse>.Failure(string.Format(Constants.EM.ROLE_NOT_MEET_REQ,
+        if (!await _authenticationContext.IsModerator())
+            return GenericResult<TextResponse>.Failure(string.Format(Constants.EM.ROLE_NOT_MEET_REQ,
                 nameof(Constants.Roles.Moderator)));
 
         var newTag = request.Tag.ToTag();
@@ -33,7 +33,7 @@ public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContex
         _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, newTag);
 
         return !result.IsSuccess
-            ? GenericResult<GenericResponse>.Failure(result.Message)
-            : GenericResult<GenericResponse>.Success("OK");
+            ? GenericResult<TextResponse>.Failure(result.Message)
+            : GenericResult<TextResponse>.Success("OK");
     }
 }

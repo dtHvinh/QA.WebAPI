@@ -9,9 +9,11 @@ using static WebAPI.Utilities.Constants;
 namespace WebAPI.Utilities.Services;
 
 public class AuthenticationService(UserManager<AppUser> userManager,
-                                   JwtTokenProvider tokenProvider) : IAuthenticationService
+                                   JwtTokenProvider tokenProvider,
+                                   ICacheService cacheService) : IAuthenticationService
 {
     private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly ICacheService _cacheService = cacheService;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 
     public async Task<GenericResult<AuthResponse>> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
@@ -25,6 +27,13 @@ public class AuthenticationService(UserManager<AppUser> userManager,
         {
             var errorMessage = string.Format(EM.USER_EMAIL_NOTFOUND, email);
             return GenericResult<AuthResponse>.Failure(errorMessage);
+        }
+
+        var banResult = await _cacheService.IsBannedWithReason(user.Id, cancellationToken);
+
+        if (banResult.HasValue)
+        {
+            return GenericResult<AuthResponse>.Failure("You are banned until " + banResult.Value.Item1.ToLocalTime() + "Reason: " + banResult.Value.Item2);
         }
 
         // Check password

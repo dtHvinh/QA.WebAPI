@@ -35,7 +35,7 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<DeleteQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Id));
 
-        if (!_authContext.IsModerator())
+        if (!await _authContext.IsModerator())
             return GenericResult<DeleteQuestionResponse>.Failure(string.Format(EM.ROLE_NOT_MEET_REQ, Roles.Moderator));
 
         string? errMessage = null;

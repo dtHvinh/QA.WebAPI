@@ -1,4 +1,5 @@
 ﻿using WebAPI.Model;
+using WebAPI.Response;
 
 namespace WebAPI.Repositories.Base;
 
@@ -15,7 +16,7 @@ public interface IQuestionRepository : IRepository<Question>
     /// Update question also update the <see cref="Question.UpdatedAt"/> field.
     /// </summary>
     /// <param name="question"></param>
-    void UpdateQuestion(Question question);
+    Task UpdateQuestion(Question question);
     Task<List<Question>> FindQuestionByUserId(int userId, int skip, int take, QuestionSortOrder sortOrder, CancellationToken cancellationToken);
     void SoftDeleteQuestion(Question question);
     Task<int> CountUserQuestion(int userId, CancellationToken cancellationToken);
@@ -24,4 +25,8 @@ public interface IQuestionRepository : IRepository<Question>
     Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken);
     Task<int> CountUserScore(int userId, CancellationToken cancellationToken);
     Task<Question?> FindQuestionWithTags(int questionId, CancellationToken cancellationToken);
+    Task<SearchResult<Question>> SearchQuestionWithNoTagAsync(string keyword, int skip, int take, CancellationToken cancellationToken);
+    Task<SearchResult<Question>> SearchQuestionWithTagAsync(string keyword, int tagId, int skip, int take, CancellationToken cancellationToken);
+    Task<SearchResult<Question>> SearchSimilarQuestionAsync(int questionId, int skip, int take, CancellationToken cancellationToken);
+    Task<SearchResult<Question>> SearchQuestionYouMayLikeAsync(int skip, int take, CancellationToken cancellationToken);
 }

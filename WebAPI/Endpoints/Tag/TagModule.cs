@@ -107,7 +107,7 @@ public class TagModule : IModule
             .RequireAuthorization();
 
         group.MapPost("/",
-                async Task<Results<Ok<GenericResponse>, ProblemHttpResult>>
+                async Task<Results<Ok<TextResponse>, ProblemHttpResult>>
                 ([FromBody] CreateTagDto dto,
                 [FromServices] IMediator mediator,
                 CancellationToken cancellationToken) =>
@@ -124,7 +124,7 @@ public class TagModule : IModule
 
 
         group.MapPut("/",
-                async Task<Results<Ok<GenericResponse>, ProblemHttpResult>>
+                async Task<Results<Ok<TextResponse>, ProblemHttpResult>>
                 ([FromBody] UpdateTagDto dto,
                     [FromServices] IMediator mediator,
                     CancellationToken cancellationToken) =>

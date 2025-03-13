@@ -9,18 +9,18 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateBookmarkHandler(IBookmarkRepository bookmarkRepository, AuthenticationContext authenticationContext)
-    : ICommandHandler<CreateBookmarkCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<CreateBookmarkCommand, GenericResult<TextResponse>>
 {
     private readonly IBookmarkRepository _bookmarkRepository = bookmarkRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
-    public async Task<GenericResult<GenericResponse>> Handle(
+    public async Task<GenericResult<TextResponse>> Handle(
         CreateBookmarkCommand request, CancellationToken cancellationToken)
     {
         var existBookmark = await _bookmarkRepository.FindBookmark(_authenticationContext.UserId, request.QuestionId);
 
         if (existBookmark is not null)
-            return GenericResult<GenericResponse>.Failure("You already bookmarked this question");
+            return GenericResult<TextResponse>.Failure("You already bookmarked this question");
 
         var newBookmark = new BookMark()
         {
@@ -33,7 +33,7 @@ public class CreateBookmarkHandler(IBookmarkRepository bookmarkRepository, Authe
         var op = await _bookmarkRepository.SaveChangesAsync(cancellationToken);
 
         return op.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Bookmark created")
-            : GenericResult<GenericResponse>.Failure(op.Message);
+            ? GenericResult<TextResponse>.Success("Bookmark created")
+            : GenericResult<TextResponse>.Failure(op.Message);
     }
 }

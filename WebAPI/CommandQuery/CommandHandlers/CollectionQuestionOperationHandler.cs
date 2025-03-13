@@ -12,27 +12,27 @@ public class CollectionQuestionOperationHandler(
     ICollectionRepository repository,
     IQuestionRepository questionRepository,
     AuthenticationContext authenticationContext)
-    : ICommandHandler<CollectionQuestionOperationCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<CollectionQuestionOperationCommand, GenericResult<TextResponse>>
 {
     private readonly ICollectionRepository _repository = repository;
     private readonly IQuestionRepository _questionRepository = questionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
-    public async Task<GenericResult<GenericResponse>> Handle(
+    public async Task<GenericResult<TextResponse>> Handle(
         CollectionQuestionOperationCommand request, CancellationToken cancellationToken)
     {
         var collection = await _repository.FindByIdAsync(request.CollectionId, cancellationToken);
 
         if (collection is null)
-            return GenericResult<GenericResponse>.Failure("Collection not found");
+            return GenericResult<TextResponse>.Failure("Collection not found");
 
         if (!_authenticationContext.IsResourceOwnedByUser(collection))
-            return GenericResult<GenericResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
+            return GenericResult<TextResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
 
         var question = await _questionRepository.FindQuestionById(request.QuestionId, cancellationToken);
 
         if (question is null)
-            return GenericResult<GenericResponse>.Failure("Question not found");
+            return GenericResult<TextResponse>.Failure("Question not found");
 
         switch (request)
         {
@@ -49,7 +49,7 @@ public class CollectionQuestionOperationHandler(
         var res = await _questionRepository.SaveChangesAsync(cancellationToken);
 
         return res.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Done")
-            : GenericResult<GenericResponse>.Failure(res.Message);
+            ? GenericResult<TextResponse>.Success("Done")
+            : GenericResult<TextResponse>.Failure(res.Message);
     }
 }

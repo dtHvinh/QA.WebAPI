@@ -13,13 +13,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 public class CreateCollectionHandler(
     ICollectionRepository qcr,
     AuthenticationContext authenticationContext,
-    Serilog.ILogger logger) : ICommandHandler<CreateCollectionCommand, GenericResult<GenericResponse>>
+    Serilog.ILogger logger) : ICommandHandler<CreateCollectionCommand, GenericResult<TextResponse>>
 {
     private readonly ICollectionRepository _questionCollectionRepository = qcr;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TextResponse>> Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
     {
         var collection = request.Dto.ToCollection();
 
@@ -32,7 +32,7 @@ public class CreateCollectionHandler(
         _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, collection);
 
         return result.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Done")
-            : GenericResult<GenericResponse>.Failure(result.Message);
+            ? GenericResult<TextResponse>.Success("Done")
+            : GenericResult<TextResponse>.Failure(result.Message);
     }
 }

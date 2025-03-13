@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using WebAPI.Dto;
 
-namespace WebAPI.Utilities.Validations;
+namespace WebAPI.Filters.Validation.Validators;
 
 public class TagDtoValidator : AbstractValidator<CreateTagDto>
 {

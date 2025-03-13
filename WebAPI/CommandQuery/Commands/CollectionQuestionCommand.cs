@@ -6,4 +6,4 @@ using WebAPI.Utilities.Result.Base;
 namespace WebAPI.CommandQuery.Commands;
 
 public record CollectionQuestionOperationCommand(int QuestionId, int CollectionId, Operations Operation)
-    : ICommand<GenericResult<GenericResponse>>;
+    : ICommand<GenericResult<TextResponse>>;

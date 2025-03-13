@@ -137,6 +137,12 @@ public sealed class QuestionModule : IModule
             .WithSummary("Close question")
             .WithDescription("Marks a question as closed, preventing new answers and comments")
             .RequireAuthorization();
+
+        group.MapPut("/{questionId:int}/re-open", ReopenQuestionHandler)
+            .WithName("ReopenQuestion")
+            .WithSummary("Re-open a question")
+            .WithDescription("Re-open a question")
+            .RequireAuthorization();
     }
 
     private static
@@ -191,7 +197,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> AcceptQuestionHandler(
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> AcceptQuestionHandler(
             int questionId,
             int answerId,
             [FromServices] IMediator mediator,
@@ -210,12 +216,30 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> CloseQuestionHandler(
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> CloseQuestionHandler(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
     {
         var cmd = new CloseQuestionCommand(questionId);
+
+        var result = await mediator.Send(cmd, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> ReopenQuestionHandler(
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new ReopenQuestionCommand(questionId);
 
         var result = await mediator.Send(cmd, cancellationToken);
 

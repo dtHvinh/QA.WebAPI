@@ -14,20 +14,20 @@ public class CreateCollectionLikeHandler(
     ICollectionRepository collectionRepository,
     AuthenticationContext authenticationContext,
     Serilog.ILogger logger)
-    : ICommandHandler<CreateCollectionLikeCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<CreateCollectionLikeCommand, GenericResult<TextResponse>>
 {
     private readonly ICollectionLikeRepository _collectionLikeRepository = collectionLikeRepository;
     private readonly ICollectionRepository _collectionRepository = collectionRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(CreateCollectionLikeCommand request,
+    public async Task<GenericResult<TextResponse>> Handle(CreateCollectionLikeCommand request,
         CancellationToken cancellationToken)
     {
         var collection = await _collectionRepository.FindByIdAsync(request.CollectionId, cancellationToken);
 
         if (collection is null)
-            return GenericResult<GenericResponse>.Failure("Collection not found");
+            return GenericResult<TextResponse>.Failure("Collection not found");
 
         _collectionLikeRepository.LikeCollection(collection, _authenticationContext.UserId);
 
@@ -38,7 +38,7 @@ public class CreateCollectionLikeHandler(
         _logger.UserAction(res.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Liked, collection);
 
         return res.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Done")
-            : GenericResult<GenericResponse>.Failure(res.Message);
+            ? GenericResult<TextResponse>.Success("Done")
+            : GenericResult<TextResponse>.Failure(res.Message);
     }
 }

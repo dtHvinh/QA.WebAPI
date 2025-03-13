@@ -13,6 +13,8 @@ public class LoginQueryHandler(IAuthenticationService authenticationService)
 
     public async Task<GenericResult<AuthResponse>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
+
+
         var authResult = await _authenticationService.LoginAsync(request.Dto.Email,
                                                                  request.Dto.Password,
                                                                  cancellationToken);

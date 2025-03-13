@@ -40,7 +40,7 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
         await _answerRepository.AddAnswerAndLoadAuthor(newAnswer);
 
         _questionHistoryRepository.AddHistory(
-            question.Id, _authContext.UserId, QuestionHistoryType.AddAnswer, request.Answer.Content);
+            question.Id, _authContext.UserId, QuestionHistoryTypes.AddAnswer, request.Answer.Content);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 

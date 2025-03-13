@@ -2,7 +2,7 @@
 using WebAPI.Dto;
 using WebAPI.Utilities.Contract;
 
-namespace WebAPI.Utilities.Validations;
+namespace WebAPI.Filters.Validation.Validators;
 
 public class LoginDtoValidator : AbstractValidator<LoginDto>
 {

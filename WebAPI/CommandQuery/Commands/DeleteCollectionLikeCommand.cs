@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record DeleteCollectionLikeCommand(int CollectionId) : ICommand<GenericResult<GenericResponse>>;
+public record DeleteCollectionLikeCommand(int CollectionId) : ICommand<GenericResult<TextResponse>>;

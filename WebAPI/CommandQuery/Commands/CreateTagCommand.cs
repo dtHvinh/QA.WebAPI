@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateTagCommand(CreateTagDto Tag) : ICommand<GenericResult<GenericResponse>>;
+public record CreateTagCommand(CreateTagDto Tag) : ICommand<GenericResult<TextResponse>>;

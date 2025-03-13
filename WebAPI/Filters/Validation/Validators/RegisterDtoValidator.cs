@@ -4,7 +4,7 @@ using WebAPI.Dto;
 using WebAPI.Utilities.Contract;
 using static WebAPI.Utilities.Constants;
 
-namespace WebAPI.Utilities.Validations;
+namespace WebAPI.Filters.Validation.Validators;
 
 public class RegisterDtoValidator : AbstractValidator<RegisterDto>
 {

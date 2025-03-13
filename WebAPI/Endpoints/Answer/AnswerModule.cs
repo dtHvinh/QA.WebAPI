@@ -56,7 +56,7 @@ public class AnswerModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteAnswer(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleDeleteAnswer(
         int answerId,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)

@@ -13,9 +13,16 @@ public class GetUserResponse
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
-    public bool IsDeleted { get; set; }
-
     public int Reputation { get; set; }
+
+    public bool IsDeleted { get; set; }
+    public bool IsBanned { get; set; }
+
+    public GetUserResponse SetIsBanned(bool isBanned)
+    {
+        IsBanned = isBanned;
+        return this;
+    }
 }
 
 public static class GetUserResponseExtensions

@@ -4,15 +4,17 @@ using WebAPI.Pagination;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AppUserResponses;
 using WebAPI.Utilities;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class AdminGetUserHandler(IAdminRepository adminRepository, IUserRepository userRepository)
+public class AdminGetUserHandler(IAdminRepository adminRepository, IUserRepository userRepository, ICacheService cacheService)
     : IQueryHandler<AdminGetUserQuery, GenericResult<PagedResponse<GetUserResponse>>>
 {
     private readonly IAdminRepository _adminRepository = adminRepository;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly ICacheService _cacheService = cacheService;
 
     public async Task<GenericResult<PagedResponse<GetUserResponse>>> Handle(AdminGetUserQuery request, CancellationToken cancellationToken)
     {
@@ -22,9 +24,13 @@ public class AdminGetUserHandler(IAdminRepository adminRepository, IUserReposito
 
         var totalCount = await _userRepository.CountAsync();
 
+        var res = users
+            .Take(request.PageArgs.PageSize)
+            .Select(e => e.ToGetUserResponse().SetIsBanned(_cacheService.IsBanned(e.Id)));
+
         return GenericResult<PagedResponse<GetUserResponse>>.Success(
             new PagedResponse<GetUserResponse>(
-                users.Take(request.PageArgs.PageSize).Select(e => e.ToGetUserResponse()),
+                res,
                 hasNext,
                 request.PageArgs.PageIndex,
                 request.PageArgs.PageSize

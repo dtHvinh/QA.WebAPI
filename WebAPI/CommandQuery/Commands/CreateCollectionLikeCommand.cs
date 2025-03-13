@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateCollectionLikeCommand(int CollectionId) : ICommand<GenericResult<GenericResponse>>;
+public record CreateCollectionLikeCommand(int CollectionId) : ICommand<GenericResult<TextResponse>>;

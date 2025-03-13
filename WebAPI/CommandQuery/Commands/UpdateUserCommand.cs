@@ -5,4 +5,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record UpdateUserCommand(UpdateUserDto UpdateUserDto) : ICommand<GenericResult<GenericResponse>>;
+public record UpdateUserCommand(UpdateUserDto UpdateUserDto) : ICommand<GenericResult<TextResponse>>;

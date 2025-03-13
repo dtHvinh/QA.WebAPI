@@ -13,22 +13,22 @@ public class DeleteCommentHandler(
     ICommentRepository commentRepository,
     AuthenticationContext authenticationContext,
     Serilog.ILogger logger)
-    : ICommandHandler<DeleteCommentCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<DeleteCommentCommand, GenericResult<TextResponse>>
 {
     private readonly ICommentRepository _commentRepository = commentRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TextResponse>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
         var comment = await _commentRepository.GetCommentByIdAsync(request.Id);
         if (comment == null)
         {
-            return (GenericResult<GenericResponse>.Failure("Comment not found"));
+            return (GenericResult<TextResponse>.Failure("Comment not found"));
         }
         if (!_authenticationContext.IsResourceOwnedByUser(comment))
         {
-            return GenericResult<GenericResponse>.Failure("You are not authorized to delete this comment");
+            return GenericResult<TextResponse>.Failure("You are not authorized to delete this comment");
         }
 
         _commentRepository.Remove(comment);
@@ -38,7 +38,7 @@ public class DeleteCommentHandler(
         _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Deleted, comment);
 
         return result.IsSuccess
-            ? GenericResult<GenericResponse>.Success(new GenericResponse("Comment deleted successfully"))
-            : GenericResult<GenericResponse>.Failure("Failed to delete comment");
+            ? GenericResult<TextResponse>.Success(new TextResponse("Comment deleted successfully"))
+            : GenericResult<TextResponse>.Failure("Failed to delete comment");
     }
 }

@@ -101,7 +101,7 @@ public class CollectionModule : IModule
             .RequireAuthorization();
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleLikeCollection(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleLikeCollection(
         int collectionId,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -118,7 +118,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUnlikeCollection(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleUnlikeCollection(
         int collectionId,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -175,7 +175,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleQuestionCollectionOp(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleQuestionCollectionOp(
         int questionId,
         int collectionId,
         string action,
@@ -236,7 +236,7 @@ public class CollectionModule : IModule
     }
 
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleCreateCollection(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleCreateCollection(
         [FromBody] CreateCollectionDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -253,7 +253,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleUpdateCollection(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleUpdateCollection(
         [FromBody] UpdateCollectionDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
@@ -270,7 +270,7 @@ public class CollectionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteCollection(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleDeleteCollection(
         int id,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)

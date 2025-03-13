@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record AcceptAnswerCommand(int QuestionId, int AnswerId) : ICommand<GenericResult<GenericResponse>>;
+public record AcceptAnswerCommand(int QuestionId, int AnswerId) : ICommand<GenericResult<TextResponse>>;

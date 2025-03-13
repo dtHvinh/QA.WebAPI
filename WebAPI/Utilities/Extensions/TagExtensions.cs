@@ -25,13 +25,9 @@ public static class TagExtensions
         };
     }
 
-    public static TagWithWikiBodyResponse ToTagWithBodyResonse(this Tag? obj)
+    public static TagWithWikiBodyResponse ToTagWithBodyResonse(this Tag obj)
     {
-        if (obj == null)
-        {
-            return null;
-        }
-        return new TagWithWikiBodyResponse(obj.Id, obj.Name, obj.Description!.Content, obj.WikiBody!.Content, obj.QuestionCount);
+        return new TagWithWikiBodyResponse(obj.Id, obj.Name, obj.Description?.Content, obj.WikiBody?.Content, obj.QuestionCount);
     }
 
     public static TagResponse? ToTagResonse(this Tag? obj)
@@ -46,7 +42,7 @@ public static class TagExtensions
     public static TagWithQuestionResponse ToTagWithQuestionResponse(this Tag obj, PagedResponse<GetQuestionResponse> questions)
     {
         return new TagWithQuestionResponse(
-            obj.Id, obj.Name, obj.Description!.Content,
+            obj.Id, obj.Name, obj.Description?.Content,
             obj.QuestionCount, questions);
     }
 }

@@ -15,6 +15,7 @@ public class ReputationRequireForRole
 public class ReputationRequirePerAction
 {
     public int CreateQuestion { get; set; }
+    public int EditTagWiki { get; set; }
     public int Upvote { get; set; }
     public int Comment { get; set; }
     public int Downvote { get; set; }

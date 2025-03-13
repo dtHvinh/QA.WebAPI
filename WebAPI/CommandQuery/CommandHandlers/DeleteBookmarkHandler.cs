@@ -8,23 +8,23 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class DeleteBookmarkHandler(IBookmarkRepository bookmarkRepository, AuthenticationContext authenticationContext) : ICommandHandler<DeleteBookmarkCommand, GenericResult<GenericResponse>>
+public class DeleteBookmarkHandler(IBookmarkRepository bookmarkRepository, AuthenticationContext authenticationContext) : ICommandHandler<DeleteBookmarkCommand, GenericResult<TextResponse>>
 {
     private readonly IBookmarkRepository _bookmarkRepository = bookmarkRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 
-    public async Task<GenericResult<GenericResponse>> Handle(DeleteBookmarkCommand request, CancellationToken cancellationToken)
+    public async Task<GenericResult<TextResponse>> Handle(DeleteBookmarkCommand request, CancellationToken cancellationToken)
     {
         var bookmark = await _bookmarkRepository.FindFirstAsync(e => e.Id == request.BookmarkId, cancellationToken);
 
         if (bookmark is null)
         {
-            return GenericResult<GenericResponse>.Failure(EM.BOOKMARK_NOT_FOUND);
+            return GenericResult<TextResponse>.Failure(EM.BOOKMARK_NOT_FOUND);
         }
 
         if (!_authenticationContext.IsResourceOwnedByUser(bookmark))
         {
-            return GenericResult<GenericResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
+            return GenericResult<TextResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
         }
 
         _bookmarkRepository.Remove(bookmark);
@@ -32,8 +32,8 @@ public class DeleteBookmarkHandler(IBookmarkRepository bookmarkRepository, Authe
         var result = await _bookmarkRepository.SaveChangesAsync(cancellationToken);
 
         return result.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Delete successfully")
-            : GenericResult<GenericResponse>.Failure(result.Message);
+            ? GenericResult<TextResponse>.Success("Delete successfully")
+            : GenericResult<TextResponse>.Failure(result.Message);
 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using WebAPI.Dto;
 
-namespace WebAPI.Utilities.Validators;
+namespace WebAPI.Filters.Validation.Validators;
 
 public class UpdateCollectionValidator : AbstractValidator<UpdateCollectionDto>
 {

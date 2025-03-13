@@ -55,7 +55,7 @@ public class BookmarkModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleCreateBookmark(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleCreateBookmark(
         int questionId,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)
@@ -69,7 +69,7 @@ public class BookmarkModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<GenericResponse>, ProblemHttpResult>> HandleDeleteBookmark(
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleDeleteBookmark(
         int bookmarkId,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)

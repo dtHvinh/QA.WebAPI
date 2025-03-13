@@ -71,18 +71,13 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
 
         existQuestion.Tags = tagsToUpdate;
 
-        _questionRepository.UpdateQuestion(existQuestion);
+        await _questionRepository.UpdateQuestion(existQuestion);
         _tagRepository.UpdateRange(tagsToUpdate);
 
-        _questionHistoryRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryType.Edit, request.UpdateObject.Comment);
+        _questionHistoryRepository.AddHistory(
+            existQuestion.Id, _authenticationContext.UserId, QuestionHistoryTypes.Edit, request.UpdateObject.Comment);
 
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
-
-        var indexDoc = await _questionSearchService.IndexOrUpdateAsync(existQuestion, cancellationToken);
-        if (!indexDoc)
-        {
-            return GenericResult<UpdateQuestionResponse>.Failure(EM.ES_INDEX_OR_UPDATE_DOCUMENT_FAILED);
-        }
 
         _logger.UserAction(updateOp.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Updated, existQuestion);
 

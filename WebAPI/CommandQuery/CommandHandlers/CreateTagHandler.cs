@@ -14,13 +14,13 @@ public class CreateTagHandler(
     ITagRepository tagRepository,
     AuthenticationContext authenticationContext,
     Serilog.ILogger logger)
-    : ICommandHandler<CreateTagCommand, GenericResult<GenericResponse>>
+    : ICommandHandler<CreateTagCommand, GenericResult<TextResponse>>
 {
     private readonly ITagRepository _tagRepository = tagRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 
-    public async Task<GenericResult<GenericResponse>> Handle(
+    public async Task<GenericResult<TextResponse>> Handle(
         CreateTagCommand request, CancellationToken cancellationToken)
     {
         var newTag = request.Tag.ToTag();
@@ -32,7 +32,7 @@ public class CreateTagHandler(
         _logger.UserAction(createTag.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, newTag);
 
         return createTag.IsSuccess
-            ? GenericResult<GenericResponse>.Success("Ok")
-            : GenericResult<GenericResponse>.Failure(createTag.Message);
+            ? GenericResult<TextResponse>.Success("Ok")
+            : GenericResult<TextResponse>.Failure(createTag.Message);
     }
 }

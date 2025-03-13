@@ -4,4 +4,4 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.Commands;
 
-public record CreateBookmarkCommand(int QuestionId) : ICommand<GenericResult<GenericResponse>>;
+public record CreateBookmarkCommand(int QuestionId) : ICommand<GenericResult<TextResponse>>;
