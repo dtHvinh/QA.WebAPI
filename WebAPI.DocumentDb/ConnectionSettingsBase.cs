@@ -1,4 +1,4 @@
-﻿namespace SocialApp.DocumentDatabase;
+﻿namespace WebAPI.DocumentDb;
 
 public class ConnectionSettingsBase
 {

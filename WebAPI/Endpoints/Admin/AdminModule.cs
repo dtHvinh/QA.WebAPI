@@ -35,6 +35,10 @@ public class AdminModule : IModule
                return operation;
            });
 
+        group.MapGet("/logs", GetLogs)
+           .RequireAuthorization()
+           .WithName("GetLogs");
+
         group.MapGet("/ban-info/{userId:int}", GetUserBanInfo)
            .RequireAuthorization()
            .WithName("GetUserBanInfo")
@@ -101,6 +105,23 @@ public class AdminModule : IModule
       CancellationToken cancellationToken = default)
     {
         var query = new GetUserRoleQuery(userId);
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<PagedResponse<SysLogResponse>>, ProblemHttpResult>> GetLogs(
+       [AsParameters] PageArgs pageArgs,
+      [FromServices] IMediator mediator,
+      CancellationToken cancellationToken = default)
+    {
+        var query = new GetLogQuery(pageArgs);
 
         var result = await mediator.Send(query, cancellationToken);
 

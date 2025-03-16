@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315063844_AddCommunity")]
+    partial class AddCommunity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -542,9 +545,6 @@ namespace WebAPI.Migrations
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MemberCount")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -591,11 +591,11 @@ namespace WebAPI.Migrations
                     b.Property<int>("CommunityId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsModerator")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsOwner")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1077,7 +1077,7 @@ namespace WebAPI.Migrations
             modelBuilder.Entity("WebAPI.Model.CommunityChatRoom", b =>
                 {
                     b.HasOne("WebAPI.Model.Community", "Community")
-                        .WithMany("Rooms")
+                        .WithMany("Chats")
                         .HasForeignKey("CommunityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1260,9 +1260,9 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Model.Community", b =>
                 {
-                    b.Navigation("Members");
+                    b.Navigation("Chats");
 
-                    b.Navigation("Rooms");
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("WebAPI.Model.CommunityChatRoom", b =>

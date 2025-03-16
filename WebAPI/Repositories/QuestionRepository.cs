@@ -149,7 +149,9 @@ public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchSe
         var q = await query
             .Skip(skip)
             .Take(take)
+            .AsSplitQuery()
             .Include(e => e.Author)
+            .AsSplitQuery()
             .Include(e => e.Tags)
             .ThenInclude(e => e.Description)
             .ToListAsync(cancellationToken);

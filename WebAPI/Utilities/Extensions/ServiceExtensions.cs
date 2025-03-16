@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebAPI.Data;
+using WebAPI.DocumentDb;
 using WebAPI.Model;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
@@ -120,6 +121,11 @@ public static class ServiceExtensions
         services.AddScoped<JwtTokenProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IValidationRuleProvider, ValidationRuleProvider>();
+        services.AddScoped(cf =>
+         new DocumentCollection<SysLog>(new ConnectionSettingsBase(
+              Configuration.GetConnectionString("MongoDb")!,
+              Configuration.GetConnectionString("MongoDb_Database")!), "log"));
+
         services.AddSingleton(e =>
         {
             return new JsonSerializerOptions()

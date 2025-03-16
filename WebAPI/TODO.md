@@ -2,6 +2,8 @@ Question bounty
 
 Protect question
 
+admin/mod delete community
+
 Save favorite collection
 
 Forget password
@@ -24,16 +26,12 @@ FROM Tags t
 ORDER BY t.Count DESC;
 
 1. User Management:
-- View all users and their details
-- Manage user roles (Admin/Moderator/Regular User)
 - Ban/Unban users
 - View user reputation history
 - Reset user passwords
 - View user activity logs
 2. Content Moderation:
 - View reported questions/answers/comments
-- Delete/Edit inappropriate content
-- Lock/Unlock questions
 - Monitor spam detection
 - View content edit history
 3. Tag Management:
