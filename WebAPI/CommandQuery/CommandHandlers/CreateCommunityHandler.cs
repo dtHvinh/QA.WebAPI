@@ -36,7 +36,6 @@ public class CreateCommunityHandler(
         var comunity = new Community()
         {
             Description = request.CreateDto.Description,
-            IconImage = request.CreateDto.IconImage,
             IsPrivate = request.CreateDto.IsPrivate,
             Name = request.CreateDto.Name,
             Members = [new() {

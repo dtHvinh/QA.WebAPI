@@ -9,6 +9,8 @@ namespace WebAPI.Repositories;
 [RepositoryImpl(typeof(ICommunityRepository))]
 public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBase<Community>(dbContext), ICommunityRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public void CreateCommunity(Community community)
     {
         Add(community);
@@ -43,7 +45,55 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
 
     public async Task<int> GetMemberCount(int communityId, CancellationToken cancellationToken)
     {
-        return await dbContext.Set<CommunityMember>().CountAsync(cm => cm.CommunityId == communityId, cancellationToken);
+        return await _dbContext.Set<CommunityMember>().CountAsync(cm => cm.CommunityId == communityId, cancellationToken);
+    }
+
+    public async Task<Community?> GetCommunityDetailByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await Table.Where(e => e.Id == id)
+            .Include(e => e.Members.Take(20))
+            .AsSplitQuery()
+            .Include(e => e.Rooms.Take(20))
+            .ThenInclude(e => e.Messages.Take(20))
+            .ThenInclude(e => e.User)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<Community?> GetCommunityDetailByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        return await Table.Where(e => e.Name == name)
+            .Include(e => e.Members.Take(20))
+            .AsSplitQuery()
+            .Include(e => e.Rooms.Take(20))
+            .ThenInclude(e => e.Messages.Take(20))
+            .ThenInclude(e => e.User)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<bool> IsJoined(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId, cancellationToken);
+    }
+
+    public async Task<bool> IsModerator(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId && cm.IsModerator, cancellationToken);
+    }
+
+    public async Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
+    }
+
+    public async Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<CommunityMember>()
+            .Where(e => e.UserId == userId)
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Community)
+            .Select(e => e.Community)
+            .ToListAsync(cancellationToken);
     }
 
     public class CommunityWithJoinStatus
