@@ -29,6 +29,11 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
         Add(community);
     }
 
+    public void CreateChatRoom(CommunityChatRoom chatRoom)
+    {
+        _dbContext.Set<CommunityChatRoom>().Add(chatRoom);
+    }
+
     public async Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default)
     {
         return await Table.Where(e => !e.IsPrivate).Skip(skip).Take(take).Select(e => new CommunityWithJoinStatus

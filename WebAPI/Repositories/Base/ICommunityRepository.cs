@@ -5,6 +5,7 @@ namespace WebAPI.Repositories.Base;
 
 public interface ICommunityRepository : IRepository<Community>
 {
+    void CreateChatRoom(CommunityChatRoom chatRoom);
     void CreateCommunity(Community community);
     void CreateCommunity(string name, string description, string iconImage, bool isPrivate);
     Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default);
