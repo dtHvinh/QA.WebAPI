@@ -67,6 +67,21 @@ public class CacheService(IDistributedCache cache,
         return (DateTime.Parse(banDate, CultureInfo.CurrentCulture), banReason);
     }
 
+    public async Task<bool> IsCommunityNameUsed(string communityName, CancellationToken cancellationToken)
+    {
+        return (await cache.GetStringAsync($"community:{communityName}", cancellationToken)) != null;
+    }
+
+    public async Task FreeCommunityName(string communityName, CancellationToken cancellationToken)
+    {
+        await cache.RemoveAsync($"community:{communityName}", cancellationToken);
+    }
+
+    public async Task SetUsedCommunity(string communityName, CancellationToken cancellationToken)
+    {
+        await cache.SetStringAsync($"community:{communityName}", "1", cancellationToken);
+    }
+
     public async Task SetUsedEmail(string email, CancellationToken cancellationToken)
     {
         await cache.SetStringAsync($"email:{email}", "1", _cacheOptionProvider.GetDefault(), cancellationToken);

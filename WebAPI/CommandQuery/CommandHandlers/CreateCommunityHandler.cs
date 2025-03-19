@@ -31,6 +31,11 @@ public class CreateCommunityHandler(
         if (communityOwner is null)
             return GenericResult<CreateCommunityResponse>.Failure("User not found");
 
+        if (await _communityRepository.IsCommunityNameUsed(request.CreateDto.Name, cancellationToken))
+        {
+            return GenericResult<CreateCommunityResponse>.Failure("Community name is already used");
+        }
+
         var defaultGlobalChatRoom = new CommunityChatRoom()
         {
             Name = "global",
@@ -55,7 +60,7 @@ public class CreateCommunityHandler(
                 request.CreateDto.IconImage,
                 cancellationToken);
 
-        _communityRepository.CreateCommunity(comunity);
+        await _communityRepository.CreateCommunity(comunity, cancellationToken);
 
         var res = await _communityRepository.SaveChangesAsync(cancellationToken);
 

@@ -1,5 +1,6 @@
 ﻿using WebAPI.Model;
 using WebAPI.Response.CommunityResponses;
+using static WebAPI.Repositories.CommunityRepository;
 
 namespace WebAPI.Utilities.Extensions;
 
@@ -28,6 +29,20 @@ public static class CommunityExtensions
     }
 
     public static GetCommunityResponse ToResponse(this Community community)
+    {
+        return new GetCommunityResponse()
+        {
+            Id = community.Id,
+            Name = community.Name,
+            Description = community.Description,
+            IconImage = community.IconImage,
+            IsPrivate = community.IsPrivate,
+            MemberCount = community.MemberCount,
+        };
+    }
+
+
+    public static GetCommunityResponse ToResponse(this CommunityWithJoinStatus community)
     {
         return new GetCommunityResponse()
         {

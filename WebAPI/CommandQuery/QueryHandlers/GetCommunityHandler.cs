@@ -3,6 +3,7 @@ using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.CommunityResponses;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -21,16 +22,7 @@ public class GetCommunityHandler(ICommunityRepository communityRepository, Authe
             request.PageArgs.PageSize,
             cancellationToken);
 
-        var res = communities.Select(c => new GetCommunityResponse()
-        {
-            Description = c.Description,
-            IconImage = c.IconImage,
-            Id = c.Id,
-            IsPrivate = c.IsPrivate,
-            Name = c.Name,
-            MemberCount = c.MemberCount,
-            IsJoined = c.IsJoined
-        }).ToList();
+        var res = communities.Select(c => c.ToResponse().WithIsJoined(c.IsJoined)).ToList();
 
         return GenericResult<List<GetCommunityResponse>>.Success(res);
     }

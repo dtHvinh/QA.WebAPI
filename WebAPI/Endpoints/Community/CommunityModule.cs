@@ -47,6 +47,9 @@ public class CommunityModule : IModule
 
         group.MapGet("/joined", GetJoinedCommunities)
             .RequireAuthorization();
+
+        group.MapGet("/search/{searchTerm}", SearchCommunities)
+            .RequireAuthorization();
     }
 
     private static async Task<Results<Ok<CreateCommunityResponse>, ProblemHttpResult>> CreateCommunity(
@@ -56,6 +59,21 @@ public class CommunityModule : IModule
     {
         var command = new CreateCommunityCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<List<GetCommunityResponse>>, ProblemHttpResult>> SearchCommunities(
+        string searchTerm,
+        [AsParameters] PageArgs pageArgs,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new SearchCommunityQuery(searchTerm, pageArgs);
+        var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)
         {
             return ProblemResultExtensions.BadRequest(result.Message);

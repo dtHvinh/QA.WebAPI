@@ -3,17 +3,20 @@ using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
 using WebAPI.Repositories.Base;
+using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Repositories;
 
 [RepositoryImpl(typeof(ICommunityRepository))]
-public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBase<Community>(dbContext), ICommunityRepository
+public class CommunityRepository(ApplicationDbContext dbContext, ICacheService cacheService) : RepositoryBase<Community>(dbContext), ICommunityRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly ICacheService _cacheService = cacheService;
 
-    public void CreateCommunity(Community community)
+    public async Task CreateCommunity(Community community, CancellationToken cancellationToken = default)
     {
         Add(community);
+        await _cacheService.SetUsedCommunity(community.Name, cancellationToken);
     }
 
     public void CreateCommunity(string name, string description, string iconImage, bool isPrivate)
@@ -32,6 +35,24 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
     public void CreateChatRoom(CommunityChatRoom chatRoom)
     {
         _dbContext.Set<CommunityChatRoom>().Add(chatRoom);
+    }
+
+    public async Task<List<CommunityWithJoinStatus>> Search(int userId, string searchTerm, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await Table.Where(e => e.Name.Contains(searchTerm))
+            .Skip(skip)
+            .Take(take)
+            .Select(e => new CommunityWithJoinStatus
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                IconImage = e.IconImage,
+                IsPrivate = e.IsPrivate,
+                MemberCount = e.MemberCount,
+                IsJoined = e.Members.Any(m => m.UserId == userId)
+            })
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default)
@@ -93,6 +114,11 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
     public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId, cancellationToken);
+    }
+
+    public async Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default)
+    {
+        return await _cacheService.IsCommunityNameUsed(name, cancellationToken);
     }
 
     public async Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken)
