@@ -21,6 +21,11 @@ public class GetCommunityDetailHandler(ICommunityRepository communityRepository,
         if (community is null)
             return GenericResult<GetCommunityDetailResponse>.Failure("Community not found.");
 
+        var isMember = await _communityRepository.IsMember(_authenticationContext.UserId, community.Id, cancellationToken);
+
+        if (!isMember)
+            return GenericResult<GetCommunityDetailResponse>.Failure("You are not community member.");
+
         var memberCount = await _communityRepository.GetMemberCount(community.Id, cancellationToken);
 
         var isJoined = await _communityRepository.IsJoined(_authenticationContext.UserId, community.Id, cancellationToken);

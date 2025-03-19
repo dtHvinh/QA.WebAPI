@@ -17,13 +17,22 @@ public class CommunityModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup(EG.Community);
+        var group = endpoints.MapGroup(EG.Community)
+            .WithTags(nameof(CommunityModule))
+            .WithOpenApi();
 
         group.MapPost("/", CreateCommunity)
+            .WithName("CreateCommunity")
+            .WithSummary("Create new community")
+            .WithDescription("Creates a new community with optional icon image")
+            .DisableAntiforgery()
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommunityDto>>();
 
         group.MapGet("/", GetCommunities)
+            .RequireAuthorization();
+
+        group.MapGet("/popular", GetPopularCommunities)
             .RequireAuthorization();
 
         group.MapGet("/detail/{name}", GetCommunityDetail)
@@ -34,12 +43,11 @@ public class CommunityModule : IModule
     }
 
     private static async Task<Results<Ok<CreateCommunityResponse>, ProblemHttpResult>> CreateCommunity(
-        [FromBody] CreateCommunityDto dto,
+        [FromForm] CreateCommunityDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
     {
         var command = new CreateCommunityCommand(dto);
-
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {
@@ -69,6 +77,21 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var query = new GetCommunityQuery(pageArgs);
+
+        var result = await mediator.Send(query, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<List<GetCommunityResponse>>, ProblemHttpResult>> GetPopularCommunities(
+        [AsParameters] PageArgs pageArgs,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetPopularCommunityQuery(pageArgs);
 
         var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)

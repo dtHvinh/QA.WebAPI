@@ -6,6 +6,7 @@ using WebAPI.Response.CommunityResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
+using WebAPI.Utilities.Services;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
@@ -13,12 +14,14 @@ public class CreateCommunityHandler(
     ICommunityRepository communityRepository,
     IUserRepository userRepository,
     AuthenticationContext authenticationContext,
+    StorageService storageService,
     Serilog.ILogger logger)
     : ICommandHandler<CreateCommunityCommand, GenericResult<CreateCommunityResponse>>
 {
     private readonly ICommunityRepository _communityRepository = communityRepository;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly StorageService _storageService = storageService;
     private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<CreateCommunityResponse>> Handle(CreateCommunityCommand request, CancellationToken cancellationToken)
@@ -42,8 +45,15 @@ public class CreateCommunityHandler(
                 User = communityOwner,
                 IsOwner = true,
             }],
+            MemberCount = 1,
             Rooms = [defaultGlobalChatRoom],
         };
+
+        if (request.CreateDto.IconImage is not null)
+            comunity.IconImage = await _storageService.UploadCommunityIcon(
+                request.CreateDto.Name,
+                request.CreateDto.IconImage,
+                cancellationToken);
 
         _communityRepository.CreateCommunity(comunity);
 

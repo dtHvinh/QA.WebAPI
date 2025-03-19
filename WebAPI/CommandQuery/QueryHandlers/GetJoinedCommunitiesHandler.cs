@@ -20,6 +20,6 @@ public class GetJoinedCommunitiesHandler(
     {
         var communities = await _communityRepository.GetCommunityUserJoined(_authenticationContext.UserId, request.PageArgs.CalculateSkip(), request.PageArgs.PageSize, cancellationToken);
 
-        return GenericResult<List<GetCommunityResponse>>.Success(communities.Select(e => e.ToResponse()).ToList());
+        return GenericResult<List<GetCommunityResponse>>.Success(communities.Select(c => c.ToResponse().WithIsJoined(true)).ToList());
     }
 }

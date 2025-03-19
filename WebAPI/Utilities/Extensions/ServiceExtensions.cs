@@ -126,6 +126,21 @@ public static class ServiceExtensions
               Configuration.GetConnectionString("MongoDb")!,
               Configuration.GetConnectionString("MongoDb_Database")!), "log"));
 
+        services.AddSingleton(cf =>
+        {
+            var key = Configuration["Supabase:Key"];
+            var url = Configuration["Supabase:Url"];
+
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            ArgumentNullException.ThrowIfNull(url, nameof(url));
+
+            var storage = new StorageService(url, key);
+
+            storage.InitializeAsync().GetAwaiter().GetResult();
+
+            return storage;
+        });
+
         services.AddSingleton(e =>
         {
             return new JsonSerializerOptions()

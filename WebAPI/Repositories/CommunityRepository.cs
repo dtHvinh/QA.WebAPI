@@ -31,7 +31,7 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
 
     public async Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default)
     {
-        return await Table.Skip(skip).Take(take).Select(e => new CommunityWithJoinStatus
+        return await Table.Where(e => !e.IsPrivate).Skip(skip).Take(take).Select(e => new CommunityWithJoinStatus
         {
             Id = e.Id,
             Name = e.Name,
@@ -55,7 +55,7 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
             .AsSplitQuery()
             .Include(e => e.Rooms.Take(20))
             .ThenInclude(e => e.Messages.Take(20))
-            .ThenInclude(e => e.User)
+            .ThenInclude(e => e.Author)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -66,7 +66,7 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
             .AsSplitQuery()
             .Include(e => e.Rooms.Take(20))
             .ThenInclude(e => e.Messages.Take(20))
-            .ThenInclude(e => e.User)
+            .ThenInclude(e => e.Author)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -85,6 +85,11 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
         return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
     }
 
+    public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId, cancellationToken);
+    }
+
     public async Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<CommunityMember>()
@@ -93,6 +98,25 @@ public class CommunityRepository(ApplicationDbContext dbContext) : RepositoryBas
             .Take(take)
             .Include(e => e.Community)
             .Select(e => e.Community)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<CommunityWithJoinStatus>> GetPopularCommunitiesWithJoinStatus(int userId, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await Table.OrderByDescending(e => e.MemberCount)
+            .Where(e => !e.IsPrivate)
+            .Skip(skip)
+            .Take(take)
+            .Select(e => new CommunityWithJoinStatus
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                IconImage = e.IconImage,
+                IsPrivate = e.IsPrivate,
+                MemberCount = e.MemberCount,
+                IsJoined = e.Members.Any(m => m.UserId == userId)
+            })
             .ToListAsync(cancellationToken);
     }
 

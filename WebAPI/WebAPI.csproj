@@ -37,6 +37,7 @@
 	  <ProjectReference Include="..\ElasticSearch\WebAPI.ElasticSearch.csproj" />
 	  <ProjectReference Include="..\WebAPI.DocumentDb\WebAPI.DocumentDb.csproj" />
 	  <ProjectReference Include="..\WebAPI.Libraries\WebAPI.Libraries.csproj" />
+	  <ProjectReference Include="..\WebAPI.Storage\WebAPI.Storage.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

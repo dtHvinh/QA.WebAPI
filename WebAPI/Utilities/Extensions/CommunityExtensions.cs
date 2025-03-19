@@ -22,8 +22,8 @@ public static class CommunityExtensions
                         e.Id,
                         e.Message,
                         e.CreatedAt,
-                        e.UserId,
-                        e.User.ToAuthorResponse()!)).ToList())).ToList()
+                        e.AuthorId,
+                        e.Author.ToAuthorResponse()!)).ToList())).ToList()
         };
     }
 
@@ -35,7 +35,8 @@ public static class CommunityExtensions
             Name = community.Name,
             Description = community.Description,
             IconImage = community.IconImage,
-            IsPrivate = community.IsPrivate
+            IsPrivate = community.IsPrivate,
+            MemberCount = community.MemberCount,
         };
     }
 
@@ -46,6 +47,12 @@ public static class CommunityExtensions
     }
 
     public static GetCommunityDetailResponse WithIsJoined(this GetCommunityDetailResponse obj, bool isJoined)
+    {
+        obj.IsJoined = isJoined;
+        return obj;
+    }
+
+    public static GetCommunityResponse WithIsJoined(this GetCommunityResponse obj, bool isJoined)
     {
         obj.IsJoined = isJoined;
         return obj;
