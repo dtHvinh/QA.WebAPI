@@ -12,7 +12,8 @@ public interface ICommunityRepository : IRepository<Community>
     /// </summary>
     Task CreateCommunity(Community community, CancellationToken cancellationToken = default);
     void CreateCommunity(string name, string description, string iconImage, bool isPrivate);
-    void DeleteChatRoom(CommunityChatRoom communityChatRoom);
+    Task<bool> JoinCommunity(AppUser appUser, Community community, CancellationToken cancellationToken = default);
+    Task<List<CommunityWithJoinStatus>> Search(int userId, string searchTerm, int skip, int take, CancellationToken cancellationToken);
     Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default);
     Task<Community?> GetCommunityDetailByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<Community?> GetCommunityDetailByNameAsync(string name, CancellationToken cancellationToken = default);
@@ -26,5 +27,5 @@ public interface ICommunityRepository : IRepository<Community>
     Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default);
     Task<bool> IsModerator(int userId, int communityId, CancellationToken cancellationToken = default);
     Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default);
-    Task<List<CommunityWithJoinStatus>> Search(int userId, string searchTerm, int skip, int take, CancellationToken cancellationToken);
+    void DeleteChatRoom(CommunityChatRoom communityChatRoom);
 }

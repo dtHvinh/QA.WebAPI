@@ -37,6 +37,25 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
         _dbContext.Set<CommunityChatRoom>().Add(chatRoom);
     }
 
+    public async Task<bool> JoinCommunity(AppUser appUser, Community community, CancellationToken cancellationToken = default)
+    {
+        if (await _dbContext.Set<CommunityMember>().AnyAsync(
+            cm => cm.UserId == appUser.Id
+            && cm.CommunityId == community.Id,
+            cancellationToken))
+            return false;
+
+        var member = new CommunityMember
+        {
+            User = appUser,
+            Community = community
+        };
+
+        _dbContext.Set<CommunityMember>().Add(member);
+
+        return true;
+    }
+
     public async Task<List<CommunityWithJoinStatus>> Search(int userId, string searchTerm, int skip, int take, CancellationToken cancellationToken)
     {
         return await Table.Where(e => e.Name.Contains(searchTerm))
@@ -127,7 +146,7 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
 
     public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId, cancellationToken);
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.CommunityId == communityId && c.UserId == userId, cancellationToken);
     }
 
     public async Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default)
