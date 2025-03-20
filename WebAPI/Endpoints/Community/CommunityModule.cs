@@ -68,6 +68,12 @@ public class CommunityModule : IModule
             .DisableAntiforgery()
             .RequireAuthorization();
 
+        group.MapDelete("/{communityId}/leave", LeaveCommunity)
+            .WithName("LeaveCommunity")
+            .WithSummary("Leave community")
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
         group.MapPut("/room", UpdateChatRoom)
             .WithName("UpdateChatRoom")
             .WithSummary("Update a chat room")
@@ -82,6 +88,21 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var command = new CreateCommunityCommand(dto);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> LeaveCommunity(
+        int communityId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new LeaveCommunityCommand(communityId);
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {

@@ -29,6 +29,13 @@ public static class SerilogExtensions
             userId, op, target.GetType().Name, target.Id != default ? target.Id : target);
     }
 
+    public static void UserAction(this Serilog.ILogger logger, LogEventLevel level,
+        int userId, LogOp op, Type targetType, int targetId)
+    {
+        logger.Write(level, UserActionMessageTemplate,
+            userId, op, targetType.GetType().Name, targetId);
+    }
+
     /// <summary>
     /// "User {UserId} {Operator} {EntityType} {EntityId} {ModeratorOperator} by moderator {ModeratorId}";
     /// </summary>
@@ -59,6 +66,8 @@ public enum LogOpRes
 public enum LogOp
 {
     Liked,
+    Left,
+    Removed,
     Joined,
     Created,
     Updated,

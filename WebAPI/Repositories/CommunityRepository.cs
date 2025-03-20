@@ -88,6 +88,11 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<CommunityMember?> GetMemberAsync(int userId, int communityId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<CommunityMember>().Where(e => e.UserId == userId && e.CommunityId == communityId).Include(e => e.Community).FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default)
     {
         return await Table.Where(e => !e.IsPrivate).Skip(skip).Take(take).Select(e => new CommunityWithJoinStatus
@@ -129,31 +134,6 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<bool> IsJoined(int userId, int communityId, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId, cancellationToken);
-    }
-
-    public async Task<bool> IsModerator(int userId, int communityId, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId && cm.IsModerator, cancellationToken);
-    }
-
-    public async Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
-    }
-
-    public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.CommunityId == communityId && c.UserId == userId, cancellationToken);
-    }
-
-    public async Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default)
-    {
-        return await _cacheService.IsCommunityNameUsed(name, cancellationToken);
-    }
-
     public async Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<CommunityMember>()
@@ -182,6 +162,35 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
                 IsJoined = e.Members.Any(m => m.UserId == userId)
             })
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<bool> IsJoined(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId, cancellationToken);
+    }
+
+    public async Task<bool> IsModerator(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(cm => cm.UserId == userId && cm.CommunityId == communityId && cm.IsModerator, cancellationToken);
+    }
+
+    public async Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
+    }
+
+    public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.CommunityId == communityId && c.UserId == userId, cancellationToken);
+    }
+
+    public async Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default)
+    {
+        return await _cacheService.IsCommunityNameUsed(name, cancellationToken);
+    }
+    public void RemoveMember(CommunityMember member)
+    {
+        _dbContext.Set<CommunityMember>().Remove(member);
     }
 
     public void DeleteChatRoom(CommunityChatRoom communityChatRoom)
