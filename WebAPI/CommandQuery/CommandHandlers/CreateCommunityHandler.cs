@@ -49,6 +49,7 @@ public class CreateCommunityHandler(
             Members = [new() {
                 User = communityOwner,
                 IsOwner = true,
+                IsModerator = true,
             }],
             MemberCount = 1,
             Rooms = [defaultGlobalChatRoom],

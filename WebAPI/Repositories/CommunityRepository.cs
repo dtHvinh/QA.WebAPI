@@ -55,6 +55,20 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<CommunityChatRoom?> GetRoomAsync(int roomId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<CommunityChatRoom>().FirstOrDefaultAsync(e => e.Id == roomId, cancellationToken);
+    }
+
+    public async Task<List<CommunityChatRoom>> GetRooms(int communityId, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<CommunityChatRoom>()
+            .Where(e => e.CommunityId == communityId)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default)
     {
         return await Table.Where(e => !e.IsPrivate).Skip(skip).Take(take).Select(e => new CommunityWithJoinStatus
@@ -149,6 +163,11 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
                 IsJoined = e.Members.Any(m => m.UserId == userId)
             })
             .ToListAsync(cancellationToken);
+    }
+
+    public void DeleteChatRoom(CommunityChatRoom communityChatRoom)
+    {
+        _dbContext.Set<CommunityChatRoom>().Remove(communityChatRoom);
     }
 
     public class CommunityWithJoinStatus

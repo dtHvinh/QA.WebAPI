@@ -6,6 +6,7 @@ using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
 using WebAPI.Filters.Validation;
 using WebAPI.Pagination;
+using WebAPI.Response;
 using WebAPI.Response.CommunityResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
@@ -36,6 +37,10 @@ public class CommunityModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommunityChatRoomDto>>();
 
+        group.MapGet("/room/{communityId}", GetCommunityRoom)
+            .WithName("GetCommunityChatRoom")
+            .RequireAuthorization();
+
         group.MapGet("/", GetCommunities)
             .RequireAuthorization();
 
@@ -50,6 +55,12 @@ public class CommunityModule : IModule
 
         group.MapGet("/search/{searchTerm}", SearchCommunities)
             .RequireAuthorization();
+
+        group.MapDelete("/{communityId}/room/{roomId}", DeleteCommunityChatRoom)
+            .WithName("DeleteCommunityChatRoom")
+            .WithSummary("Delete community chat room")
+            .DisableAntiforgery()
+            .RequireAuthorization();
     }
 
     private static async Task<Results<Ok<CreateCommunityResponse>, ProblemHttpResult>> CreateCommunity(
@@ -59,6 +70,36 @@ public class CommunityModule : IModule
     {
         var command = new CreateCommunityCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> DeleteCommunityChatRoom(
+        int communityId,
+        int roomId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteChatRoomCommand(communityId, roomId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<List<ChatRoomResponse>>, ProblemHttpResult>> GetCommunityRoom(
+        int communityId,
+        [AsParameters] PageArgs pageArgs,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetCommunityChatRoomQuery(communityId, pageArgs);
+        var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)
         {
             return ProblemResultExtensions.BadRequest(result.Message);
