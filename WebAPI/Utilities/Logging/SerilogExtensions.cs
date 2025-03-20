@@ -59,6 +59,7 @@ public enum LogOpRes
 public enum LogOp
 {
     Liked,
+    Joined,
     Created,
     Updated,
     Deleted,

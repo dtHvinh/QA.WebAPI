@@ -189,6 +189,11 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
         _dbContext.Set<CommunityChatRoom>().Remove(communityChatRoom);
     }
 
+    public void UpdateRoom(CommunityChatRoom communityChatRoom)
+    {
+        _dbContext.Set<CommunityChatRoom>().Update(communityChatRoom);
+    }
+
     public class CommunityWithJoinStatus
     {
         public int Id { get; set; }

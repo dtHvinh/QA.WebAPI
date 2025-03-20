@@ -12,7 +12,9 @@ using WebAPI.Utilities.Services;
 namespace WebAPI.Repositories;
 
 [RepositoryImpl(typeof(IQuestionRepository))]
-public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchService questionSearchService)
+public class QuestionRepository(
+    ApplicationDbContext dbContext,
+    QuestionSearchService questionSearchService)
     : RepositoryBase<Question>(dbContext), IQuestionRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
@@ -26,6 +28,7 @@ public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchSe
             .EvaluateQuery(new ValidQuestionSpecification());
 
         var result = await query
+            .Include(e => e.Author)
             .Skip(skip)
             .Take(take)
             .ToListAsync(cancellationToken);
@@ -44,6 +47,7 @@ public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchSe
             .EvaluateQuery(new ValidQuestionSpecification());
 
         var result = await query
+            .Include(e => e.Author)
             .Skip(skip)
             .Take(take)
             .ToListAsync(cancellationToken);
@@ -87,6 +91,7 @@ public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchSe
     CancellationToken cancellationToken)
     {
         var response = await Table
+            .EvaluateQuery(new ValidQuestionSpecification())
             .OrderBy(q => Guid.NewGuid())
             .Skip(skip)
             .Take(take)
@@ -94,7 +99,6 @@ public class QuestionRepository(ApplicationDbContext dbContext, QuestionSearchSe
 
         return new SearchResult<Question>(response, -1);
     }
-
 
     public async Task<Question?> FindQuestionById(int questionId, CancellationToken cancellationToken)
     {

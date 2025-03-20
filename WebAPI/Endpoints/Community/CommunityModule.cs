@@ -67,6 +67,13 @@ public class CommunityModule : IModule
             .WithSummary("Delete community chat room")
             .DisableAntiforgery()
             .RequireAuthorization();
+
+        group.MapPut("/room", UpdateChatRoom)
+            .WithName("UpdateChatRoom")
+            .WithSummary("Update a chat room")
+            .DisableAntiforgery()
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<UpdateChatRoomDto>>();
     }
 
     private static async Task<Results<Ok<CreateCommunityResponse>, ProblemHttpResult>> CreateCommunity(
@@ -75,6 +82,20 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var command = new CreateCommunityCommand(dto);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> UpdateChatRoom(
+        [FromBody] UpdateChatRoomDto dto,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateChatRoomCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {

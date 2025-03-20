@@ -28,4 +28,5 @@ public interface ICommunityRepository : IRepository<Community>
     Task<bool> IsModerator(int userId, int communityId, CancellationToken cancellationToken = default);
     Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default);
     void DeleteChatRoom(CommunityChatRoom communityChatRoom);
+    void UpdateRoom(CommunityChatRoom communityChatRoom);
 }
