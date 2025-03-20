@@ -12,6 +12,10 @@ public class UpdateChatRoomValidator
             .NotEmpty()
             .WithMessage("Chat room id is required.");
 
+        RuleFor(e => e.CommunityId)
+            .NotEmpty()
+            .WithMessage("Community id is required.");
+
         RuleFor(e => e.Name)
             .NotEmpty()
             .WithMessage("Chat room name is required.")

@@ -21,7 +21,7 @@ public interface ICommunityRepository : IRepository<Community>
     Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken);
     Task<int> GetMemberCount(int communityId, CancellationToken cancellationToken);
     Task<List<CommunityWithJoinStatus>> GetPopularCommunitiesWithJoinStatus(int userId, int skip, int take, CancellationToken cancellationToken);
-    Task<CommunityChatRoom?> GetRoomAsync(int roomId, CancellationToken cancellationToken);
+    Task<CommunityChatRoom?> GetRoom(int roomId, CancellationToken cancellationToken);
     Task<List<CommunityChatRoom>> GetRooms(int communityId, int skip, int take, CancellationToken cancellationToken);
     Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default);
     Task<bool> IsJoined(int userId, int communityId, CancellationToken cancellationToken = default);
@@ -31,4 +31,6 @@ public interface ICommunityRepository : IRepository<Community>
     void DeleteChatRoom(CommunityChatRoom communityChatRoom);
     void UpdateRoom(CommunityChatRoom communityChatRoom);
     void RemoveMember(CommunityMember member);
+    Task<List<CommunityMember>> GetMembers(int communityId, int skip, int take, CancellationToken cancellationToken);
+    Task<bool> IsChatRoomNameUnique(int communityId, string name, CancellationToken cancellationToken = default);
 }

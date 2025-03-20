@@ -53,6 +53,9 @@ public class CommunityModule : IModule
         group.MapGet("/popular", GetPopularCommunities)
             .RequireAuthorization();
 
+        group.MapGet("/{communityId}/members", GetCommunityMembers)
+            .RequireAuthorization();
+
         group.MapGet("/detail/{name}", GetCommunityDetail)
             .RequireAuthorization();
 
@@ -103,6 +106,21 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var command = new LeaveCommunityCommand(communityId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<PagedResponse<CommunityMemberResponse>>, ProblemHttpResult>> GetCommunityMembers(
+        int communityId,
+        [AsParameters] PageArgs pageArgs,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetCommunityMemberQuery(communityId, pageArgs);
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {

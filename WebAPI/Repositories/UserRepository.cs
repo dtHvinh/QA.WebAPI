@@ -36,9 +36,6 @@ public class UserRepository(ApplicationDbContext dbContext,
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Set default image
-            user.ProfilePicture = _imgProv.GetDefaultPFP($"{user.Email!.First()}");
-
             var result = await _userManager.CreateAsync(user, password);
 
             if (!result.Succeeded)

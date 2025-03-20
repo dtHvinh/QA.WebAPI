@@ -74,7 +74,17 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<CommunityChatRoom?> GetRoomAsync(int roomId, CancellationToken cancellationToken)
+    public async Task<List<CommunityMember>> GetMembers(int communityId, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<CommunityMember>()
+            .Where(e => e.CommunityId == communityId)
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.User)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<CommunityChatRoom?> GetRoom(int roomId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<CommunityChatRoom>().FirstOrDefaultAsync(e => e.Id == roomId, cancellationToken);
     }
@@ -182,6 +192,11 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
     public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.CommunityId == communityId && c.UserId == userId, cancellationToken);
+    }
+
+    public async Task<bool> IsChatRoomNameUnique(int communityId, string name, CancellationToken cancellationToken = default)
+    {
+        return !await _dbContext.Set<CommunityChatRoom>().AnyAsync(e => e.CommunityId == communityId && e.Name == name, cancellationToken);
     }
 
     public async Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default)

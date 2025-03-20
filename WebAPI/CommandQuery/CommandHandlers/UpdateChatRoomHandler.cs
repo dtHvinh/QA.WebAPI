@@ -20,10 +20,15 @@ public class UpdateChatRoomHandler(
 
     public async Task<GenericResult<TextResponse>> Handle(UpdateChatRoomCommand request, CancellationToken cancellationToken)
     {
-        var chatRoom = await _repository.GetRoomAsync(request.Dto.Id, cancellationToken);
+        var chatRoom = await _repository.GetRoom(request.Dto.Id, cancellationToken);
 
         if (chatRoom is null)
             return GenericResult<TextResponse>.Failure("Chat room not found.");
+
+        if (!await _repository.IsChatRoomNameUnique(request.Dto.CommunityId, request.Dto.Name, cancellationToken))
+        {
+            return GenericResult<TextResponse>.Failure("Chat room name already exists.");
+        }
 
         chatRoom.Name = request.Dto.Name;
 

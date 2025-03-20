@@ -22,7 +22,7 @@ public class DeleteChatRoomHandler(ICommunityRepository communityRepository, Aut
             return GenericResult<TextResponse>.Failure("You are not a moderator of this community.");
         }
 
-        var chatRoom = await _communityRepository.GetRoomAsync(request.RoomId, cancellationToken);
+        var chatRoom = await _communityRepository.GetRoom(request.RoomId, cancellationToken);
 
         if (chatRoom == null)
         {

@@ -5,17 +5,20 @@ using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Result.Base;
+using WebAPI.Utilities.Services;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class UpdateUserHandler(
     IUserRepository userRepository,
     AuthenticationContext authenticationContext,
+    StorageService storage,
     Serilog.ILogger logger)
     : ICommandHandler<UpdateUserCommand, GenericResult<TextResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly StorageService _storage = storage;
     private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<TextResponse>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)

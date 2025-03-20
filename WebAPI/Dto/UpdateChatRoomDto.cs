@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Dto;
 
-public record UpdateChatRoomDto(int Id, string Name);
+public record UpdateChatRoomDto(int Id, int CommunityId, string Name);

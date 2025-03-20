@@ -28,6 +28,15 @@ public static class CommunityExtensions
         };
     }
 
+    public static CommunityMemberResponse ToResponse(this CommunityMember member)
+    {
+        return new CommunityMemberResponse(
+            member.User.Id,
+            member.User.UserName!,
+            member.User.ProfilePicture,
+            member.IsModerator);
+    }
+
     public static GetCommunityResponse ToResponse(this Community community)
     {
         return new GetCommunityResponse()
