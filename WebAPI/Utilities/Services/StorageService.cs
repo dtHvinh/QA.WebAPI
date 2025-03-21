@@ -7,6 +7,7 @@ namespace WebAPI.Utilities.Services;
 public class StorageService(string url, string key) : FileStorage(url, key)
 {
     private IStorageFileApi<FileObject> CommunityBucket => Client.Storage.From("qa");
+    private readonly Supabase.Storage.FileOptions _options = new() { Upsert = true };
 
     public async Task<string> UploadCommunityIcon(string communityName, IFormFile file, CancellationToken cancellationToken)
     {
@@ -17,7 +18,8 @@ public class StorageService(string url, string key) : FileStorage(url, key)
 
         var supabasePath = await CommunityBucket.Upload(
             stream.ToArray(),
-            "icons/" + communityName + extension);
+            "icons/" + communityName + extension,
+            _options);
 
         return supabasePath;
     }
@@ -31,7 +33,8 @@ public class StorageService(string url, string key) : FileStorage(url, key)
 
         var supabasePath = await CommunityBucket.Upload(
             stream.ToArray(),
-            "pfp/" + userId + extension);
+            "pfps/" + userId + extension,
+            _options);
 
         return supabasePath;
     }

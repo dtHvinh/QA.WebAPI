@@ -41,14 +41,34 @@ public class UserModule : IModule
             .WithSummary("Update user profile")
             .WithDescription("Updates the current user's profile information")
             .RequireAuthorization();
+
+        group.MapPut("/profile-picture", HandleUpdateUserPfp)
+            .WithName("UpdateUserProfilePicture")
+            .WithSummary("Update user profile picture")
+            .DisableAntiforgery()
+            .RequireAuthorization();
     }
 
     private static async Task<Results<Ok<UserResponse>, ProblemHttpResult>> HandleGetUser(
-        [FromServices] IMediator mediator,
         string? username,
+        [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)
     {
         var query = new GetUserQuery(username);
+        var result = await mediator.Send(query, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> HandleUpdateUserPfp(
+        [FromForm] UpdatePfpDto dto,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new UpdateProfileImageCommand(dto.ProfilePicture);
         var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)
         {

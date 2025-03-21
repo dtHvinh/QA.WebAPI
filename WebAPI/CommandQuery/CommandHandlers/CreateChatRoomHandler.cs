@@ -27,6 +27,11 @@ public class CreateChatRoomHandler(
             Name = request.CreateDto.Name
         };
 
+        if (!await _communityRepository.IsChatRoomNameUnique(chatRoom.CommunityId, chatRoom.Name, cancellationToken))
+        {
+            return GenericResult<CreateChatRoomResponse>.Failure("Chat room name is already used");
+        }
+
         _communityRepository.CreateChatRoom(chatRoom);
 
         var res = await _communityRepository.SaveChangesAsync(cancellationToken);

@@ -8,6 +8,12 @@ using WebAPI.Utilities.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseDefaultServiceProvider((context, options) =>
+{
+    options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
+    options.ValidateOnBuild = true;
+});
+
 builder.Services.AddEndpointsApiExplorer()
                 .AddOpenApi()
                 .AddHttpContextAccessor();
