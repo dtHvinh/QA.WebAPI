@@ -3,7 +3,6 @@ using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
-using WebAPI.Utilities;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Logging;
@@ -21,19 +20,27 @@ public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContex
     public async Task<GenericResult<TextResponse>> Handle(
         UpdateTagCommand request, CancellationToken cancellationToken)
     {
-        if (!await _authenticationContext.IsModerator())
-            return GenericResult<TextResponse>.Failure(string.Format(Constants.EM.ROLE_NOT_MEET_REQ,
-                nameof(Constants.Roles.Moderator)));
+        var existTag = await _tagRepository.FindTagWithBodyById(request.Tag.Id, cancellationToken);
 
-        var newTag = request.Tag.ToTag();
+        if (existTag == null)
+        {
+            return GenericResult<TextResponse>.Failure("Tag not found");
+        }
 
-        _tagRepository.Update(newTag);
+        ArgumentNullException.ThrowIfNull(existTag.WikiBody, nameof(existTag.WikiBody));
+        ArgumentNullException.ThrowIfNull(existTag.Description, nameof(existTag.Description));
+
+        existTag.Name = ObjectExtensions.ReturnIfNotNull(request.Tag.Name, existTag.Name);
+        existTag.WikiBody.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.WikiBody, existTag.WikiBody.Content);
+        existTag.Description.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.Description, existTag.Description.Content);
+
+        _tagRepository.Update(existTag);
         var result = await _tagRepository.SaveChangesAsync(cancellationToken);
 
-        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, newTag);
+        _logger.UserAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogOp.Created, existTag);
 
-        return !result.IsSuccess
-            ? GenericResult<TextResponse>.Failure(result.Message)
-            : GenericResult<TextResponse>.Success("OK");
+        return result.IsSuccess
+            ? GenericResult<TextResponse>.Success("OK")
+            : GenericResult<TextResponse>.Failure(result.Message);
     }
 }

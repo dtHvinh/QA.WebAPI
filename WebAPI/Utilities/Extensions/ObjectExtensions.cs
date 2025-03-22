@@ -17,6 +17,29 @@ public static class ObjectExtensions
         return question;
     }
 
+    public static void DoIfTrue(bool expression, Action action)
+    {
+        if (expression)
+        {
+            action();
+        }
+    }
+
+    public static T ReturnIfNotNull<T>(T? value, T @default)
+    {
+        if (value == null)
+        {
+            return @default;
+        }
+
+        if (typeof(T).IsValueType && value.Equals(default(T)))
+        {
+            return @default;
+        }
+
+        return value;
+    }
+
     /// <summary>
     /// Set <see cref="ISoftDeleteEntity.IsDeleted"/> to <see langword="true"/>
     /// </summary>

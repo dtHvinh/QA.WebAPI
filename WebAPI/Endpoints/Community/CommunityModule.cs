@@ -68,7 +68,11 @@ public class CommunityModule : IModule
         group.MapDelete("/{communityId}/room/{roomId}", DeleteCommunityChatRoom)
             .WithName("DeleteCommunityChatRoom")
             .WithSummary("Delete community chat room")
-            .DisableAntiforgery()
+            .RequireAuthorization();
+
+        group.MapDelete("/{communityId}/", DeleteCommunity)
+            .WithName("DeleteCommunity")
+            .WithSummary("Delete community")
             .RequireAuthorization();
 
         group.MapDelete("/{communityId}/leave", LeaveCommunity)
@@ -99,6 +103,19 @@ public class CommunityModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> DeleteCommunity(
+        int communityId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteCommunityCommand(communityId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
 
     private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> LeaveCommunity(
         int communityId,

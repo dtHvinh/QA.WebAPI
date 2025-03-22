@@ -186,7 +186,7 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
 
     public async Task<bool> IsOwner(int userId, int communityId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.Id == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
+        return await _dbContext.Set<CommunityMember>().AnyAsync(c => c.CommunityId == communityId && c.UserId == userId && c.IsOwner, cancellationToken);
     }
 
     public async Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default)

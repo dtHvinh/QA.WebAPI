@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
+using WebAPI.Filters.Requirement;
 using WebAPI.Filters.Validation;
 using WebAPI.Pagination;
 using WebAPI.Response;
@@ -126,8 +127,8 @@ public class TagModule : IModule
         group.MapPut("/",
                 async Task<Results<Ok<TextResponse>, ProblemHttpResult>>
                 ([FromBody] UpdateTagDto dto,
-                    [FromServices] IMediator mediator,
-                    CancellationToken cancellationToken) =>
+                 [FromServices] IMediator mediator,
+                 CancellationToken cancellationToken) =>
                 {
                     var command = new UpdateTagCommand(dto);
                     var result = await mediator.Send(command, cancellationToken);
@@ -137,6 +138,7 @@ public class TagModule : IModule
                         : ProblemResultExtensions.BadRequest(result.Message);
                 })
             .RequireAuthorization()
+            .AddEndpointFilter<ForEditTag>()
             .AddEndpointFilter<FluentValidation<UpdateTagDto>>();
 
         group.MapDelete("/{id:int}",

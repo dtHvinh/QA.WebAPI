@@ -38,4 +38,9 @@ public class StorageService(string url, string key) : FileStorage(url, key)
 
         return supabasePath;
     }
+
+    public async Task Delete(string path)
+    {
+        await CommunityBucket.Remove(path);
+    }
 }
