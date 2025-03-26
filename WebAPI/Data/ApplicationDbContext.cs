@@ -18,6 +18,8 @@ namespace WebAPI.Data;
 public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<AppUser, IdentityRole<int>, int>(options)
 {
+    private const string _fullTextDefaultCatalogName = "qa_default_catalog";
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

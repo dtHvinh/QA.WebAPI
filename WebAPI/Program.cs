@@ -1,4 +1,5 @@
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using WebAPI.Middleware;
@@ -62,6 +63,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+app.ConfigureFullTextSearch();
 
 app.UseSerilogRequestLogging();
 
@@ -72,8 +74,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.RegisterEndpoints();
-
 app.UseMiddleware<BanMiddleware>();
+
 
 RecurringJob.AddOrUpdate<GrantModeratorRoleJob>(nameof(GrantModeratorRoleJob), (e) => e.ExecuteJob(), Cron.Hourly);
 

@@ -19,7 +19,7 @@ public class AppUser : IdentityUser<int>, IEntityWithTime<int>, ISoftDeleteEntit
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     [Column(TypeName = "nvarchar(255)")]
-    public string ProfilePicture { get; set; } = default!;
+    public string? ProfilePicture { get; set; } = default!;
     public bool IsDeleted { get; set; } = false;
 
     [JsonIgnore]

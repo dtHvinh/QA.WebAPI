@@ -65,6 +65,8 @@ public enum LogOpRes
 
 public enum LogOp
 {
+    RevokedCommunityMod,
+    GrantCommunityMod,
     Liked,
     Left,
     Removed,

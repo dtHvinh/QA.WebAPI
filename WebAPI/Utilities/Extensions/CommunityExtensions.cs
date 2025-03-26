@@ -34,6 +34,7 @@ public static class CommunityExtensions
             member.User.Id,
             member.User.UserName!,
             member.User.ProfilePicture,
+            member.IsOwner,
             member.IsModerator);
     }
 

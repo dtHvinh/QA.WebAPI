@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable CA1822 // Mark members as static
+
+using Microsoft.EntityFrameworkCore;
 using WebAPI.Attributes;
 using WebAPI.Data;
 using WebAPI.Model;
@@ -24,18 +26,10 @@ public class QuestionRepository(
         CancellationToken cancellationToken)
     {
         var query = Table
-            .Where(e => e.Title.Contains(keyword) || e.Content.Contains(keyword))
+            .Where(e => EF.Functions.FreeText(e.Title, keyword) || EF.Functions.FreeText(e.Content, keyword))
             .EvaluateQuery(new ValidQuestionSpecification());
 
-        var result = await query
-            .Include(e => e.Author)
-            .Skip(skip)
-            .Take(take)
-            .ToListAsync(cancellationToken);
-
-        var total = await query.CountAsync(cancellationToken);
-
-        return new SearchResult<Question>(result, total);
+        return await InternalSearchQuestion(query, skip, take, cancellationToken);
     }
 
     public async Task<SearchResult<Question>> SearchQuestionWithTagAsync(string keyword, int tagId, int skip, int take,
@@ -43,10 +37,16 @@ public class QuestionRepository(
     {
         var query = Table
             .Where(e => e.Tags.Any(t => t.Id == tagId))
-            .Where(e => e.Title.Contains(keyword) || e.Content.Contains(keyword))
+            .Where(e => EF.Functions.FreeText(e.Title, keyword) || EF.Functions.FreeText(e.Content, keyword))
             .EvaluateQuery(new ValidQuestionSpecification());
 
+        return await InternalSearchQuestion(query, skip, take, cancellationToken);
+    }
+
+    private async Task<SearchResult<Question>> InternalSearchQuestion(IQueryable<Question> query, int skip, int take, CancellationToken cancellationToken)
+    {
         var result = await query
+            .OrderBy(e => e.Id)
             .Include(e => e.Author)
             .Skip(skip)
             .Take(take)
@@ -77,7 +77,7 @@ public class QuestionRepository(
         }
 
         var query = Table.Where(q => q.Id != questionId &&
-                                    tokens.Any(token => EF.Functions.Like(q.Title.ToLower(), $"%{token}%")));
+                                    tokens.Any(token => EF.Functions.Contains(q.Title.ToLower(), $"%{token}%")));
 
         var results = await query.OrderBy(q => Guid.NewGuid())
                                  .Skip(skip)
@@ -92,6 +92,7 @@ public class QuestionRepository(
     {
         var response = await Table
             .EvaluateQuery(new ValidQuestionSpecification())
+            .Include(e => e.Author)
             .OrderBy(q => Guid.NewGuid())
             .Skip(skip)
             .Take(take)

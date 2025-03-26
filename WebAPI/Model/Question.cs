@@ -27,7 +27,9 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
     [Column(TypeName = "nvarchar(max)")]
     public required string Content { get; set; }
 
+    public string DuplicateQuestionUrl { get; set; } = ""; // When user mark as duplicate
     public bool IsDuplicate { get; set; } = false; // When user or admin mark as duplicate
+
     public bool IsClosed { get; set; } = false; // Disable new answer
     public bool IsDeleted { get; set; } = false;
     public bool IsSolved { get; set; } = false; // When author accept one of the answers

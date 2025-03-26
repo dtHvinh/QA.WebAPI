@@ -71,6 +71,11 @@ public class RepositoryBase<T>(ApplicationDbContext dbContext) : IRepository<T> 
         Entities.UpdateRange(entities);
     }
 
+    public void Update(object entity)
+    {
+        dbContext.Update(entity);
+    }
+
     public async Task<int> CountAsync()
     {
         return await Entities.CountAsync();

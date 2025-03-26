@@ -22,6 +22,18 @@ public class CommunityModule : IModule
             .WithTags(nameof(CommunityModule))
             .WithOpenApi();
 
+        group.MapPost("/{communityId:int}/mod/grant/{userId:int}", GrantModRole)
+            .WithName("GrantModRole")
+            .WithSummary("Grant moderator role")
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
+        group.MapPost("/{communityId:int}/mod/revoke/{userId:int}", RevokeModRole)
+            .WithName("RevokeModRole")
+            .WithSummary("Revoke moderator role")
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
         group.MapPost("/", CreateCommunity)
             .WithName("CreateCommunity")
             .WithSummary("Create new community")
@@ -81,6 +93,13 @@ public class CommunityModule : IModule
             .DisableAntiforgery()
             .RequireAuthorization();
 
+        group.MapPut("/", UpdateCommunity)
+            .WithName("UpdateCommunity")
+            .WithSummary("Update communitiy")
+            .DisableAntiforgery()
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<UpdateCommunityDto>>();
+
         group.MapPut("/room", UpdateChatRoom)
             .WithName("UpdateChatRoom")
             .WithSummary("Update a chat room")
@@ -95,6 +114,50 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var command = new CreateCommunityCommand(dto);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> RevokeModRole(
+        int communityId,
+        int userId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new CommunityModRoleCommand(userId, communityId, false);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> GrantModRole(
+        int communityId,
+        int userId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new CommunityModRoleCommand(userId, communityId, true);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> UpdateCommunity(
+        [FromForm] UpdateCommunityDto dto,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateCommunityCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {

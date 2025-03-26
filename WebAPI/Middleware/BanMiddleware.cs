@@ -38,8 +38,15 @@ public class BanMiddleware(RequestDelegate next, ICacheService cacheService)
 
             return;
         }
+        try
+        {
 
-        await _next(context);
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private static int GetId(string accessToken)

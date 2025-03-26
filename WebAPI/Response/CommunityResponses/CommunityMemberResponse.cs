@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Response.CommunityResponses;
 
-public record CommunityMemberResponse(int Id, string Username, string ProfileImage, bool IsModerator);
+public record CommunityMemberResponse(int Id, string Username, string ProfileImage, bool IsOwner, bool IsModerator);

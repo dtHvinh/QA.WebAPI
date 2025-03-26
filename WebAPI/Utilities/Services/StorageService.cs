@@ -18,7 +18,7 @@ public class StorageService(string url, string key) : FileStorage(url, key)
 
         var supabasePath = await CommunityBucket.Upload(
             stream.ToArray(),
-            "icons/" + communityName + extension,
+            "icons/" + communityName + "-" + Random.Shared.NextInt64(1, 500) + extension,
             _options);
 
         return supabasePath;
