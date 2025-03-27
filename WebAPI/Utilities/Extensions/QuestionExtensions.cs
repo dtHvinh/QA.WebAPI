@@ -59,6 +59,8 @@ public static class QuestionExtensions
             Score = obj.Score,
             CreatedAt = obj.CreatedAt,
             UpdatedAt = obj.UpdatedAt,
+
+            DuplicateQuestionUrl = obj.DuplicateQuestionUrl,
         };
 
         if (obj.Tags != null)
@@ -94,6 +96,8 @@ public static class QuestionExtensions
             Score = obj.Score,
             CreatedAt = obj.CreatedAt,
             UpdatedAt = obj.UpdatedAt,
+
+            DuplicateQuestionUrl = obj.DuplicateQuestionUrl,
         };
 
         if (obj.Tags != null)

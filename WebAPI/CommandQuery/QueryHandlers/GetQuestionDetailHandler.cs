@@ -5,7 +5,6 @@ using WebAPI.Response.QuestionResponses;
 using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Result.Base;
-using WebAPI.Utilities.Services;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
@@ -13,7 +12,6 @@ namespace WebAPI.CommandQuery.QueryHandlers;
 public class GetQuestionDetailHandler(IQuestionRepository questionRepository,
                                       IAnswerRepository answerRepository,
                                       IBookmarkRepository bookmarkRepository,
-                                      QuestionSearchService questionSearchService,
                                       AuthenticationContext authenticationContext)
     : IQueryHandler<GetQuestionDetailQuery, GenericResult<GetQuestionResponse>>
 {
@@ -37,8 +35,6 @@ public class GetQuestionDetailHandler(IQuestionRepository questionRepository,
 
         _questionRepository.MarkAsView(question.Id);
         await _questionRepository.SaveChangesAsync(cancellationToken);
-
-        await questionSearchService.IndexOrUpdateAsync(question, cancellationToken);
 
         var isQuestionBookmarked =
             await _bookmarkRepository.IsBookmarked(_authenticationContext.UserId, question.Id);

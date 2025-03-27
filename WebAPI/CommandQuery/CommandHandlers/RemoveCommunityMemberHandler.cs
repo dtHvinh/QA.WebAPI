@@ -3,17 +3,20 @@ using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class RemoveCommunityMemberHandler(
     ICommunityRepository communityRepository,
-    AuthenticationContext authenticationContext)
+    AuthenticationContext authenticationContext,
+    Serilog.ILogger logger)
     : ICommandHandler<RemoveCommunityMemberCommand, GenericResult<TextResponse>>
 {
     private readonly ICommunityRepository _communityRepository = communityRepository;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<TextResponse>> Handle(RemoveCommunityMemberCommand request, CancellationToken cancellationToken)
     {
@@ -34,6 +37,10 @@ public class RemoveCommunityMemberHandler(
         _communityRepository.RemoveMember(member);
 
         var res = await _communityRepository.SaveChangesAsync(cancellationToken);
+
+        _logger.UserAction(res.IsSuccess
+            ? Serilog.Events.LogEventLevel.Information
+            : Serilog.Events.LogEventLevel.Error, _authenticationContext.UserId, LogOp.Removed, member);
 
         return res.IsSuccess
                 ? GenericResult<TextResponse>.Success("User has been removed from the community.")

@@ -30,12 +30,8 @@ public static class TagExtensions
         return new TagWithWikiBodyResponse(obj.Id, obj.Name, obj.Description?.Content, obj.WikiBody?.Content, obj.QuestionCount);
     }
 
-    public static TagResponse? ToTagResonse(this Tag? obj)
+    public static TagResponse ToTagResonse(this Tag obj)
     {
-        if (obj == null)
-        {
-            return null;
-        }
         return new TagResponse(obj.Id, obj.Name, obj.Description?.Content, obj.QuestionCount);
     }
 

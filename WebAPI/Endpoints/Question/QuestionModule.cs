@@ -119,6 +119,17 @@ public sealed class QuestionModule : IModule
             .WithDescription("Removes a question and all its associated content")
             .RequireAuthorization();
 
+        group.MapPut("/duplicate", FlagQuestionDuplicate)
+            .RequireAuthorization()
+            .WithName("FlagQuestionDuplicate")
+            .WithSummary("Flag question as duplicate")
+            .WithDescription("Marks a question as a duplicate of another question")
+            .AddEndpointFilter<FluentValidation<FlagQuestionDuplicateDto>>();
+
+        group.MapPut("/{questionid}/remove-duplicate-flag", RemoveDuplicateFlag)
+            .WithName("RemoveDuplicateFlag")
+            .RequireAuthorization();
+
         group.MapPut("/", UpdateQuestionHandler)
             .WithName("UpdateQuestion")
             .WithSummary("Update question")
@@ -153,6 +164,36 @@ public sealed class QuestionModule : IModule
             CancellationToken cancellationToken = default)
     {
         var cmd = new GetQuestionCommentQuery(questionId, pageArgs);
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> RemoveDuplicateFlag(
+            int questionId,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new RemoveDuplicateFlagCommand(questionId);
+        var result = await mediator.Send(cmd, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> FlagQuestionDuplicate(
+            [FromBody] FlagQuestionDuplicateDto dto,
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken = default)
+    {
+        var cmd = new FlagQuestionDuplicateCommand(dto.QuestionId, dto.DuplicateUrl);
         var result = await mediator.Send(cmd, cancellationToken);
         if (!result.IsSuccess)
         {

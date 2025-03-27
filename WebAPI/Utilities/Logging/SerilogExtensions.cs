@@ -65,6 +65,8 @@ public enum LogOpRes
 
 public enum LogOp
 {
+    RemoveDuplicateFlag,
+    FlagQuestionDuplicated,
     RevokedCommunityMod,
     GrantCommunityMod,
     Liked,

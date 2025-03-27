@@ -23,6 +23,8 @@ public class QuestionHistory : IEntityWithTime<int>, IOwnedByUser<int>
 
 public static class QuestionHistoryTypes
 {
+    public const string FlagDuplicate = "Flag Duplicate";
+    public const string RemoveDuplicateFlag = "Remove Duplicate Flag";
     public const string Edit = "Edit";
     public const string Close = "Close Question";
     public const string Reopen = "Re-open Question";

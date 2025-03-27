@@ -28,6 +28,7 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public int CommentCount { get; set; }
     public int Score { get; set; }
 
+    public string DuplicateQuestionUrl { get; set; } = string.Empty;
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
     public ICollection<TagResponse> Tags { get; set; } = default!;
