@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{02EA68
 	ProjectSection(SolutionItems) = preProject
 		command.txt = command.txt
 		logstash.conf = logstash.conf
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI.DocumentDb", "WebAPI.DocumentDb\WebAPI.DocumentDb.csproj", "{9D9709CE-D4E7-434E-8D6E-DFC9F333F1BA}"
