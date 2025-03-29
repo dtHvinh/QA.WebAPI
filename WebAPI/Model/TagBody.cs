@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
+[Index(nameof(TagId))]
 public class TagBody : IEntity<int>
 {
     public int Id { get; set; }

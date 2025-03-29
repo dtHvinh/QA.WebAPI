@@ -12,16 +12,16 @@ public class VoteRepository(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public Task<bool> DownvoteQuestion(int questionId, int userId, CancellationToken cancellationToken)
-        => InternalVoteQuestion(questionId, userId, false, cancellationToken);
+    public Task<bool> DownvoteQuestion(Question question, int userId, CancellationToken cancellationToken)
+        => InternalVoteQuestion(question, userId, false, cancellationToken);
 
-    public Task<bool> UpvoteQuestion(int questionId, int userId, CancellationToken cancellationToken)
-        => InternalVoteQuestion(questionId, userId, true, cancellationToken);
+    public Task<bool> UpvoteQuestion(Question question, int userId, CancellationToken cancellationToken)
+        => InternalVoteQuestion(question, userId, true, cancellationToken);
 
-    private async Task<bool> InternalVoteQuestion(int questionId, int userId, bool isUpvote, CancellationToken cancellationToken)
+    private async Task<bool> InternalVoteQuestion(Question question, int userId, bool isUpvote, CancellationToken cancellationToken)
     {
         var existVote = await _dbContext.Set<QuestionVote>()
-            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.QuestionId == questionId,
+            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.QuestionId == question.Id,
             cancellationToken);
 
         if (existVote != null)
@@ -30,6 +30,8 @@ public class VoteRepository(ApplicationDbContext dbContext)
             {
                 existVote.IsUpvote = isUpvote;
                 Entities.Update(existVote);
+
+                question.Score += isUpvote ? 2 : -2;
 
                 return true;
             }
@@ -39,10 +41,12 @@ public class VoteRepository(ApplicationDbContext dbContext)
 
         var upvote = new QuestionVote
         {
-            QuestionId = questionId,
+            QuestionId = question.Id,
             AuthorId = userId,
             IsUpvote = isUpvote,
         };
+
+        question.Score += isUpvote ? 1 : -1;
 
         Entities.Add(upvote);
 
@@ -50,16 +54,16 @@ public class VoteRepository(ApplicationDbContext dbContext)
     }
 
 
-    public Task<bool> DownvoteAnswer(int answerId, int userId, CancellationToken cancellationToken)
-    => InternalVoteAnswer(answerId, userId, false, cancellationToken);
+    public Task<bool> DownvoteAnswer(Answer answer, int userId, CancellationToken cancellationToken)
+    => InternalVoteAnswer(answer, userId, false, cancellationToken);
 
-    public Task<bool> UpvoteAnswer(int answerId, int userId, CancellationToken cancellationToken)
-        => InternalVoteAnswer(answerId, userId, true, cancellationToken);
+    public Task<bool> UpvoteAnswer(Answer answer, int userId, CancellationToken cancellationToken)
+        => InternalVoteAnswer(answer, userId, true, cancellationToken);
 
-    private async Task<bool> InternalVoteAnswer(int answerId, int userId, bool isUpvote, CancellationToken cancellationToken)
+    private async Task<bool> InternalVoteAnswer(Answer answer, int userId, bool isUpvote, CancellationToken cancellationToken)
     {
         var existVote = await _dbContext.Set<AnswerVote>()
-            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.AnswerId == answerId,
+            .FirstOrDefaultAsync(u => u.AuthorId == userId && u.AnswerId == answer.Id,
             cancellationToken);
 
         if (existVote != null)
@@ -69,6 +73,8 @@ public class VoteRepository(ApplicationDbContext dbContext)
                 existVote.IsUpvote = isUpvote;
                 Entities.Update(existVote);
 
+                answer.Score += isUpvote ? 2 : -2;
+
                 return true;
             }
 
@@ -77,10 +83,12 @@ public class VoteRepository(ApplicationDbContext dbContext)
 
         var upvote = new AnswerVote
         {
-            AnswerId = answerId,
+            AnswerId = answer.Id,
             AuthorId = userId,
             IsUpvote = isUpvote,
         };
+
+        answer.Score += isUpvote ? 1 : -1;
 
         Entities.Add(upvote);
 

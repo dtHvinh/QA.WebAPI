@@ -1,9 +1,11 @@
-﻿namespace WebAPI.Repositories.Base;
+﻿using WebAPI.Model;
+
+namespace WebAPI.Repositories.Base;
 
 public interface IVoteRepository
 {
-    Task<bool> UpvoteQuestion(int questionId, int userId, CancellationToken cancellationToken);
-    Task<bool> DownvoteQuestion(int questionId, int userId, CancellationToken cancellationToken);
-    Task<bool> DownvoteAnswer(int answerId, int userId, CancellationToken cancellationToken);
-    Task<bool> UpvoteAnswer(int answerId, int userId, CancellationToken cancellationToken);
+    Task<bool> UpvoteQuestion(Question question, int userId, CancellationToken cancellationToken);
+    Task<bool> DownvoteQuestion(Question question, int userId, CancellationToken cancellationToken);
+    Task<bool> DownvoteAnswer(Answer answer, int userId, CancellationToken cancellationToken);
+    Task<bool> UpvoteAnswer(Answer answer, int userId, CancellationToken cancellationToken);
 }

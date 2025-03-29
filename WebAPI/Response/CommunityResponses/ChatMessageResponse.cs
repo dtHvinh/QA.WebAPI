@@ -6,6 +6,6 @@ public record ChatMessageResponse(
     int Id,
     string Message,
     DateTime CreatedAt,
-    int UserId,
+    DateTime UpdatedAt,
     AuthorResponse Author
 );

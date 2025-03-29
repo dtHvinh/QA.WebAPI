@@ -33,4 +33,5 @@ public interface ICommunityRepository : IRepository<Community>
     void RemoveMember(CommunityMember member);
     Task<List<CommunityMember>> GetMembers(int communityId, int skip, int take, CancellationToken cancellationToken);
     Task<bool> IsChatRoomNameUnique(int communityId, string name, CancellationToken cancellationToken = default);
+    void CreateChatMessage(ChatRoomMessage message);
 }

@@ -23,7 +23,7 @@ public static class CommunityExtensions
                         e.Id,
                         e.Message,
                         e.CreatedAt,
-                        e.AuthorId,
+                        e.UpdatedAt,
                         e.Author.ToAuthorResponse()!)).ToList())).ToList()
         };
     }

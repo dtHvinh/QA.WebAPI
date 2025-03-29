@@ -43,29 +43,25 @@ public class CreateVoteHandler(
 
         if (request.IsUpvote)
         {
-            var res = await _voteRepository.UpvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken);
+            var res = await _voteRepository.UpvoteQuestion(question, _authContext.UserId, cancellationToken);
 
             if (res)
             {
                 question.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.QuestionUpvoted;
-
-                question.Score++;
             }
             else
-                GenericResult<VoteResponse>.Failure("You have already done this");
+                return GenericResult<VoteResponse>.Failure("You have already done this");
         }
         else
         {
-            var res = await _voteRepository.DownvoteQuestion(request.QuestionId, _authContext.UserId, cancellationToken);
+            var res = await _voteRepository.DownvoteQuestion(question, _authContext.UserId, cancellationToken);
 
             if (res)
             {
                 question.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.QuestionDownvoted;
-
-                question.Score--;
             }
             else
-                GenericResult<VoteResponse>.Failure("You have already done this");
+                return GenericResult<VoteResponse>.Failure("You have already done this");
         }
 
         _userRepository.Update(question.Author!);
@@ -94,29 +90,25 @@ public class CreateVoteHandler(
 
         if (request.IsUpvote)
         {
-            var res = await _voteRepository.UpvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken);
+            var res = await _voteRepository.UpvoteAnswer(answer, _authContext.UserId, cancellationToken);
 
             if (res)
             {
                 answer.Author!.Reputation += _applicationProperties.ReputationAcquirePerAction.AnswerUpvoted;
-
-                answer.Score++;
             }
             else
-                GenericResult<VoteResponse>.Failure("You have already done this");
+                return GenericResult<VoteResponse>.Failure("You have already done this");
         }
         else
         {
-            var res = await _voteRepository.DownvoteAnswer(request.AnswerId, _authContext.UserId, cancellationToken);
+            var res = await _voteRepository.DownvoteAnswer(answer, _authContext.UserId, cancellationToken);
 
             if (res)
             {
                 answer.Author!.Reputation -= _applicationProperties.ReputationAcquirePerAction.AnswerDownvoted;
-
-                answer.Score--;
             }
             else
-                GenericResult<VoteResponse>.Failure("You have already done this");
+                return GenericResult<VoteResponse>.Failure("You have already done this");
         }
 
         _userRepository.Update(answer.Author!);

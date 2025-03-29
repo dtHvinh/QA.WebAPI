@@ -1,0 +1,43 @@
+﻿using WebAPI.CommandQuery.Commands;
+using WebAPI.CQRS;
+using WebAPI.Repositories.Base;
+using WebAPI.Response.CommunityResponses;
+using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Extensions;
+using WebAPI.Utilities.Result.Base;
+
+namespace WebAPI.CommandQuery.CommandHandlers;
+
+public class ChatHandler(
+    ICommunityRepository communityRepository,
+    AuthenticationContext authenticationContext,
+    IUserRepository userRepository)
+    : ICommandHandler<ChatCommand, GenericResult<ChatMessageResponse>>
+{
+    private readonly ICommunityRepository _communityRepository = communityRepository;
+    private readonly AuthenticationContext _authenticationContext = authenticationContext;
+    private readonly IUserRepository _userRepository = userRepository;
+
+    public async Task<GenericResult<ChatMessageResponse>> Handle(ChatCommand request, CancellationToken cancellationToken)
+    {
+        var chatMessage = request.Dto.ToChatRoomMessage()
+            .WithAuthor(_authenticationContext.UserId);
+
+        _communityRepository.CreateChatMessage(chatMessage);
+
+        var author = await _userRepository.FindUserByIdAsync(_authenticationContext.UserId, cancellationToken);
+
+        if (author == null)
+        {
+            return GenericResult<ChatMessageResponse>.Failure("Author not found");
+        }
+
+        chatMessage.Author = author;
+
+        var res = await _communityRepository.SaveChangesAsync(cancellationToken);
+
+        return res.IsSuccess
+            ? GenericResult<ChatMessageResponse>.Success(chatMessage.ToResponseWithAuthor())
+            : GenericResult<ChatMessageResponse>.Failure("Fail to send message");
+    }
+}

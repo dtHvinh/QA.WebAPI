@@ -37,6 +37,11 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
         _dbContext.Set<CommunityChatRoom>().Add(chatRoom);
     }
 
+    public void CreateChatMessage(ChatRoomMessage message)
+    {
+        _dbContext.Set<ChatRoomMessage>().Add(message);
+    }
+
     public async Task<bool> JoinCommunity(AppUser appUser, Community community, CancellationToken cancellationToken = default)
     {
         if (await _dbContext.Set<CommunityMember>().AnyAsync(

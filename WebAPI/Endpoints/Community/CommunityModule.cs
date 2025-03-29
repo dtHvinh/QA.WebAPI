@@ -22,6 +22,13 @@ public class CommunityModule : IModule
             .WithTags(nameof(CommunityModule))
             .WithOpenApi();
 
+        group.MapPost("/room/chat", SendChatRoomMessage)
+            .WithName("SendChatRoomMessage")
+            .WithSummary("Send chat room message")
+            .DisableAntiforgery()
+            .RequireAuthorization()
+            .AddEndpointFilter<FluentValidation<ChatRequestDto>>();
+
         group.MapPost("/{communityId:int}/mod/grant/{userId:int}", GrantModRole)
             .WithName("GrantModRole")
             .WithSummary("Grant moderator role")
@@ -119,6 +126,20 @@ public class CommunityModule : IModule
         CancellationToken cancellationToken)
     {
         var command = new CreateCommunityCommand(dto);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<ChatMessageResponse>, ProblemHttpResult>> SendChatRoomMessage(
+        [FromForm] ChatRequestDto dto,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new ChatCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
         if (!result.IsSuccess)
         {

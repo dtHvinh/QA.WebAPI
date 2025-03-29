@@ -1,7 +1,9 @@
-﻿using WebAPI.Utilities.Contract;
+﻿using Microsoft.EntityFrameworkCore;
+using WebAPI.Utilities.Contract;
 
 namespace WebAPI.Model;
 
+[Index(nameof(TagId))]
 public class TagDescription : IEntity<int>
 {
     public int Id { get; set; }
