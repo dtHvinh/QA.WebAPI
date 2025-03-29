@@ -11,6 +11,8 @@ namespace WebAPI.Repositories;
 public class AnswerRepository(ApplicationDbContext dbContext)
     : RepositoryBase<Answer>(dbContext), IAnswerRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public void AddAnswer(Answer answer)
     {
         Entities.Add(answer);
@@ -19,7 +21,7 @@ public class AnswerRepository(ApplicationDbContext dbContext)
     public Task AddAnswerAndLoadAuthor(Answer answer, CancellationToken cancellationToken = default)
     {
         Entities.Add(answer);
-        return dbContext.Entry(answer).Reference(e => e.Author).LoadAsync(cancellationToken);
+        return _dbContext.Entry(answer).Reference(e => e.Author).LoadAsync(cancellationToken);
     }
 
     public void TryEditAnswer(Answer answer, out string? errMsg)

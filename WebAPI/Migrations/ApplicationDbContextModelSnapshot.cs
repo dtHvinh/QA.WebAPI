@@ -187,7 +187,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionsId");
 
-                    b.ToTable("QuestionCollection");
+                    b.ToTable("QuestionCollection", (string)null);
                 });
 
             modelBuilder.Entity("QuestionTag", b =>
@@ -202,7 +202,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag");
+                    b.ToTable("QuestionTag", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Answer", b =>
@@ -244,7 +244,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answer", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.AppUser", b =>
@@ -370,7 +370,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("AuthorId", "CreatedAt")
                         .IsDescending(false, true);
 
-                    b.ToTable("BookMark");
+                    b.ToTable("BookMark", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.ChatRoomMessage", b =>
@@ -403,7 +403,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("ChatRoomId");
 
-                    b.ToTable("ChatRoomMessage");
+                    b.ToTable("ChatRoomMessage", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.ChatRoomMessageReaction", b =>
@@ -424,7 +424,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("ChatMessageId");
 
-                    b.ToTable("ChatRoomMessageReaction");
+                    b.ToTable("ChatRoomMessageReaction", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Collection", b =>
@@ -472,7 +472,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("LikeCount");
 
-                    b.ToTable("Collection");
+                    b.ToTable("Collection", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.CollectionLike", b =>
@@ -501,7 +501,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("CollectionId");
 
-                    b.ToTable("CollectionLike");
+                    b.ToTable("CollectionLike", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Comment", b =>
@@ -535,7 +535,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
 
                     b.HasDiscriminator<string>("CommentType").HasValue("Comment");
 
@@ -575,7 +575,7 @@ namespace WebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Community");
+                    b.ToTable("Community", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.CommunityChatRoom", b =>
@@ -597,7 +597,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("CommunityId");
 
-                    b.ToTable("CommunityChatRoom");
+                    b.ToTable("CommunityChatRoom", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.CommunityMember", b =>
@@ -626,7 +626,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommunityMember");
+                    b.ToTable("CommunityMember", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.ExternalLinks", b =>
@@ -652,7 +652,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("ExternalLinks");
+                    b.ToTable("ExternalLinks", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Question", b =>
@@ -726,7 +726,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("ViewCount")
                         .IsDescending();
 
-                    b.ToTable("Question");
+                    b.ToTable("Question", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.QuestionHistory", b =>
@@ -763,7 +763,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("QuestionHistory");
+                    b.ToTable("QuestionHistory", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Tag", b =>
@@ -799,7 +799,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("QuestionCount")
                         .IsDescending();
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tag", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.TagBody", b =>
@@ -822,7 +822,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("TagId")
                         .IsUnique();
 
-                    b.ToTable("TagBody");
+                    b.ToTable("TagBody", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.TagDescription", b =>
@@ -845,7 +845,7 @@ namespace WebAPI.Migrations
                     b.HasIndex("TagId")
                         .IsUnique();
 
-                    b.ToTable("TagDescription");
+                    b.ToTable("TagDescription", (string)null);
                 });
 
             modelBuilder.Entity("WebAPI.Model.Vote", b =>
@@ -871,7 +871,7 @@ namespace WebAPI.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Vote");
+                    b.ToTable("Vote", (string)null);
 
                     b.HasDiscriminator<string>("VoteType").HasValue("Vote");
 

@@ -79,6 +79,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         return typeof(ApplicationDbContext).Assembly.GetTypes()
             .Where(type => type.IsClass && type.GetInterfaces()
                 .Any(i => i == typeof(IKeylessEntityWithTime)
+                || i == typeof(IKeylessEntity)
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityWithTime<>))
                 || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>))));
     }
