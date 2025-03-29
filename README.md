@@ -189,16 +189,6 @@ Now the endpoint will properly receive:
 - isPrivate (bool)
 - iconImage (file) from the FormData sent by your React frontend.
 
-## dtHvinh
-Copy
-
-Delete
-
-Workspace can you give me Readme.md file to describe detail entire how my application work for documentation
-
-## Trae AI
-25 context(s) used
-
 # QA Platform
 This repository contains a comprehensive Question and Answer platform built with ASP.NET Core and React. The platform allows users to ask questions, provide answers, create collections, bookmark content, and participate in communities.
 
