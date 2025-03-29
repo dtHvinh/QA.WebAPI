@@ -28,7 +28,6 @@ qa_platform/
 │   └── WebAPI.Storage/          # File storage implementation
 └── front-end/                   # React frontend application
  ```
-```
 
 ## Key Features
 ### Authentication
@@ -133,11 +132,6 @@ if (imageFile) {
     formData.append('iconImage', imageFile);
 }
  ```
-
-## Trae AI
-4 context(s) used
-
-No, the current implementation won't work with FormData from the frontend. The [FromBody] attribute expects JSON data, but you're sending FormData. Let's modify the endpoint to handle FormData correctly:
 
 ```csharp
 public class CommunityModule : IModule
