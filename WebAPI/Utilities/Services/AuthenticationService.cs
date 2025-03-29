@@ -33,7 +33,10 @@ public class AuthenticationService(UserManager<AppUser> userManager,
 
         if (banResult.HasValue)
         {
-            return GenericResult<AuthResponse>.Failure("You are banned until " + banResult.Value.Item1.ToLocalTime() + "Reason: " + banResult.Value.Item2);
+            return GenericResult<AuthResponse>.Failure("You are banned until "
+                + banResult.Value.Item1.ToString("dd/MM/yyyy hh:mm:ss")
+                + " Reason: "
+                + banResult.Value.Item2);
         }
 
         // Check password

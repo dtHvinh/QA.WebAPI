@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Response.AuthResponses;
 
-public record AuthResponse(string AccessToken, string RefreshToken, string Username, string ProfilePicture, IList<string> Roles);
+public record AuthResponse(string AccessToken, string RefreshToken, string Username, string? ProfilePicture, IList<string> Roles);

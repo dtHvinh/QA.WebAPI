@@ -23,8 +23,8 @@ public class BanMiddleware(RequestDelegate next, ICacheService cacheService)
         }
 
         var token = string.Concat(auth.Skip(7));
-
-        var banTo = await _cacheService.IsBanned(GetId(token), context.RequestAborted);
+        var id = GetId(token);
+        var banTo = await _cacheService.IsBanned(id, context.RequestAborted);
 
         if (banTo.HasValue)
         {
@@ -33,8 +33,11 @@ public class BanMiddleware(RequestDelegate next, ICacheService cacheService)
             var json = JsonSerializer.Serialize(result);
             var bytes = Encoding.UTF8.GetBytes(json);
 
-            context.Response.StatusCode = 401;
+            // TODO: document this status code
+            context.Response.StatusCode = 444;
             await context.Response.BodyWriter.WriteAsync(bytes);
+
+            await context.Response.CompleteAsync();
 
             return;
         }

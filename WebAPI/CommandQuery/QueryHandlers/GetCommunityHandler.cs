@@ -8,7 +8,9 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetCommunityHandler(ICommunityRepository communityRepository, AuthenticationContext authenticationContext)
+public class GetCommunityHandler(
+    ICommunityRepository communityRepository,
+    AuthenticationContext authenticationContext)
     : IQueryHandler<GetCommunityQuery, GenericResult<List<GetCommunityResponse>>>
 {
     private readonly ICommunityRepository _communityRepository = communityRepository;

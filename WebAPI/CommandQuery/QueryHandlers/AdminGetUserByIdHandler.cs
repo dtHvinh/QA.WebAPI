@@ -2,14 +2,18 @@
 using WebAPI.CQRS;
 using WebAPI.Repositories.Base;
 using WebAPI.Response.AppUserResponses;
+using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class AdminGetUserByIdHandler(IUserRepository userRepository)
+public class AdminGetUserByIdHandler(
+    IUserRepository userRepository,
+    ICacheService cacheService)
     : IQueryHandler<AdminGetUserByIdQuery, GenericResult<GetUserResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly ICacheService _cacheService = cacheService;
 
     public async Task<GenericResult<GetUserResponse>> Handle(AdminGetUserByIdQuery request, CancellationToken cancellationToken)
     {
@@ -19,6 +23,7 @@ public class AdminGetUserByIdHandler(IUserRepository userRepository)
             return GenericResult<GetUserResponse>.Failure("User not found");
         }
 
-        return GenericResult<GetUserResponse>.Success(user.ToGetUserResponse());
+        return GenericResult<GetUserResponse>.Success(user.ToGetUserResponse()
+            .SetIsBanned(_cacheService.IsBanned(user.Id)));
     }
 }
