@@ -62,6 +62,10 @@ public class CommunityModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommunityChatRoomDto>>();
 
+        group.MapGet("/room/chat/{roomId}", GetChatRoomMessage)
+            .WithName("GetChatRoomMessage")
+            .RequireAuthorization();
+
         group.MapGet("/room/{communityId}", GetCommunityRoom)
             .WithName("GetCommunityChatRoom")
             .RequireAuthorization();
@@ -127,6 +131,21 @@ public class CommunityModule : IModule
     {
         var command = new CreateCommunityCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<PagedResponse<ChatMessageResponse>>, ProblemHttpResult>> GetChatRoomMessage(
+        int roomId,
+        [AsParameters] PageArgs pageArgs,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetChatRoomMessageQuery(roomId, pageArgs);
+        var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)
         {
             return ProblemResultExtensions.BadRequest(result.Message);

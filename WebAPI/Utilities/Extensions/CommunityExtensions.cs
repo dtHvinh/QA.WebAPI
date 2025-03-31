@@ -19,7 +19,7 @@ public static class CommunityExtensions
                 r => new ChatRoomResponse(
                     r.Id,
                     r.Name,
-                    r.Messages.Select(e => new ChatMessageResponse(
+                    r.Messages.Select(e => ChatMessageResponse.From(
                         e.Id,
                         e.Message,
                         e.CreatedAt,

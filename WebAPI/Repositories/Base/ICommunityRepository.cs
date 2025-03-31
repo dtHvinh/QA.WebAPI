@@ -6,7 +6,7 @@ namespace WebAPI.Repositories.Base;
 public interface ICommunityRepository : IRepository<Community>
 {
     void CreateChatRoom(CommunityChatRoom chatRoom);
-
+    void CreateChatMessage(ChatRoomMessage message);
     /// <summary>
     /// Create community, then add its name to cache.
     /// </summary>
@@ -23,6 +23,7 @@ public interface ICommunityRepository : IRepository<Community>
     Task<List<CommunityWithJoinStatus>> GetPopularCommunitiesWithJoinStatus(int userId, int skip, int take, CancellationToken cancellationToken);
     Task<CommunityChatRoom?> GetRoom(int roomId, CancellationToken cancellationToken);
     Task<List<CommunityChatRoom>> GetRooms(int communityId, int skip, int take, CancellationToken cancellationToken);
+    Task<bool> IsChatRoomNameUnique(int communityId, string name, CancellationToken cancellationToken = default);
     Task<bool> IsCommunityNameUsed(string name, CancellationToken cancellationToken = default);
     Task<bool> IsJoined(int userId, int communityId, CancellationToken cancellationToken = default);
     Task<bool> IsMember(int userId, int communityId, CancellationToken cancellationToken = default);
@@ -32,6 +33,6 @@ public interface ICommunityRepository : IRepository<Community>
     void UpdateRoom(CommunityChatRoom communityChatRoom);
     void RemoveMember(CommunityMember member);
     Task<List<CommunityMember>> GetMembers(int communityId, int skip, int take, CancellationToken cancellationToken);
-    Task<bool> IsChatRoomNameUnique(int communityId, string name, CancellationToken cancellationToken = default);
-    void CreateChatMessage(ChatRoomMessage message);
+    Task<int> GetUnreadMessageCountAsync(int userId, int chatRoomId, CancellationToken cancellationToken = default);
+    Task<List<ChatRoomMessage>> GetChatRoomMessagesWithAuthor(int roomId, int skip, int take, CancellationToken cancellationToken);
 }

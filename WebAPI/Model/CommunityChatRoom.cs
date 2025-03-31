@@ -12,5 +12,5 @@ public class CommunityChatRoom : IEntity<int>
     public int CommunityId { get; set; }
     public Community Community { get; set; } = default!;
 
-    public ICollection<ChatRoomMessage> Messages { get; set; } = default!;
+    public ICollection<ChatRoomMessage> Messages { get; set; } = [];
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using WebAPI.Middleware;
+using WebAPI.Realtime;
 using WebAPI.Utilities.Extensions;
 using WebAPI.Utilities.Jobs;
 using WebAPI.Utilities.Reflection;
@@ -14,6 +15,8 @@ builder.Host.UseDefaultServiceProvider((context, options) =>
     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
     options.ValidateOnBuild = true;
 });
+builder.Services.AddSignalR()
+    .AddJsonProtocol();
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddOpenApi()
@@ -49,7 +52,9 @@ builder.Services.AddCors(options =>
                               "https://qa-web-dthvinhs-projects.vercel.app",
                               "https://qa-2vvl99o65-dthvinhs-projects.vercel.app");
                           policy.AllowAnyHeader();
+                          policy.SetIsOriginAllowed(origin => true);
                           policy.AllowAnyMethod();
+                          policy.AllowCredentials();
                       });
 });
 
@@ -74,6 +79,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.RegisterEndpoints();
+
+app.MapHub<RoomChatHub>("/roomChatHub");
+
 app.UseMiddleware<BanMiddleware>();
 
 

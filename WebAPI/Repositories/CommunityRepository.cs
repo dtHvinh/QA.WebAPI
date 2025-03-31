@@ -122,6 +122,18 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
         }).ToListAsync(cancellationToken);
     }
 
+    public async Task<List<ChatRoomMessage>> GetChatRoomMessagesWithAuthor(int roomId, int skip, int take, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<ChatRoomMessage>()
+            .Where(e => e.ChatRoomId == roomId)
+            .OrderByDescending(e => e.CreatedAt)
+            .Skip(skip)
+            .Take(take)
+            .Include(e => e.Author)
+            .Reverse()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<int> GetMemberCount(int communityId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<CommunityMember>().CountAsync(cm => cm.CommunityId == communityId, cancellationToken);
@@ -140,13 +152,13 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
 
     public async Task<Community?> GetCommunityDetailByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await Table.Where(e => e.Name == name)
+        var community = await Table.Where(e => e.Name == name)
             .Include(e => e.Members.Take(20))
             .AsSplitQuery()
             .Include(e => e.Rooms.Take(20))
-            .ThenInclude(e => e.Messages.Take(20))
-            .ThenInclude(e => e.Author)
             .FirstOrDefaultAsync(cancellationToken);
+
+        return community;
     }
 
     public async Task<List<Community>> GetCommunityUserJoined(int userId, int skip, int take, CancellationToken cancellationToken)
@@ -222,6 +234,19 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
     {
         _dbContext.Set<CommunityChatRoom>().Update(communityChatRoom);
     }
+
+    public async Task<int> GetUnreadMessageCountAsync(int userId, int chatRoomId, CancellationToken cancellationToken = default)
+    {
+        var readMessageIds = await _dbContext.Set<ChatRoomMessageRead>()
+            .Where(r => r.UserId == userId)
+            .Select(r => r.ChatRoomMessageId)
+            .ToListAsync(cancellationToken);
+
+        return await _dbContext.Set<ChatRoomMessage>()
+            .Where(m => m.ChatRoomId == chatRoomId && !readMessageIds.Contains(m.Id))
+            .CountAsync(cancellationToken);
+    }
+
 
     public class CommunityWithJoinStatus
     {

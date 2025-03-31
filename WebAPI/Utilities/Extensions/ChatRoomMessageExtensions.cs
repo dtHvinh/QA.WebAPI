@@ -46,7 +46,7 @@ public static class ChatRoomMessageExtensions
 
         ArgumentNullException.ThrowIfNull(message.Author, nameof(message.Author));
 
-        return new ChatMessageResponse(
+        return ChatMessageResponse.From(
             message.Id, message.Message, message.CreatedAt, message.UpdatedAt, message.Author.ToAuthorResponse()!);
     }
 }
