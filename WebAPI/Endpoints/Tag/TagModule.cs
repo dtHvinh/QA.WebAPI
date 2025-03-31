@@ -24,6 +24,21 @@ public class TagModule : IModule
         var group = endpoints.MapGroup(EG.Tag)
             .WithTags(nameof(TagModule));
 
+        group.MapGet("/{id:int}/description",
+                async Task<Results<Ok<TextResponse>, ProblemHttpResult>> (
+                    int id,
+                    [FromServices] IMediator mediator,
+                    CancellationToken cancellationToken) =>
+                {
+                    var query = new GetTagDescriptionQuery(id);
+                    var result = await mediator.Send(query, cancellationToken);
+
+                    return result.IsSuccess
+                        ? TypedResults.Ok(result.Value)
+                        : ProblemResultExtensions.BadRequest(result.Message);
+                })
+            .RequireAuthorization();
+
         group.MapGet("/{id:int}",
                 async Task<Results<Ok<TagWithQuestionResponse>, ProblemHttpResult>> (
                     int id,

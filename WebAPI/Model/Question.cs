@@ -21,11 +21,11 @@ public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<in
     public AppUser? Author { get; set; } = default!;
 
     [Column(TypeName = "nvarchar(150)")]
-    public required string Title { get; set; }
+    public string Title { get; set; } = default!;
     [Column(TypeName = "nvarchar(250)")]
-    public required string Slug { get; set; }
+    public string Slug { get; set; } = default!;
     [Column(TypeName = "nvarchar(max)")]
-    public required string Content { get; set; }
+    public string Content { get; set; } = default!;
 
     public string DuplicateQuestionUrl { get; set; } = ""; // When user mark as duplicate
     public bool IsDuplicate { get; set; } = false; // When user or admin mark as duplicate

@@ -33,6 +33,13 @@ public class TagRepository(ApplicationDbContext dbContext)
         return tag;
     }
 
+    public async Task<TagDescription?> FindTagDescription(int tagId, CancellationToken cancellationToken = default)
+    {
+        var tag = await Table.FirstOrDefaultAsync(e => e.Id.Equals(tagId), cancellationToken);
+        if (tag is null) return null;
+        await _dbContext.Entry(tag).Reference(e => e.Description).LoadAsync(cancellationToken);
+        return tag.Description;
+    }
 
     public async Task<List<Tag>> GetQuestionTags(Question question, CancellationToken cancellationToken = default)
     {

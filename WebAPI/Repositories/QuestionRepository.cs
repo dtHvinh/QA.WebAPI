@@ -158,7 +158,17 @@ public class QuestionRepository(
             .Include(e => e.Author)
             .AsSplitQuery()
             .Include(e => e.Tags)
-            .ThenInclude(e => e.Description)
+            .Select(e => new Question()
+            {
+                Id = e.Id,
+                Title = e.Title,
+                Slug = e.Slug,
+                AuthorId = e.AuthorId,
+                Author = e.Author,
+                Tags = e.Tags,
+
+                Content = e.Content.Substring(0, 173),
+            })
             .ToListAsync(cancellationToken);
 
         return q;
@@ -185,7 +195,6 @@ public class QuestionRepository(
                    .ThenInclude(e => e.Author)
                    .AsSplitQuery()
                    .Include(e => e.Tags)
-                   .ThenInclude(e => e.Description)
                    .FirstOrDefaultAsync(cancellationToken);
 
         return result;
