@@ -67,7 +67,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
-                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.MostVoted => q
@@ -82,7 +81,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
-                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.MostViewed => q
@@ -97,7 +95,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
-                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             QuestionSortOrder.Solved => q
@@ -112,7 +109,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
-                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
 
             _ => q
@@ -123,7 +119,6 @@ public class TagRepository(ApplicationDbContext dbContext)
                        .Include(e => e.Questions.Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Tags)
-                       .ThenInclude(e => e.Description)
                        .FirstOrDefaultAsync(cancellationToken),
         };
     }

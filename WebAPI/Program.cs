@@ -47,6 +47,8 @@ builder.Services.AddCors(options =>
                       {
                           policy.WithOrigins(
                               "https://localhost:7051",
+                              "http://192.168.1.3",
+                              "https://192.168.1.3",
                               "http://localhost:7051",
                               "https://qa-web-mu.vercel.app",
                               "https://qa-web-dthvinhs-projects.vercel.app",

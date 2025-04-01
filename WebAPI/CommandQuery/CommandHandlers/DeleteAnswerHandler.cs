@@ -27,9 +27,7 @@ public class DeleteAnswerHandler(
         {
             if (await _authContext.IsModerator()) // Moderator delete
             {
-                _answerRepository.TrySoftDeleteAnswer(answer, out var morderatorDelErr);
-                if (morderatorDelErr is not null)
-                    return GenericResult<TextResponse>.Failure(morderatorDelErr);
+                _answerRepository.Remove(answer);
 
                 var morderatorDelRes = await _answerRepository.SaveChangesAsync(cancellationToken);
 

@@ -14,11 +14,13 @@ public class RoomChatHub(Serilog.ILogger logger) : AbstractHub<IRoomChatClient>
 
     public Task StartTyping(string username, string userId, string roomId)
     {
+        _logger.Information("----------User start typing");
         return Clients.Group(MapGroup(roomId)).SomeOneStartTyping(username, userId);
     }
 
     public Task StopTyping(string username, string userId, string roomId)
     {
+        _logger.Information("----------User stop typing");
         return Clients.Group(MapGroup(roomId)).SomeOneStopTyping(username, userId);
     }
 
