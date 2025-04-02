@@ -4,6 +4,7 @@ using WebAPI.CQRS;
 using WebAPI.Model;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
+using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.Endpoints.Admin;
@@ -31,13 +32,13 @@ public class AddUserToRoleHandler(UserManager<AppUser> userManager, Authenticati
 
         var res = await _userManager.AddToRoleAsync(user, request.Role);
 
+        _logger.UserAction(res.Succeeded
+            ? Serilog.Events.LogEventLevel.Information
+            : Serilog.Events.LogEventLevel.Error, _authenticationContext.UserId, LogOp.GrantRole, user);
+
         if (res.Succeeded)
-        {
             return GenericResult<TextResponse>.Success("User added to role");
-        }
-
-        _logger.Error("Failed to add user to role: {@Errors}", res.Errors);
-
-        return GenericResult<TextResponse>.Failure("Failed to add user to role");
+        else
+            return GenericResult<TextResponse>.Failure("Failed to add user to role");
     }
 }

@@ -35,30 +35,30 @@ public class DeleteQuestionHandler(IQuestionRepository questionRepository,
             return GenericResult<DeleteQuestionResponse>.Failure(
                 string.Format(EM.QUESTION_ID_NOTFOUND, request.Id));
 
-        if (!await _authContext.IsModerator())
-            return GenericResult<DeleteQuestionResponse>.Failure(string.Format(EM.ROLE_NOT_MEET_REQ, Roles.Moderator));
+        if (!_authContext.IsResourceOwnedByUser(questionToDelete))
+            return GenericResult<DeleteQuestionResponse>.Failure(EM.ACTION_REQUIRE_RESOURCE_OWNER);
 
-        //string? errMessage = null;
+        string? errMessage = null;
 
-        //if (questionToDelete.IsSolved)
-        //{
-        //    errMessage = "Can not delete solved question";
-        //}
+        if (questionToDelete.IsSolved)
+        {
+            errMessage = "Can not delete solved question";
+        }
 
-        //if (questionToDelete.Score > 0)
-        //{
-        //    errMessage = "Can not delete question people may find it valuable";
-        //}
+        if (questionToDelete.Score > 0)
+        {
+            errMessage = "Can not delete question people may find it valuable";
+        }
 
-        //var allAnswer = await _answerRepository.GetAnswersAsync(questionToDelete.Id, cancellationToken);
+        var allAnswer = await _answerRepository.GetAnswersAsync(questionToDelete.Id, cancellationToken);
 
-        //if (allAnswer.Any(e => e.Score > 0))
-        //{
-        //    errMessage = "Can not delete question people may find it valuable";
-        //}
+        if (allAnswer.Any(e => e.Score > 0))
+        {
+            errMessage = "Can not delete question people may find it valuable";
+        }
 
-        //if (errMessage is not null)
-        //    return GenericResult<DeleteQuestionResponse>.Failure(errMessage);
+        if (errMessage is not null)
+            return GenericResult<DeleteQuestionResponse>.Failure(errMessage);
 
         var allTags = await _tagRepository.GetQuestionTags(questionToDelete, cancellationToken);
 

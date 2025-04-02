@@ -65,6 +65,8 @@ public enum LogOpRes
 
 public enum LogOp
 {
+    Report,
+    GrantRole,
     RemoveDuplicateFlag,
     FlagQuestionDuplicated,
     RevokedCommunityMod,

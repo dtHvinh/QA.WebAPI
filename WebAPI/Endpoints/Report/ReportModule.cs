@@ -24,6 +24,7 @@ public class ReportModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateReportDto>>();
 
+
     }
 
     private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> CreateReport(

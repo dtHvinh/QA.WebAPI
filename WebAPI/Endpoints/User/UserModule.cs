@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
+using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Response.AppUserResponses;
@@ -23,6 +25,13 @@ public class UserModule : IModule
         var group = endpoints.MapGroup(EG.User)
             .WithTags(nameof(UserModule))
             .WithOpenApi();
+
+        group.MapGet("/{userId}/is_role/{role}",
+            async (int userId, string role, UserManager<AppUser> roleManager, AuthenticationContext authContext) =>
+        {
+            var isRole = await roleManager.IsInRoleAsync(new() { Id = userId, }, role);
+            return TypedResults.Ok(isRole);
+        });
 
         group.MapGet("/{username?}", HandleGetUser)
             .WithName("GetUserProfile")

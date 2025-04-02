@@ -51,6 +51,7 @@ public static class QuestionExtensions
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
             IsSolved = obj.IsSolved,
+            IsDeleted = obj.IsDeleted,
 
             ViewCount = obj.ViewCount,
             AnswerCount = obj.AnswerCount,
@@ -88,6 +89,7 @@ public static class QuestionExtensions
             IsDuplicate = obj.IsDuplicate,
             IsClosed = obj.IsClosed,
             IsSolved = obj.IsSolved,
+            IsDeleted = obj.IsDeleted,
 
             ViewCount = obj.ViewCount,
             AnswerCount = obj.AnswerCount,

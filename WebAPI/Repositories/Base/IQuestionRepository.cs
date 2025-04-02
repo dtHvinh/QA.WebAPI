@@ -29,4 +29,5 @@ public interface IQuestionRepository : IRepository<Question>
     Task<SearchResult<Question>> SearchQuestionWithTagAsync(string keyword, int tagId, int skip, int take, CancellationToken cancellationToken);
     Task<SearchResult<Question>> SearchSimilarQuestionAsync(int questionId, int skip, int take, CancellationToken cancellationToken);
     Task<SearchResult<Question>> SearchQuestionYouMayLikeAsync(int skip, int take, CancellationToken cancellationToken);
+    Task<List<Question>> FindQuestionNoException(int skip, int take, CancellationToken cancellationToken = default);
 }

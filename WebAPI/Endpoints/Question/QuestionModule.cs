@@ -429,9 +429,9 @@ public sealed class QuestionModule : IModule
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
     {
-        var cmd = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
+        var query = new GetQuestionQuery(orderBy, PageArgs.From(pageIndex, pageSize));
 
-        var result = await mediator.Send(cmd, cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
 
         if (!result.IsSuccess)
         {

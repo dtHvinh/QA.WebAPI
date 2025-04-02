@@ -137,6 +137,11 @@ public class QuestionRepository(
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<List<Question>> FindQuestionNoException(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await Table.Skip(skip).Take(take).Include(e => e.Author).ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Question>> FindQuestion(int skip, int take, QuestionSortOrder sortOrder,
         CancellationToken cancellationToken)
     {
@@ -158,17 +163,6 @@ public class QuestionRepository(
             .Include(e => e.Author)
             .AsSplitQuery()
             .Include(e => e.Tags)
-            .Select(e => new Question()
-            {
-                Id = e.Id,
-                Title = e.Title,
-                Slug = e.Slug,
-                AuthorId = e.AuthorId,
-                Author = e.Author,
-                Tags = e.Tags,
-
-                Content = e.Content.Substring(0, 173),
-            })
             .ToListAsync(cancellationToken);
 
         return q;
