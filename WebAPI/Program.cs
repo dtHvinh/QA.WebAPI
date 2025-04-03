@@ -2,6 +2,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using StackExchange.Redis;
 using WebAPI.Middleware;
 using WebAPI.Realtime;
 using WebAPI.Utilities.Extensions;
@@ -16,7 +17,11 @@ builder.Host.UseDefaultServiceProvider((context, options) =>
     options.ValidateOnBuild = true;
 });
 builder.Services.AddSignalR()
-    .AddJsonProtocol();
+    .AddJsonProtocol()
+    .AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!, options =>
+    {
+        options.Configuration.ChannelPrefix = RedisChannel.Literal("QAPlat_Signalr");
+    });
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddOpenApi()

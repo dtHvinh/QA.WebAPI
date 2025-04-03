@@ -126,7 +126,7 @@ public sealed class QuestionModule : IModule
             .WithDescription("Marks a question as a duplicate of another question")
             .AddEndpointFilter<FluentValidation<FlagQuestionDuplicateDto>>();
 
-        group.MapPut("/{questionid}/remove-duplicate-flag", RemoveDuplicateFlag)
+        group.MapPut("/{questionId}/remove-duplicate-flag", RemoveDuplicateFlag)
             .WithName("RemoveDuplicateFlag")
             .RequireAuthorization();
 
