@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Dto;
-using WebAPI.Filters.Requirement;
+using WebAPI.Filters.Requirement.RepReq;
 using WebAPI.Filters.Validation;
 using WebAPI.Pagination;
 using WebAPI.Response;

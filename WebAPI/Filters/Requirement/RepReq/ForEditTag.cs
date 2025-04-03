@@ -5,13 +5,13 @@ using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 
-namespace WebAPI.Filters.Requirement;
+namespace WebAPI.Filters.Requirement.RepReq;
 
-public class ForCreateTag(
+public class ForEditTag(
     IUserRepository userRepository,
     AuthenticationContext authContext,
     ICacheService cache,
     IOptions<ApplicationProperties> options)
-    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ActionRepRequirement.CreateTags)
+    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ActionRepRequirement.EditTagWiki)
 {
 }

@@ -86,4 +86,27 @@ public class CacheService(IDistributedCache cache,
     {
         await cache.SetStringAsync($"email:{email}", "1", _cacheOptionProvider.GetDefault(), cancellationToken);
     }
+
+    public async Task SetInvitationLink(string invitationLink, int communityId, CancellationToken cancellationToken)
+    {
+        await cache.SetStringAsync($"invitationLink:{invitationLink}", communityId.ToString(), new()
+        {
+            AbsoluteExpiration = DateTime.UtcNow.AddMinutes(15),
+        }, cancellationToken);
+
+        await cache.SetStringAsync($"invitationLink:#{communityId}", invitationLink, new()
+        {
+            AbsoluteExpiration = DateTime.UtcNow.AddMinutes(15),
+        }, cancellationToken);
+    }
+
+    public async Task<string?> GetInvitationLink(int communityId, CancellationToken cancellationToken)
+    {
+        return await cache.GetStringAsync($"invitationLink:#{communityId}", cancellationToken);
+    }
+
+    public async Task<int?> GetCommunityIdFromInvLink(string invitationLink, CancellationToken cancellationToken)
+    {
+        return int.TryParse(await cache.GetStringAsync($"invitationLink:{invitationLink}", cancellationToken), out var id) ? id : null;
+    }
 }

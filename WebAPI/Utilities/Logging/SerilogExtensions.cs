@@ -85,6 +85,7 @@ public enum LogModeratorOp
 {
     Approved,
     Rejected,
+    Close,
     Delete,
     Reopen
 }

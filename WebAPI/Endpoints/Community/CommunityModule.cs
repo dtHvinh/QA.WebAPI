@@ -38,7 +38,10 @@ public class CommunityModule : IModule
         group.MapPost("/{communityId:int}/mod/revoke/{userId:int}", RevokeModRole)
             .WithName("RevokeModRole")
             .WithSummary("Revoke moderator role")
-            .DisableAntiforgery()
+            .RequireAuthorization();
+
+        group.MapPost("/{communityId:int}/invitation", CreateInvitationLink)
+            .WithName("CreateInvitationLink")
             .RequireAuthorization();
 
         group.MapPost("/", CreateCommunity)
@@ -55,12 +58,22 @@ public class CommunityModule : IModule
             .DisableAntiforgery()
             .RequireAuthorization();
 
+        group.MapPost("/invited/{invitationLink}", JoinCommunityViaInivitation)
+            .WithName("JoinCommunityViaInivitation")
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
         group.MapPost("/room", CreateCommunityChatRoom)
             .WithName("CreateCommunityChatRoom")
             .WithSummary("Create new community chat room")
             .DisableAntiforgery()
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateCommunityChatRoomDto>>();
+
+
+        group.MapGet("/{communityId:int}/invitation", GetInvitationLink)
+            .WithName("GetInvitationLink")
+            .RequireAuthorization();
 
         group.MapGet("/room/chat/{roomId}", GetChatRoomMessage)
             .WithName("GetChatRoomMessage")
@@ -131,6 +144,48 @@ public class CommunityModule : IModule
     {
         var command = new CreateCommunityCommand(dto);
         var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<InvitationLinkResponse>, ProblemHttpResult>> CreateInvitationLink(
+        int communityId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new CreateInvitationLinkCommand(communityId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> JoinCommunityViaInivitation(
+        string invitationLink,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new JoinCommunityViaInvitationLinkCommand(invitationLink);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<InvitationLinkResponse>, ProblemHttpResult>> GetInvitationLink(
+        int communityId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetInvitationLinkQuery(communityId);
+        var result = await mediator.Send(query, cancellationToken);
         if (!result.IsSuccess)
         {
             return ProblemResultExtensions.BadRequest(result.Message);

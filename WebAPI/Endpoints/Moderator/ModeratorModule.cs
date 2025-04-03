@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CommandQuery.Queries;
 using WebAPI.Endpoints.Community;
+using WebAPI.Filters.Requirement.RoleReq;
 using WebAPI.Pagination;
 using WebAPI.Response;
 using WebAPI.Response.QuestionResponses;
@@ -25,19 +26,27 @@ public class ModeratorModule : IModule
         group.MapGet("/questions/all", ModGetQuestion)
             .WithName("ModGetQuestions")
             .WithSummary("Mod Get all questions")
+            .AddEndpointFilter<RequireModerator>()
             .RequireAuthorization();
 
+        group.MapGet("/question/{questionId:int}/", ModGetQuestionById)
+            .WithName("ModGetQuestionById")
+            .AddEndpointFilter<RequireModerator>()
+            .RequireAuthorization();
 
         group.MapGet("/reports/{type?}", GetAllReport)
             .WithName("GetReport")
+            .AddEndpointFilter<RequireModerator>()
             .RequireAuthorization();
 
         group.MapPut("/question/{questionId:int}/restore", ModRestoreQuestion)
             .WithName("ModCloseQuestion")
+            .AddEndpointFilter<RequireModerator>()
             .RequireAuthorization();
 
         group.MapDelete("/question/{questionId:int}", ModDeleteQuestion)
             .WithName("ModDeleteQuestion")
+            .AddEndpointFilter<RequireModerator>()
             .RequireAuthorization();
     }
 
@@ -48,6 +57,24 @@ public class ModeratorModule : IModule
         CancellationToken cancellationToken = default)
     {
         var query = new ModGetQuestionQuery(pageArgs);
+
+        var result = await mediator.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async
+    Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ModGetQuestionById(
+        int questionId,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new ModGetQuestionByIdQuery(questionId);
 
         var result = await mediator.Send(query, cancellationToken);
 

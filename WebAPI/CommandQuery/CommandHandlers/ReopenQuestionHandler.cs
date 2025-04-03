@@ -46,7 +46,9 @@ public class ReopenQuestionHandler(
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 
 
-        _logger.ModeratorNoEnityOwnerAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Reopen, existQuestion);
+        _logger.ModeratorNoEnityOwnerAction(result.IsSuccess
+            ? LogEventLevel.Information
+            : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Reopen, existQuestion);
 
         return result.IsSuccess
             ? GenericResult<TextResponse>.Success("Question closed")

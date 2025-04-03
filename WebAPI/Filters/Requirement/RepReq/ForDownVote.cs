@@ -5,13 +5,13 @@ using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Options;
 
-namespace WebAPI.Filters.Requirement;
+namespace WebAPI.Filters.Requirement.RepReq;
 
-public class ForEditTag(
+public class ForDownVote(
     IUserRepository userRepository,
     AuthenticationContext authContext,
     ICacheService cache,
     IOptions<ApplicationProperties> options)
-    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ActionRepRequirement.EditTagWiki)
+    : ReputationRequirementFilter(userRepository, authContext, cache, options.Value.ActionRepRequirement.Downvote)
 {
 }

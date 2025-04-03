@@ -46,7 +46,9 @@ public class CloseQuestionHandler(
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 
-        _logger.ModeratorAction(result.IsSuccess ? LogEventLevel.Information : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Approved, existQuestion.Author!, LogOp.Created, existQuestion);
+        _logger.ModeratorNoEnityOwnerAction(result.IsSuccess
+            ? LogEventLevel.Information
+            : LogEventLevel.Error, _authenticationContext.UserId, LogModeratorOp.Close, existQuestion);
 
 
         return result.IsSuccess

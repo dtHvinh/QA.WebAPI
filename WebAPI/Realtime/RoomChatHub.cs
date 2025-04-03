@@ -1,8 +1,9 @@
-﻿using WebAPI.Realtime.Hubs;
+﻿using Microsoft.AspNetCore.SignalR;
+using WebAPI.Realtime.Hubs;
 
 namespace WebAPI.Realtime;
 
-public class RoomChatHub(Serilog.ILogger logger) : AbstractHub<IRoomChatClient>
+public class RoomChatHub(Serilog.ILogger logger) : AbstractHub
 {
     private readonly Serilog.ILogger _logger = logger;
 
@@ -15,24 +16,24 @@ public class RoomChatHub(Serilog.ILogger logger) : AbstractHub<IRoomChatClient>
     public Task StartTyping(string username, string userId, string roomId)
     {
         _logger.Information("----------User start typing");
-        return Clients.Group(MapGroup(roomId)).SomeOneStartTyping(username, userId);
+        return Clients.Group(MapGroup(roomId)).SendAsync("SomeOneStartTyping", username, userId);
     }
 
     public Task StopTyping(string username, string userId, string roomId)
     {
         _logger.Information("----------User stop typing");
-        return Clients.Group(MapGroup(roomId)).SomeOneStopTyping(username, userId);
+        return Clients.Group(MapGroup(roomId)).SendAsync("SomeOneStartTyping", username, userId);
     }
 
     public new Task JoinRoom(string roomId)
     {
-        _logger.Information("----------User join a group");
+        _logger.Information("----------User join a room");
         return base.JoinRoom(roomId);
     }
 
     public new Task LeaveRoom(string roomId)
     {
-        _logger.Information("----------User leave a group");
+        _logger.Information("----------User leave a room");
         return base.LeaveRoom(roomId);
     }
 }

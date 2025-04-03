@@ -59,27 +59,28 @@ public class QuestionRepository(
 
     public async Task<SearchResult<Question>> SearchSimilarQuestionAsync(int questionId, int skip, int take, CancellationToken cancellationToken)
     {
-        var question = await Table.FirstOrDefaultAsync(e => e.Id == questionId, cancellationToken);
-        if (question == null)
-        {
-            return new SearchResult<Question>([], 0);
-        }
+        //var question = await Table.FirstOrDefaultAsync(e => e.Id == questionId, cancellationToken);
+        //if (question == null)
+        //{
+        //    return new SearchResult<Question>([], 0);
+        //}
 
-        var tokens = question.Title
-                             .Split([' '], StringSplitOptions.RemoveEmptyEntries)
-                             .Select(t => t.Trim().ToLowerInvariant())
-                             .Distinct()
-                             .ToList();
+        //var tokens = question.Title
+        //                     .Split([' '], StringSplitOptions.RemoveEmptyEntries)
+        //                     .Select(t => t.Trim().ToLowerInvariant())
+        //                     .Distinct()
+        //                     .ToList();
 
-        if (tokens.Count == 0)
-        {
-            return new SearchResult<Question>([], 0);
-        }
+        //if (tokens.Count == 0)
+        //{
+        //    return new SearchResult<Question>([], 0);
+        //}
 
-        var query = Table.Where(q => q.Id != questionId &&
-                                    tokens.Any(token => EF.Functions.Contains(q.Title.ToLower(), $"%{token}%")));
+        //var query = Table.Where(q => q.Id != questionId &&
+        //                            tokens.Any(token => EF.Functions.Contains(q.Title.ToLower(), $"%{token}%")));
 
-        var results = await query.OrderBy(q => Guid.NewGuid())
+        var results = await Table.EvaluateQuery(new ValidQuestionSpecification())
+                                 .OrderBy(q => Guid.NewGuid())
                                  .Skip(skip)
                                  .Take(take)
                                  .ToListAsync(cancellationToken);
