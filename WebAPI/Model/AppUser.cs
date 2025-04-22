@@ -10,10 +10,6 @@ namespace WebAPI.Model;
 [Index(nameof(Reputation))]
 public class AppUser : IdentityUser<int>, IEntityWithTime<int>, ISoftDeleteEntity
 {
-    [Column(TypeName = "nvarchar(50)")]
-    public string? FirstName { get; set; }
-    [Column(TypeName = "nvarchar(50)")]
-    public string? LastName { get; set; }
     public string? RefreshToken { get; set; }
     public int Reputation { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

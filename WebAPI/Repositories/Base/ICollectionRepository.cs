@@ -13,6 +13,7 @@ public interface ICollectionRepository : IRepository<Collection>
     Task<Collection?> FindDetailById(int id, int skip, int take, CancellationToken cancellationToken);
     Task<List<CollectionRepository.CollectionWithAddStatus>> FindWithAddStatusByAuthorId(int id, int questionId, int skip, int take, CancellationToken cancellationToken = default);
     Task<List<bool>> GetAddStatusAsync(List<int> collectionIds, int questionId, CancellationToken cancellation);
+    Task<int> PublicCollectionCount(CancellationToken cancellationToken);
     void RemoveFromCollection(Question question, Collection questionCollection);
     Task<List<Collection>> SearchCollections(string searchTerm, int skip, int take, CancellationToken cancellationToken);
     Task<List<Question>> SearchInCollection(int collectionId, string searchTerm, CancellationToken cancellationToken);

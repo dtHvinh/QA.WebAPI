@@ -81,6 +81,8 @@ public static class ServiceExtensions
             options.InstanceName = "QA_";
         });
 
+        services.AddDistributedMemoryCache();
+
         return services;
     }
 

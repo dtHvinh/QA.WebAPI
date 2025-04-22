@@ -7,7 +7,7 @@ using WebAPI.Utilities.Context;
 using WebAPI.Utilities.Logging;
 using WebAPI.Utilities.Result.Base;
 
-namespace WebAPI.Endpoints.Admin;
+namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class AddUserToRoleHandler(UserManager<AppUser> userManager, AuthenticationContext authenticationContext, Serilog.ILogger logger)
     : ICommandHandler<AddUserToRoleCommand, GenericResult<TextResponse>>

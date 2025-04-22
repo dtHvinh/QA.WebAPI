@@ -24,7 +24,13 @@ public class ReportModule : IModule
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateReportDto>>();
 
+        group.MapPut("/{reportId}/reject", RejectReport)
+            .WithName("RejectReport")
+            .RequireAuthorization();
 
+        group.MapPut("/{reportId}/resolve", ResolveReport)
+            .WithName("ResolveReport")
+            .RequireAuthorization();
     }
 
     private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> CreateReport(
@@ -39,6 +45,33 @@ public class ReportModule : IModule
             return ProblemResultExtensions.BadRequest(result.Message);
         }
         return TypedResults.Ok(result.Value);
+    }
 
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> RejectReport(
+        int reportId,
+        [FromServices] ISender mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new RejectReportCommand(reportId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
+    }
+
+    private static async Task<Results<Ok<TextResponse>, ProblemHttpResult>> ResolveReport(
+        int reportId,
+        [FromServices] ISender mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new ResolveReportCommand(reportId);
+        var result = await mediator.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return ProblemResultExtensions.BadRequest(result.Message);
+        }
+        return TypedResults.Ok(result.Value);
     }
 }

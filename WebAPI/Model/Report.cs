@@ -13,3 +13,9 @@ public class Report : IEntityWithTime<int>
     public string Status { get; set; } = default!;
     public int TargetId { get; set; }
 }
+
+public static class ReportStatus
+{
+    public const string Resolved = "Resolved";
+    public const string Rejected = "Rejected";
+}

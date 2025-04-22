@@ -114,6 +114,11 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
         questionCollection.Questions.Remove(question);
     }
 
+    public async Task<int> PublicCollectionCount(CancellationToken cancellationToken)
+    {
+        return await Table.CountAsync(e => e.IsPublic, cancellationToken);
+    }
+
     public async Task<int> CountByAuthorId(int id, CancellationToken cancellationToken)
     {
         return await Table.CountAsync(x => x.AuthorId == id, cancellationToken);

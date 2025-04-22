@@ -10,7 +10,7 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.QueryHandlers;
 
-public class GetCollectionQueryHandler(
+public class GetCollectionHandler(
     ICollectionRepository collectionRepository,
     AuthenticationContext authenticationContext)
     : IQueryHandler<GetCollectionsQuery, GenericResult<PagedResponse<GetCollectionResponse>>>
@@ -24,11 +24,11 @@ public class GetCollectionQueryHandler(
         var collections = await _collectionRepository.FindCollections(
             request.SortOrder,
             request.Args.CalculateSkip(),
-            request.Args.PageIndex + 1, cancellationToken);
+            request.Args.PageSize + 1, cancellationToken);
 
         var hasNext = collections.Count == request.Args.PageSize + 1;
 
-        var totalCount = await _collectionRepository.CountAsync();
+        var totalCount = await _collectionRepository.PublicCollectionCount(cancellationToken);
 
         return GenericResult<PagedResponse<GetCollectionResponse>>.Success(
             new PagedResponse<GetCollectionResponse>(

@@ -31,8 +31,6 @@ public static class AppUserExtensions
                 Id = obj.Id,
                 Username = obj!.UserName!,
                 ProfilePicture = obj.ProfilePicture,
-                FirstName = obj.FirstName,
-                LastName = obj.LastName,
                 Reputation = obj.Reputation
             };
     }

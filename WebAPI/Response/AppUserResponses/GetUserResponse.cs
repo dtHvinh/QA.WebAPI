@@ -34,8 +34,6 @@ public static class GetUserResponseExtensions
             Id = user.Id,
             UserName = user.UserName!,
             Email = user.Email!,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
             ProfilePicture = user.ProfilePicture,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
