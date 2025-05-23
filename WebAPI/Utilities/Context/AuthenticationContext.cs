@@ -6,10 +6,10 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Context;
 
-public class AuthenticationContext(IHttpContextAccessor hca, UserManager<AppUser> userManager)
+public class AuthenticationContext(IHttpContextAccessor hca, UserManager<ApplicationUser> userManager)
 {
     private readonly HttpContext? _httpContext = hca.HttpContext;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
 
     public bool IsResourceOwnedByUser(IOwnedByUser<int> resource) => UserId == resource.AuthorId;
 

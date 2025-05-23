@@ -56,13 +56,13 @@ public class TagRepository(ApplicationDbContext dbContext)
         return orderBy switch
         {
             QuestionSortOrder.Newest => q
-                       .Include(e => e.Questions.OrderByDescending(e => e.CreatedAt)
+                       .Include(e => e.Questions.OrderByDescending(e => e.CreationDate)
                                                 .Where(e => !e.IsDeleted)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
                        .ThenInclude(e => e.Author)
                        .AsSplitQuery()
-                       .Include(e => e.Questions.OrderByDescending(e => e.CreatedAt)
+                       .Include(e => e.Questions.OrderByDescending(e => e.CreationDate)
                                                 .Where(e => !e.IsDeleted)
                                                 .Skip(questionSkip)
                                                 .Take(questionTake))
@@ -134,7 +134,7 @@ public class TagRepository(ApplicationDbContext dbContext)
         {
             "popular" => Table.OrderByDescending(e => e.QuestionCount),
             "name" => Table.OrderBy(e => e.Name),
-            "newest" => Table.OrderByDescending(e => e.CreatedAt),
+            "newest" => Table.OrderByDescending(e => e.CreationDate),
             _ => Table.AsNoTracking()
         };
 

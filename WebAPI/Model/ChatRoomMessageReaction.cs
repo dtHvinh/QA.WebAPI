@@ -11,10 +11,10 @@ public class ChatRoomMessageReaction : IKeylessEntityWithTime, IOwnedByUser<int>
     public int ChatMessageId { get; set; }
     public ChatRoomMessage? ChatMessage { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     [ForeignKey(nameof(Author))]
     public int AuthorId { get; set; }
-    public AppUser? Author { get; set; }
+    public ApplicationUser? Author { get; set; }
 }

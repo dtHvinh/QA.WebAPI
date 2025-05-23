@@ -31,7 +31,7 @@ public class CommentRepository(ApplicationDbContext dbContext)
 
     public void UpdateComment(Comment comment)
     {
-        comment.UpdatedAt = DateTime.UtcNow;
+        comment.ModificationDate = DateTime.UtcNow;
         Entities.Update(comment);
     }
     public Task<int> CountUserComment(int userId, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ public class CommentRepository(ApplicationDbContext dbContext)
     public async Task<List<QuestionComment>> GetQuestionCommentWithAuthor(int questionId, int skip, int take, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<QuestionComment>().Where(e => e.QuestionId.Equals(questionId))
-            .OrderByDescending(e => e.CreatedAt)
+            .OrderByDescending(e => e.CreationDate)
             .Skip(skip)
             .Take(take)
             .Include(e => e.Author)

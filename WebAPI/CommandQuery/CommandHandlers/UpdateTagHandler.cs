@@ -27,12 +27,13 @@ public class UpdateTagHandler(ITagRepository tagRepository, AuthenticationContex
             return GenericResult<TextResponse>.Failure("Tag not found");
         }
 
-        ArgumentNullException.ThrowIfNull(existTag.WikiBody, nameof(existTag.WikiBody));
-        ArgumentNullException.ThrowIfNull(existTag.Description, nameof(existTag.Description));
-
         existTag.Name = ObjectExtensions.ReturnIfNotNull(request.Tag.Name, existTag.Name);
-        existTag.WikiBody.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.WikiBody, existTag.WikiBody.Content);
-        existTag.Description.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.Description, existTag.Description.Content);
+
+        if (existTag.WikiBody != null)
+            existTag.WikiBody.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.WikiBody, existTag.WikiBody.Content);
+
+        if (existTag.Description != null)
+            existTag.Description.Content = ObjectExtensions.ReturnIfNotNull(request.Tag.Description, existTag.Description.Content);
 
         _tagRepository.Update(existTag);
         var result = await _tagRepository.SaveChangesAsync(cancellationToken);

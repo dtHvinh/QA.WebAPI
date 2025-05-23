@@ -22,8 +22,8 @@ public static class CommunityExtensions
                     r.Messages.Select(e => ChatMessageResponse.From(
                         e.Id,
                         e.Message,
-                        e.CreatedAt,
-                        e.UpdatedAt,
+                        e.CreationDate,
+                        e.ModificationDate,
                         e.Author.ToAuthorResponse()!)).ToList())).ToList()
         };
     }

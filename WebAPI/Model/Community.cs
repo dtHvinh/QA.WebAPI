@@ -16,8 +16,8 @@ public class Community : IEntityWithTime<int>
 
     public bool IsPrivate { get; set; } = false;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
 
     public int MemberCount { get; set; } = 0;
 

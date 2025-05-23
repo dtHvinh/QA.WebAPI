@@ -25,7 +25,7 @@ public class CacheOptionProvider(IOptions<CacheOptions> options) : ICacheOptionP
     {
         return type switch
         {
-            nameof(AppUser) => new DistributedCacheEntryOptions
+            nameof(ApplicationUser) => new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_options.AppUser.AE),
                 SlidingExpiration = TimeSpan.FromSeconds(_options.AppUser.SE),

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using WebAPI.Utilities.Contract;
 
@@ -11,9 +10,7 @@ public class Tag : IEntityWithTime<int>
 {
     public int Id { get; set; }
 
-    [Column(TypeName = "nvarchar(50)")]
     public required string Name { get; set; }
-    [Column(TypeName = "nvarchar(50)")]
     public string NormalizedName { get; set; } = default!;
     public int QuestionCount { get; set; }
 
@@ -23,6 +20,6 @@ public class Tag : IEntityWithTime<int>
     [JsonIgnore]
     public ICollection<Question> Questions { get; set; } = default!;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
 }

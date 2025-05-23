@@ -9,10 +9,10 @@ using WebAPI.Utilities.Result.Base;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class AddUserToRoleHandler(UserManager<AppUser> userManager, AuthenticationContext authenticationContext, Serilog.ILogger logger)
+public class AddUserToRoleHandler(UserManager<ApplicationUser> userManager, AuthenticationContext authenticationContext, Serilog.ILogger logger)
     : ICommandHandler<AddUserToRoleCommand, GenericResult<TextResponse>>
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
     private readonly Serilog.ILogger _logger = logger;
 

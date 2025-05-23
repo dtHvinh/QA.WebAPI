@@ -12,10 +12,10 @@ using WebAPI.Utilities.Result;
 namespace WebAPI.Utilities.Provider;
 
 public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
-                              UserManager<AppUser> userManager) : ITokenProvider
+                              UserManager<ApplicationUser> userManager) : ITokenProvider
 {
     private readonly JwtOptions _options = optionAccessor.Value;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly SymmetricSecurityKey _symmetricSecurityKey = new(Encoding.UTF8.GetBytes(optionAccessor.Value.SecretKey));
 
     private string GenerateRefreshToken()
@@ -38,7 +38,7 @@ public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
         return handler.WriteToken(securityToken);
     }
 
-    private async Task<string> CreateTokenInternalAsync(AppUser user, IEnumerable<Claim>? externalClaims = null)
+    private async Task<string> CreateTokenInternalAsync(ApplicationUser user, IEnumerable<Claim>? externalClaims = null)
     {
         ArgumentNullException.ThrowIfNull(_options.SecretKey);
         SigningCredentials signingCredentials = new(_symmetricSecurityKey, _options.SecurityAlgorithm);
@@ -96,13 +96,13 @@ public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
 
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="ArgumentNullException"></exception>
-    public async Task<string> CreateTokenAsync(AppUser user, IEnumerable<Claim>? externalClaims = null)
+    public async Task<string> CreateTokenAsync(ApplicationUser user, IEnumerable<Claim>? externalClaims = null)
         => await CreateTokenInternalAsync(user, externalClaims);
 
     /// <summary>
     /// Create new access token by provided refresh token, if the refresh token is expired, perform update.
     /// </summary>
-    public async Task<TokenResult> CreateTokenAndUpdateAsync(AppUser user, string refreshToken, IEnumerable<Claim>? externalClaims = null)
+    public async Task<TokenResult> CreateTokenAndUpdateAsync(ApplicationUser user, string refreshToken, IEnumerable<Claim>? externalClaims = null)
     {
         ArgumentNullException.ThrowIfNull(_options.PassPhrase);
         ArgumentNullException.ThrowIfNull(user.RefreshToken);
@@ -147,7 +147,7 @@ public class JwtTokenProvider(IOptions<JwtOptions> optionAccessor,
     /// <summary>
     /// Generate refresh token and save its encrypted version to the user.
     /// </summary>
-    public async Task<string> GenerateRefreshToken(AppUser user)
+    public async Task<string> GenerateRefreshToken(ApplicationUser user)
     {
         var refreshToken = GenerateRefreshToken();
 

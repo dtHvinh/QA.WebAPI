@@ -6,6 +6,6 @@ public record GetReportResponse(
     int TargetId,
     string Description,
     string Status,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTimeOffset CreationDate,
+    DateTimeOffset ModificationDate
 );

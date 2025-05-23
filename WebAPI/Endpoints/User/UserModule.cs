@@ -27,7 +27,7 @@ public class UserModule : IModule
             .WithOpenApi();
 
         group.MapGet("/{userId}/is_role/{role}",
-            async (int userId, string role, UserManager<AppUser> roleManager, AuthenticationContext authContext) =>
+            async (int userId, string role, UserManager<ApplicationUser> roleManager, AuthenticationContext authContext) =>
         {
             var isRole = await roleManager.IsInRoleAsync(new() { Id = userId, }, role);
             return TypedResults.Ok(isRole);

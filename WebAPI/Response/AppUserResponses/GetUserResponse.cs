@@ -11,8 +11,8 @@ public class GetUserResponse
     public string? LastName { get; set; }
     public string ProfilePicture { get; set; } = default!;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; set; }
     public int Reputation { get; set; }
 
     public bool IsDeleted { get; set; }
@@ -27,7 +27,7 @@ public class GetUserResponse
 
 public static class GetUserResponseExtensions
 {
-    public static GetUserResponse ToGetUserResponse(this AppUser user)
+    public static GetUserResponse ToGetUserResponse(this ApplicationUser user)
     {
         return new GetUserResponse
         {
@@ -35,8 +35,8 @@ public static class GetUserResponseExtensions
             UserName = user.UserName!,
             Email = user.Email!,
             ProfilePicture = user.ProfilePicture,
-            CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt,
+            CreatedAt = user.CreationDate,
+            UpdatedAt = user.ModificationDate,
             IsDeleted = user.IsDeleted,
             Reputation = user.Reputation
         };

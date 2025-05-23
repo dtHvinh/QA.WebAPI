@@ -42,7 +42,7 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
         _dbContext.Set<ChatRoomMessage>().Add(message);
     }
 
-    public async Task<bool> JoinCommunity(AppUser appUser, Community community, CancellationToken cancellationToken = default)
+    public async Task<bool> JoinCommunity(ApplicationUser appUser, Community community, CancellationToken cancellationToken = default)
     {
         if (await _dbContext.Set<CommunityMember>().AnyAsync(
             cm => cm.UserId == appUser.Id
@@ -126,7 +126,7 @@ public class CommunityRepository(ApplicationDbContext dbContext, ICacheService c
     {
         return await _dbContext.Set<ChatRoomMessage>()
             .Where(e => e.ChatRoomId == roomId)
-            .OrderByDescending(e => e.CreatedAt)
+            .OrderByDescending(e => e.CreationDate)
             .Skip(skip)
             .Take(take)
             .Include(e => e.Author)

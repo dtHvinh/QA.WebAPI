@@ -6,8 +6,8 @@ namespace WebAPI.Response.AsnwerResponses;
 public class AnswerResponse : IResourceRight<AnswerResponse>
 {
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
     public AuthorResponse? Author { get; set; } = default!;
     public required string Content { get; set; }
     public int Score { get; set; }

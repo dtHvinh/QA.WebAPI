@@ -17,8 +17,8 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
         query = sortOrder switch
         {
             CollectionSortOrder.MostLiked => query.OrderByDescending(x => x.LikeCount),
-            CollectionSortOrder.Newest => query.OrderByDescending(x => x.CreatedAt),
-            _ => query.OrderByDescending(x => x.CreatedAt),
+            CollectionSortOrder.Newest => query.OrderByDescending(x => x.CreationDate),
+            _ => query.OrderByDescending(x => x.CreationDate),
         };
         return await query.Skip(skip)
                           .Take(take)
@@ -43,8 +43,8 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
         query = sortOrder switch
         {
             CollectionSortOrder.MostLiked => query.OrderByDescending(x => x.LikeCount),
-            CollectionSortOrder.Newest => query.OrderByDescending(x => x.CreatedAt),
-            _ => query.OrderByDescending(x => x.CreatedAt),
+            CollectionSortOrder.Newest => query.OrderByDescending(x => x.CreationDate),
+            _ => query.OrderByDescending(x => x.CreationDate),
         };
 
         return await query.Skip(skip)
@@ -88,7 +88,7 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
     public async Task<List<bool>> GetAddStatusAsync(List<int> collectionIds, int questionId, CancellationToken cancellation)
     {
         return await Table.Where(x => collectionIds.Contains(x.Id))
-                          .OrderByDescending(e => e.CreatedAt)
+                          .OrderByDescending(e => e.CreationDate)
                           .Select(x => x.Questions.Any(q => q.Id == questionId))
                           .ToListAsync(cancellation);
     }
@@ -130,10 +130,10 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
     public sealed class CollectionWithAddStatus
     {
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
         public int AuthorId { get; set; }
-        public AppUser? Author { get; set; }
+        public ApplicationUser? Author { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public bool IsPublic { get; set; } = false;
@@ -145,8 +145,8 @@ public class CollectionRepository(ApplicationDbContext dbContext) : RepositoryBa
         public CollectionWithAddStatus(Collection collection)
         {
             Id = collection.Id;
-            CreatedAt = collection.CreatedAt;
-            UpdatedAt = collection.UpdatedAt;
+            CreatedAt = collection.CreationDate;
+            UpdatedAt = collection.ModificationDate;
             AuthorId = collection.AuthorId;
             Author = collection.Author;
             Name = collection.Name;

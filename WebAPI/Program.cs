@@ -88,7 +88,6 @@ app.UseAuthorization();
 app.RegisterEndpoints();
 
 app.MapHub<RoomChatHub>("/roomChatHub");
-
 app.UseMiddleware<BanMiddleware>();
 
 

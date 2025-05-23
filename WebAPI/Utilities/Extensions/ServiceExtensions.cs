@@ -61,10 +61,10 @@ public static class ServiceExtensions
     {
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
+            options.UseNpgsql(Configuration.GetConnectionString("Postgres"));
         });
 
-        services.AddIdentity<AppUser, IdentityRole<int>>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;

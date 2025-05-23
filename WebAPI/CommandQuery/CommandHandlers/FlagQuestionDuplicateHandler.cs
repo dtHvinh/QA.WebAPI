@@ -37,11 +37,12 @@ public class FlagQuestionDuplicateHandler(
 
         await questionRepository.UpdateQuestion(question);
 
-        _questionHistoryRepository.AddHistory(
+        await _questionHistoryRepository.AddHistory(
             questionId: question.Id,
             authorId: _authenticationContext.UserId,
             questionHistoryType: QuestionHistoryTypes.FlagDuplicate,
-            comment: $"Flagged as duplicate of {MarkupText.Link(request.DuplicateQuestionUrl, request.DuplicateQuestionUrl)}");
+            comment: $"Flagged as duplicate of {MarkupText.Link(request.DuplicateQuestionUrl, request.DuplicateQuestionUrl)}",
+            cancellationToken: cancellationToken);
 
         var res = await questionRepository.SaveChangesAsync(cancellationToken);
 

@@ -6,11 +6,11 @@ namespace WebAPI.Model;
 public class CollectionLike : IEntityWithTime<int>, IOwnedByUser<int>
 {
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
 
     public int AuthorId { get; set; }
-    public AppUser? Author { get; set; }
+    public ApplicationUser? Author { get; set; }
 
     [ForeignKey(nameof(Collection))]
     public int CollectionId { get; set; }

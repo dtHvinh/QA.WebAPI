@@ -37,10 +37,11 @@ public class CreateAnswerHandler(IAnswerRepository answerRepository,
             return GenericResult<AnswerResponse>.Failure(EM.QUESTION_CLOSED_COMMENT_RESTRICT);
 
         var newAnswer = request.Answer.ToAnswer(_authContext.UserId, request.QuestionId);
-        await _answerRepository.AddAnswerAndLoadAuthor(newAnswer);
 
-        _questionHistoryRepository.AddHistory(
-            question.Id, _authContext.UserId, QuestionHistoryTypes.AddAnswer, request.Answer.Content);
+        await _answerRepository.AddAnswerAndLoadAuthor(newAnswer, cancellationToken);
+
+        await _questionHistoryRepository.AddHistory(
+             question.Id, _authContext.UserId, QuestionHistoryTypes.AddAnswer, request.Answer.Content);
 
         var result = await _answerRepository.SaveChangesAsync(cancellationToken);
 

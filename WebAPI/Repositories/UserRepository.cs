@@ -14,12 +14,12 @@ namespace WebAPI.Repositories;
 
 [RepositoryImpl(typeof(IUserRepository))]
 public class UserRepository(ApplicationDbContext dbContext,
-                            UserManager<AppUser> userManager,
+                            UserManager<ApplicationUser> userManager,
                             ImageProvider imageProvider,
                             ICacheService cache)
-    : RepositoryBase<AppUser>(dbContext), IUserRepository
+    : RepositoryBase<ApplicationUser>(dbContext), IUserRepository
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly ImageProvider _imgProv = imageProvider;
     private readonly ICacheService _cache = cache;
 
@@ -30,7 +30,7 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user is null ? 0 : user.Reputation;
 
     }
-    public async Task<GenericResult<AppUser>> AddUserAsync(AppUser user, string password, CancellationToken cancellationToken)
+    public async Task<GenericResult<ApplicationUser>> AddUserAsync(ApplicationUser user, string password, CancellationToken cancellationToken)
     {
         try
         {
@@ -40,7 +40,7 @@ public class UserRepository(ApplicationDbContext dbContext,
 
             if (!result.Succeeded)
             {
-                return GenericResult<AppUser>.Failure(result.Errors.Select(e => e.Description).FirstOrDefault()
+                return GenericResult<ApplicationUser>.Failure(result.Errors.Select(e => e.Description).FirstOrDefault()
                     ?? "Error");
             }
 
@@ -57,15 +57,15 @@ public class UserRepository(ApplicationDbContext dbContext,
             // Cache the user's email for fast look up
             await _cache.SetUsedEmail(user.Email!, cancellationToken);
 
-            return GenericResult<AppUser>.Success(user);
+            return GenericResult<ApplicationUser>.Success(user);
         }
         catch (Exception ex)
         {
-            return GenericResult<AppUser>.Failure(ex.Message);
+            return GenericResult<ApplicationUser>.Failure(ex.Message);
         }
     }
 
-    public async Task<AppUser?> FindByEmail(string email, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> FindByEmail(string email, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByEmailAsync(email);
@@ -75,10 +75,10 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
-    public async Task<AppUser?> FindByUsername(string username, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> FindByUsername(string username, CancellationToken cancellationToken = default)
         => await Table.Where(e => e.UserName!.Equals(username)).FirstOrDefaultAsync(cancellationToken);
 
-    public async Task<AppUser?> FindUserByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> FindUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var user = await _userManager.FindByIdAsync(id.ToString());
@@ -88,7 +88,7 @@ public class UserRepository(ApplicationDbContext dbContext,
         return user;
     }
 
-    public async Task<AppUser?> FindUserWithLinks(int id, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> FindUserWithLinks(int id, CancellationToken cancellationToken = default)
     {
         return await Table.Where(e => e.Id == id).Include(e => e.ExternalLinks).FirstOrDefaultAsync(cancellationToken);
     }

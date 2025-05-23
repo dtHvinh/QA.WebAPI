@@ -5,8 +5,8 @@ namespace WebAPI.Model;
 public class Report : IEntityWithTime<int>
 {
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 
     public string Description { get; set; } = default!;
     public string Type { get; set; } = default!;

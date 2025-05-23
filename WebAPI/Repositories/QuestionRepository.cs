@@ -115,7 +115,7 @@ public class QuestionRepository(
 
         query = sortOrder switch
         {
-            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreationDate),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
@@ -150,7 +150,7 @@ public class QuestionRepository(
 
         query = sortOrder switch
         {
-            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreationDate),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
@@ -180,12 +180,12 @@ public class QuestionRepository(
                    .Include(e => e.Answers.Where(e => !e.IsDeleted)
                                           .OrderByDescending(e => e.IsAccepted)
                                           .ThenByDescending(e => e.Score)
-                                          .ThenByDescending(e => e.CreatedAt)
+                                          .ThenByDescending(e => e.CreationDate)
                                           .Take(10))
                    .ThenInclude(e => e.Author)
                    .AsSplitQuery()
                    .Include(e => e.Comments.Where(e => !e.IsDeleted)
-                                          .OrderByDescending(e => e.CreatedAt)
+                                          .OrderByDescending(e => e.CreationDate)
                                           .Take(5))
                    .ThenInclude(e => e.Author)
                    .AsSplitQuery()
@@ -203,7 +203,7 @@ public class QuestionRepository(
 
         query = sortOrder switch
         {
-            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreatedAt),
+            QuestionSortOrder.Newest => query.OrderByDescending(e => e.CreationDate),
             QuestionSortOrder.MostViewed => query.OrderByDescending(e => e.ViewCount),
             QuestionSortOrder.MostVoted => query.OrderByDescending(e => e.Score),
             QuestionSortOrder.Solved => query.OrderByDescending(e => e.IsSolved),
@@ -232,7 +232,7 @@ public class QuestionRepository(
 
     public async Task UpdateQuestion(Question question)
     {
-        question.UpdatedAt = DateTime.UtcNow;
+        question.ModificationDate = DateTime.UtcNow;
         await _questionSearchService.IndexOrUpdateAsync(question, default);
         Entities.Update(question);
     }
@@ -240,7 +240,7 @@ public class QuestionRepository(
     public void SoftDeleteQuestion(Question question)
     {
         question.SolftDelete();
-        question.UpdatedAt = DateTime.UtcNow;
+        question.ModificationDate = DateTime.UtcNow;
         Entities.Update(question);
     }
 

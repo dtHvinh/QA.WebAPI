@@ -13,7 +13,7 @@ public interface IQuestionRepository : IRepository<Question>
     Task SetQuestionTag(Question question, List<Tag> tags);
     Task<Question?> FindQuestionWithAuthorByIdAsync(int id, CancellationToken cancellationToken);
     /// <summary>
-    /// Update question also update the <see cref="Question.UpdatedAt"/> field.
+    /// Update question also update the <see cref="Question.ModificationDate"/> field.
     /// </summary>
     /// <param name="question"></param>
     Task UpdateQuestion(Question question);

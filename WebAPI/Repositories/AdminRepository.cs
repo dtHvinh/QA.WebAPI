@@ -10,7 +10,7 @@ using static WebAPI.Utilities.Enums;
 namespace WebAPI.Repositories;
 
 [RepositoryImpl(typeof(IAdminRepository))]
-public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<AppUser>(dbContext), IAdminRepository
+public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<ApplicationUser>(dbContext), IAdminRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
@@ -19,8 +19,8 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         var previousDate = DateTime.UtcNow.AddDays(-1);
         var currentDate = DateTime.UtcNow;
 
-        var perviousCount = await _dbContext.Set<T>().CountAsync(x => x.CreatedAt.Date == previousDate.Date);
-        var currentCount = await _dbContext.Set<T>().CountAsync(x => x.CreatedAt.Date == currentDate.Date);
+        var perviousCount = await _dbContext.Set<T>().CountAsync(x => x.CreationDate.Date == previousDate.Date);
+        var currentCount = await _dbContext.Set<T>().CountAsync(x => x.CreationDate.Date == currentDate.Date);
 
         return new GrownAnalytic(perviousCount, currentCount, MathHelper.GetPercentageGrowth(perviousCount, currentCount));
     }
@@ -34,9 +34,9 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         var previousWeekEnd = currentWeekStart.AddTicks(-1);
 
         var previousCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= previousWeekStart && x.CreatedAt <= previousWeekEnd);
+            .CountAsync(x => x.CreationDate >= previousWeekStart && x.CreationDate <= previousWeekEnd);
         var currentCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= currentWeekStart && x.CreatedAt <= now);
+            .CountAsync(x => x.CreationDate >= currentWeekStart && x.CreationDate <= now);
 
         var a = MathHelper.GetPercentageGrowth(previousCount, currentCount);
 
@@ -51,9 +51,9 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         var previousMonthEnd = currentMonthStart.AddTicks(-1);
 
         var previousCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= previousMonthStart && x.CreatedAt <= previousMonthEnd);
+            .CountAsync(x => x.CreationDate >= previousMonthStart && x.CreationDate <= previousMonthEnd);
         var currentCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= currentMonthStart && x.CreatedAt <= now);
+            .CountAsync(x => x.CreationDate >= currentMonthStart && x.CreationDate <= now);
 
         return new GrownAnalytic(previousCount, currentCount, MathHelper.GetPercentageGrowth(previousCount, currentCount));
     }
@@ -66,9 +66,9 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         var previousYearEnd = currentYearStart.AddTicks(-1);
 
         var previousCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= previousYearStart && x.CreatedAt <= previousYearEnd);
+            .CountAsync(x => x.CreationDate >= previousYearStart && x.CreationDate <= previousYearEnd);
         var currentCount = await _dbContext.Set<T>()
-            .CountAsync(x => x.CreatedAt >= currentYearStart && x.CreatedAt <= now);
+            .CountAsync(x => x.CreationDate >= currentYearStart && x.CreationDate <= now);
 
         return new GrownAnalytic(previousCount, currentCount, MathHelper.GetPercentageGrowth(previousCount, currentCount));
     }
@@ -85,7 +85,7 @@ public class AdminRepository(ApplicationDbContext dbContext) : RepositoryBase<Ap
         };
     }
 
-    public async Task<List<AppUser>> GetUsers(int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<List<ApplicationUser>> GetUsers(int skip, int take, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Users.Skip(skip).Take(take).ToListAsync(cancellationToken);
     }

@@ -24,7 +24,7 @@ public class CreateReportHandler(
         var report = new Report
         {
             Description = request.Dto.Description,
-            CreatedAt = DateTime.Now,
+            CreationDate = DateTime.Now,
             Status = "Pending",
             TargetId = request.Dto.TargetId,
             Type = request.Dto.TargetType,

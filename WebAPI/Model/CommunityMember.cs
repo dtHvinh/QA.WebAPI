@@ -13,7 +13,7 @@ public class CommunityMember : IEntity<int>
 
     [ForeignKey(nameof(User))]
     public int UserId { get; set; }
-    public AppUser User { get; set; } = default!;
+    public ApplicationUser User { get; set; } = default!;
 
     public bool IsOwner { get; set; }
     public bool IsModerator { get; set; }

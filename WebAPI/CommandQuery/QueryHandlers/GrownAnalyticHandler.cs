@@ -28,7 +28,7 @@ public class GrownAnalyticHandler(IAdminRepository adminRepository) : IQueryHand
         }
         else if (string.Equals(request.What, "user", StringComparison.InvariantCultureIgnoreCase))
         {
-            grownAnalytic = await _adminRepository.GetGrownAnalytic<AppUser>(analyticPeriod);
+            grownAnalytic = await _adminRepository.GetGrownAnalytic<ApplicationUser>(analyticPeriod);
         }
         else
         {

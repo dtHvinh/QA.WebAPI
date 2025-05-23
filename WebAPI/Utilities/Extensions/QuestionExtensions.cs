@@ -58,8 +58,8 @@ public static class QuestionExtensions
             CommentCount = obj.CommentCount,
 
             Score = obj.Score,
-            CreatedAt = obj.CreatedAt,
-            UpdatedAt = obj.UpdatedAt,
+            CreationDate = obj.CreationDate,
+            ModificationDate = obj.ModificationDate,
 
             DuplicateQuestionUrl = obj.DuplicateQuestionUrl,
         };
@@ -96,8 +96,8 @@ public static class QuestionExtensions
             CommentCount = obj.CommentCount,
 
             Score = obj.Score,
-            CreatedAt = obj.CreatedAt,
-            UpdatedAt = obj.UpdatedAt,
+            CreationDate = obj.CreationDate,
+            ModificationDate = obj.ModificationDate,
 
             DuplicateQuestionUrl = obj.DuplicateQuestionUrl,
         };

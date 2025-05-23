@@ -26,7 +26,7 @@ public class ModRestoreQuestionHandler(
             return GenericResult<TextResponse>.Failure("Question not found");
 
         question.IsDeleted = false;
-        question.UpdatedAt = DateTime.UtcNow;
+        question.ModificationDate = DateTime.UtcNow;
 
         var res = await _questionRepository.SaveChangesAsync(cancellationToken);
 

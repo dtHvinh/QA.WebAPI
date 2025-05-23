@@ -13,8 +13,8 @@ public class GetQuestionResponse : IResourceRight<GetQuestionResponse>
     public string Title { get; set; } = string.Empty;
     public string Slug { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = default!;
-    public DateTime UpdatedAt { get; set; } = default!;
+    public DateTimeOffset CreationDate { get; set; } = default!;
+    public DateTimeOffset ModificationDate { get; set; } = default!;
 
     public AuthorResponse? Author { get; set; } = default!;
 

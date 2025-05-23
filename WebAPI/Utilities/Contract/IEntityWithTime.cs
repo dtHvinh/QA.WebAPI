@@ -2,8 +2,8 @@
 
 public interface IEntityWithTime<T> : IEntity<T>
 {
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 }
 
 public interface IEntity<T> where T : allows ref struct

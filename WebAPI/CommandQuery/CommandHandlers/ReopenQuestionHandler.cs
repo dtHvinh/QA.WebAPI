@@ -41,7 +41,8 @@ public class ReopenQuestionHandler(
 
         await _questionRepository.UpdateQuestion(existQuestion);
 
-        _historyRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryTypes.Reopen, "");
+        await _historyRepository.AddHistory(existQuestion.Id,
+            _authenticationContext.UserId, QuestionHistoryTypes.Reopen, "", cancellationToken);
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 

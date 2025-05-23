@@ -12,7 +12,6 @@ using WebAPI.Response.QuestionResponses;
 using WebAPI.Response.TagResponses;
 using WebAPI.Utilities.Contract;
 using WebAPI.Utilities.Extensions;
-using WebAPI.Utilities.Provider;
 using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Endpoints.Tag;
@@ -159,8 +158,8 @@ public class TagModule : IModule
         group.MapDelete("/{id:int}",
                 async Task<Results<Ok<DeleteTagResponse>, ProblemHttpResult>>
                 (int id,
-                    [FromServices] IMediator mediator,
-                    CancellationToken cancellationToken) =>
+                [FromServices] IMediator mediator,
+                CancellationToken cancellationToken) =>
                 {
                     var command = new DeleteTagCommand(id);
                     var result = await mediator.Send(command, cancellationToken);
@@ -168,7 +167,6 @@ public class TagModule : IModule
                     return result.IsSuccess
                         ? TypedResults.Ok(result.Value)
                         : ProblemResultExtensions.BadRequest(result.Message);
-                })
-            .RequireAuthorization(PolicyProvider.RequireAdminRole);
+                });
     }
 }

@@ -12,7 +12,7 @@ public record GetCollectionDetailResponse(
     int LikeCount,
     bool IsPublic,
     bool IsLikedByUser,
-    DateTime CreatedAt,
+    DateTimeOffset CreationDate,
     AuthorResponse Author,
     PagedResponse<GetQuestionResponse> Questions) : IResourceRight<GetCollectionDetailResponse>
 {

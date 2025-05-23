@@ -9,10 +9,10 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.CommandQuery.CommandHandlers;
 
-public class RemoveFromRoleHandler(UserManager<AppUser> userManager, Serilog.ILogger logger, AuthenticationContext authenticationContext)
+public class RemoveFromRoleHandler(UserManager<ApplicationUser> userManager, Serilog.ILogger logger, AuthenticationContext authenticationContext)
     : ICommandHandler<RemoveFromRoleCommand, GenericResult<TextResponse>>
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly Serilog.ILogger _logger = logger;
     private readonly AuthenticationContext _authenticationContext = authenticationContext;
 

@@ -32,7 +32,7 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
     {
         AddCriteria(question => !question.IsDeleted);
 
-        AddOrderByDesc(question => question.CreatedAt);
+        AddOrderByDesc(question => question.CreationDate);
     }
 
     public override IQueryable<Question> EvaluateQuery(IQueryable<Question> query)
@@ -43,10 +43,10 @@ public class QuestionFullDetailSpecification : SpecificationBase<Question>
                    .Include(e => e.Answers.Where(e => !e.IsDeleted)
                                           .OrderByDescending(e => e.IsAccepted)
                                           .ThenByDescending(e => e.Score)
-                                          .ThenByDescending(e => e.CreatedAt))
+                                          .ThenByDescending(e => e.CreationDate))
                     .ThenInclude(e => e.Author)
                    .AsSplitQuery()
-                   .Include(e => e.Comments.OrderByDescending(e => e.CreatedAt))
+                   .Include(e => e.Comments.OrderByDescending(e => e.CreationDate))
                     .ThenInclude(e => e.Author)
                    .Include(e => e.Tags)
                     .ThenInclude(e => e.Description);

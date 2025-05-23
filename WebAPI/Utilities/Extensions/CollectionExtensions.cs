@@ -26,7 +26,7 @@ public static class CollectionExtensions
             obj.LikeCount,
             obj.QuestionCount,
             obj.IsPublic,
-            obj.CreatedAt,
+            obj.CreationDate,
             obj.Author.ToAuthorResponse()!);
     }
 
@@ -39,7 +39,7 @@ public static class CollectionExtensions
             obj.LikeCount,
             obj.IsPublic,
             isLikedByUser,
-            obj.CreatedAt,
+            obj.CreationDate,
             obj.Author.ToAuthorResponse()!,
             questions);
     }

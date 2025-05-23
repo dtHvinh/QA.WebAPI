@@ -7,8 +7,8 @@ public class ChatRoomMessage : IEntityWithTime<int>, IOwnedByUser<int>
 {
     public int Id { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
 
     public string Message { get; set; } = default!;
 
@@ -18,5 +18,5 @@ public class ChatRoomMessage : IEntityWithTime<int>, IOwnedByUser<int>
 
     [ForeignKey(nameof(Author))]
     public int AuthorId { get; set; }
-    public AppUser? Author { get; set; } = default!;
+    public ApplicationUser? Author { get; set; } = default!;
 }

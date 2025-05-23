@@ -36,7 +36,7 @@ public class UpdateCommunityHandler(
         community.Name = request.Dto.Name;
         community.Description = request.Dto.Description;
         community.IsPrivate = request.Dto.IsPrivate;
-        community.UpdatedAt = DateTime.UtcNow;
+        community.ModificationDate = DateTime.UtcNow;
 
         _communityRepository.Update(community);
 

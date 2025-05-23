@@ -12,8 +12,8 @@ public static class CommentExtensions
         {
             Id = comment.Id,
             Content = comment.Content,
-            CreatedAt = comment.CreatedAt,
-            UpdatedAt = comment.UpdatedAt,
+            CreationDate = comment.CreationDate,
+            ModificationDate = comment.ModificationDate,
             Author = comment.Author.ToAuthorResponse()
         };
     }
@@ -24,8 +24,8 @@ public static class CommentExtensions
         {
             Id = comment.Id,
             Content = comment.Content,
-            CreatedAt = comment.CreatedAt,
-            UpdatedAt = comment.UpdatedAt,
+            CreationDate = comment.CreationDate,
+            ModificationDate = comment.ModificationDate,
             Author = comment.Author.ToAuthorResponse()
         };
     }

@@ -9,7 +9,7 @@ public static class BookmarkExtensions
     {
         var qResponse = bookMark.Question!.ToGetQuestionResponse();
 
-        var res = new BookmarkResponse(bookMark.Id, bookMark.CreatedAt, qResponse);
+        var res = new BookmarkResponse(bookMark.Id, bookMark.CreationDate, qResponse);
 
         return res;
     }

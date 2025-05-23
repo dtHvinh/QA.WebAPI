@@ -5,26 +5,23 @@ using WebAPI.Utilities.Contract;
 namespace WebAPI.Model;
 
 [Index(nameof(AuthorId))]
-[Index(nameof(CreatedAt), AllDescending = true)]
+[Index(nameof(CreationDate), AllDescending = true)]
 [Index(nameof(ViewCount), AllDescending = true)]
 [Index(nameof(IsSolved))]
 [Index(nameof(Score))]
 public class Question : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<int>
 {
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
 
 
     [ForeignKey(nameof(Author))]
     public required int AuthorId { get; set; }
-    public AppUser? Author { get; set; } = default!;
+    public ApplicationUser? Author { get; set; } = default!;
 
-    [Column(TypeName = "nvarchar(150)")]
     public string Title { get; set; } = default!;
-    [Column(TypeName = "nvarchar(250)")]
     public string Slug { get; set; } = default!;
-    [Column(TypeName = "nvarchar(max)")]
     public string Content { get; set; } = default!;
 
     public string DuplicateQuestionUrl { get; set; } = ""; // When user mark as duplicate

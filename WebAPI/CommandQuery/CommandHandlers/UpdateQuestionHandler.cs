@@ -74,8 +74,8 @@ public class UpdateQuestionHandler(IQuestionRepository questionRepository,
         await _questionRepository.UpdateQuestion(existQuestion);
         _tagRepository.UpdateRange(tagsToUpdate);
 
-        _questionHistoryRepository.AddHistory(
-            existQuestion.Id, _authenticationContext.UserId, QuestionHistoryTypes.Edit, request.UpdateObject.Comment);
+        await _questionHistoryRepository.AddHistory(
+             existQuestion.Id, _authenticationContext.UserId, QuestionHistoryTypes.Edit, request.UpdateObject.Comment, cancellationToken);
 
         var updateOp = await _questionRepository.SaveChangesAsync(cancellationToken);
 

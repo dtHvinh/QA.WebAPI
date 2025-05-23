@@ -2,7 +2,6 @@
 using Serilog.Events;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
-using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
@@ -43,12 +42,12 @@ public class AcceptAnswerHandler(IQuestionRepository questionRepository,
         if (answer.IsAccepted)
             return GenericResult<TextResponse>.Failure("Answer is already been accepted");
 
-        // Main logic
         question.IsSolved = true;
         answer.IsAccepted = true;
         answer.Author!.Reputation += _options.ReputationAcquirePerAction.AnswerAccepted;
 
-        _questionHistoryRepository.AddHistory(question.Id, _authenticationContext.UserId, QuestionHistoryTypes.AcceptAnswer, answer.Content);
+        await _questionHistoryRepository.AddHistory(
+            question.Id, _authenticationContext.UserId, "Accept Answer", answer.Content, cancellationToken);
 
         await _questionRepository.UpdateQuestion(question);
         _answerRepository.UpdateAnswer(answer);

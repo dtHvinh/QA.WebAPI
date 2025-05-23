@@ -9,7 +9,7 @@ public class ChatRoomMessageRead : IKeylessEntity
 {
     [ForeignKey(nameof(User))]
     public int UserId { get; set; }
-    public AppUser? User { get; set; }
+    public ApplicationUser? User { get; set; }
 
     [ForeignKey(nameof(ChatRoomMessage))]
     public int ChatRoomMessageId { get; set; }

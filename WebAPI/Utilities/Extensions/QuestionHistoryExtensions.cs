@@ -10,11 +10,11 @@ public static class QuestionHistoryExtensions
         return new QuestionHistoryResponse
         {
             Id = obj.Id,
-            CreatedAt = obj.CreatedAt,
-            UpdatedAt = obj.UpdatedAt,
+            CreationDate = obj.CreationDate,
+            ModificationDate = obj.ModificationDate,
             AuthorName = obj.Author?.UserName ?? "Unknown",
             AuthorId = obj.AuthorId,
-            QuestionHistoryType = obj.QuestionHistoryType,
+            QuestionHistoryType = obj.QuestionHistoryType.Name,
             Comment = obj.Comment
         };
     }

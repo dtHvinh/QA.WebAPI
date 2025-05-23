@@ -1,7 +1,6 @@
 ﻿using Serilog.Events;
 using WebAPI.CommandQuery.Commands;
 using WebAPI.CQRS;
-using WebAPI.Model;
 using WebAPI.Repositories.Base;
 using WebAPI.Response;
 using WebAPI.Utilities.Context;
@@ -42,7 +41,7 @@ public class CloseQuestionHandler(
 
         await _questionRepository.UpdateQuestion(existQuestion);
 
-        _historyRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, QuestionHistoryTypes.Close, "");
+        await _historyRepository.AddHistory(existQuestion.Id, _authenticationContext.UserId, "Close", "", cancellationToken);
 
         var result = await _questionRepository.SaveChangesAsync(cancellationToken);
 

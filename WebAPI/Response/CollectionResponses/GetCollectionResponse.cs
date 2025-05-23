@@ -10,7 +10,7 @@ public record GetCollectionResponse(
     int LikeCount,
     int QuestionCount,
     bool IsPublic,
-    DateTime CreatedAt,
+    DateTimeOffset CreationDate,
     AuthorResponse Author) : IResourceRight<GetCollectionResponse>
 {
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);

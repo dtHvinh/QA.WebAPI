@@ -21,7 +21,7 @@ public static class ChatRoomMessageExtensions
         };
     }
 
-    public static ChatRoomMessage WithAuthor(this ChatRoomMessage message, AppUser author)
+    public static ChatRoomMessage WithAuthor(this ChatRoomMessage message, ApplicationUser author)
     {
         message.Author = author;
         return message;
@@ -47,6 +47,6 @@ public static class ChatRoomMessageExtensions
         ArgumentNullException.ThrowIfNull(message.Author, nameof(message.Author));
 
         return ChatMessageResponse.From(
-            message.Id, message.Message, message.CreatedAt, message.UpdatedAt, message.Author.ToAuthorResponse()!);
+            message.Id, message.Message, message.CreationDate, message.ModificationDate, message.Author.ToAuthorResponse()!);
     }
 }

@@ -12,13 +12,13 @@ namespace WebAPI.CommandQuery.CommandHandlers;
 
 public class CreateUserHandler(IUserRepository userRepository,
                                JwtTokenProvider tokenProvider,
-                               UserManager<AppUser> userManager,
+                               UserManager<ApplicationUser> userManager,
                                Serilog.ILogger logger)
     : ICommandHandler<CreateUserCommand, GenericResult<AuthResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly Serilog.ILogger _logger = logger;
 
     public async Task<GenericResult<AuthResponse>> Handle(

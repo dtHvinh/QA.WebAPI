@@ -10,18 +10,25 @@ namespace WebAPI.Repositories;
 public class QuestionHistoryRepository(ApplicationDbContext dbContext)
     : RepositoryBase<QuestionHistory>(dbContext), IQuestionHistoryRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public void AddHistory(QuestionHistory history)
     {
         Entities.Add(history);
     }
 
-    public void AddHistory(int questionId, int authorId, string questionHistoryType, string comment)
+    public async Task AddHistory(int questionId, int authorId, string questionHistoryType, string comment, CancellationToken cancellationToken = default)
     {
+        // The question history type should be in the database otherwise throw exception
+        var historyType = await _dbContext.Set<QuestionHistoryType>()
+            .FirstOrDefaultAsync(e => e.Name == questionHistoryType, cancellationToken)
+            ?? throw new InvalidOperationException("History type not found");
+
         var history = new QuestionHistory
         {
             QuestionId = questionId,
             AuthorId = authorId,
-            QuestionHistoryType = questionHistoryType,
+            QuestionHistoryTypeId = historyType.Id,
             Comment = comment
         };
 
@@ -31,6 +38,6 @@ public class QuestionHistoryRepository(ApplicationDbContext dbContext)
     public async Task<List<QuestionHistory>> FindHistoryWithAuthor(int questionId, CancellationToken cancellationToken)
     {
         return await Entities.Where(x => x.QuestionId == questionId).Include(e => e.Author)
-            .OrderByDescending(e => e.CreatedAt).ToListAsync(cancellationToken);
+            .OrderByDescending(e => e.CreationDate).ToListAsync(cancellationToken);
     }
 }

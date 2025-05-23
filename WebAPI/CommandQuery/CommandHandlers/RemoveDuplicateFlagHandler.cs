@@ -36,11 +36,11 @@ public class RemoveDuplicateFlagHandler(
 
         await _questionRepository.UpdateQuestion(question);
 
-        _questionHistoryRepository.AddHistory(
-           questionId: question.Id,
-           authorId: _authenticationContext.UserId,
-           questionHistoryType: QuestionHistoryTypes.RemoveDuplicateFlag,
-           comment: "Removed duplicate flag.");
+        await _questionHistoryRepository.AddHistory(
+            questionId: question.Id,
+            authorId: _authenticationContext.UserId,
+            questionHistoryType: QuestionHistoryTypes.RemoveDuplicateFlag,
+            comment: "Removed duplicate flag.");
 
         var res = await _questionRepository.SaveChangesAsync(cancellationToken);
 

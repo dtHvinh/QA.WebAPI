@@ -14,8 +14,8 @@ public static class AnswerExtensions
             Content = answer.Content,
             IsAccepted = answer.IsAccepted,
             Score = answer.Score,
-            CreatedAt = answer.CreatedAt,
-            UpdatedAt = answer.UpdatedAt,
+            CreatedAt = answer.CreationDate,
+            UpdatedAt = answer.ModificationDate,
             Author = answer.Author.ToAuthorResponse(),
         };
     }

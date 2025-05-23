@@ -8,11 +8,11 @@ using static WebAPI.Utilities.Constants;
 
 namespace WebAPI.Utilities.Services;
 
-public class AuthenticationService(UserManager<AppUser> userManager,
+public class AuthenticationService(UserManager<ApplicationUser> userManager,
                                    JwtTokenProvider tokenProvider,
                                    ICacheService cacheService) : IAuthenticationService
 {
-    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly ICacheService _cacheService = cacheService;
     private readonly JwtTokenProvider _tokenProvider = tokenProvider;
 

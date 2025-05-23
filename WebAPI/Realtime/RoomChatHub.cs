@@ -22,7 +22,7 @@ public class RoomChatHub(Serilog.ILogger logger) : AbstractHub
     public Task StopTyping(string username, string userId, string roomId)
     {
         _logger.Information("----------User stop typing");
-        return Clients.Group(MapGroup(roomId)).SendAsync("SomeOneStartTyping", username, userId);
+        return Clients.Group(MapGroup(roomId)).SendAsync("SomeOneStopTyping", username, userId);
     }
 
     public new Task JoinRoom(string roomId)

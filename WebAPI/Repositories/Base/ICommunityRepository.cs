@@ -12,7 +12,7 @@ public interface ICommunityRepository : IRepository<Community>
     /// </summary>
     Task CreateCommunity(Community community, CancellationToken cancellationToken = default);
     void CreateCommunity(string name, string description, string iconImage, bool isPrivate);
-    Task<bool> JoinCommunity(AppUser appUser, Community community, CancellationToken cancellationToken = default);
+    Task<bool> JoinCommunity(ApplicationUser appUser, Community community, CancellationToken cancellationToken = default);
     Task<List<CommunityWithJoinStatus>> Search(int userId, string searchTerm, int skip, int take, CancellationToken cancellationToken);
     Task<CommunityMember?> GetMemberAsync(int userId, int communityId, CancellationToken cancellationToken);
     Task<List<CommunityWithJoinStatus>> GetCommunitiesWithJoinStatusAsync(int userId, int skip, int take, CancellationToken cancellationToken = default);

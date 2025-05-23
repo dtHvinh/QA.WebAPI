@@ -7,22 +7,22 @@ namespace WebAPI.Utilities.Extensions;
 
 public static class AppUserExtensions
 {
-    public static AuthResponse ToAuthResponseDto(this AppUser user, string accessToken, string refreshToken,
+    public static AuthResponse ToAuthResponseDto(this ApplicationUser user, string accessToken, string refreshToken,
         IList<string> roles)
     {
         return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture, roles);
     }
 
-    public static AppUser ToAppUser(this RegisterDto dto)
+    public static ApplicationUser ToAppUser(this RegisterDto dto)
     {
-        return new AppUser
+        return new ApplicationUser
         {
             UserName = $"user{Random.Shared.Next(100)}{Random.Shared.Next(100000)}",
             Email = dto.Email
         };
     }
 
-    public static AuthorResponse? ToAuthorResponse(this AppUser? obj)
+    public static AuthorResponse? ToAuthorResponse(this ApplicationUser? obj)
     {
         return obj is null
             ? null
@@ -35,15 +35,15 @@ public static class AppUserExtensions
             };
     }
 
-    public static UserResponse ToUserResponse(this AppUser? obj)
+    public static UserResponse ToUserResponse(this ApplicationUser? obj)
     {
         return new UserResponse
         {
             ProfilePicture = obj!.ProfilePicture,
             Username = obj!.UserName!,
             Reputation = obj.Reputation,
-            CreatedAt = obj.CreatedAt,
-            UpdatedAt = obj.UpdatedAt
+            CreatedAt = obj.CreationDate,
+            UpdatedAt = obj.ModificationDate
         };
     }
 }

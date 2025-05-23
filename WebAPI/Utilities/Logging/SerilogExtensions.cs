@@ -40,7 +40,7 @@ public static class SerilogExtensions
     /// "User {UserId} {Operator} {EntityType} {EntityId} {ModeratorOperator} by moderator {ModeratorId}";
     /// </summary>
     public static void ModeratorAction(this Serilog.ILogger logger, LogEventLevel level,
-    int moderatorId, LogModeratorOp moderatorOp, AppUser user, LogOp op, IEntity<int> target)
+    int moderatorId, LogModeratorOp moderatorOp, ApplicationUser user, LogOp op, IEntity<int> target)
     {
         logger.Write(level, ModeratorActionMessageTemplate,
             user.Id, op, target.GetType().Name, target.Id != default ? target.Id : target, moderatorOp, moderatorId);

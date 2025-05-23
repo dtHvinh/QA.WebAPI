@@ -52,7 +52,7 @@ public class CommunityModHandler(
             : Serilog.Events.LogEventLevel.Error,
             userId: _authenticationContext.UserId,
             op: request.IsGranting ? LogOp.GrantCommunityMod : LogOp.RevokedCommunityMod,
-            targetType: typeof(AppUser),
+            targetType: typeof(ApplicationUser),
             targetId: request.UserId);
 
         return res.IsSuccess

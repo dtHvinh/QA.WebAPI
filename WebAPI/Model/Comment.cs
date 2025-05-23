@@ -6,17 +6,16 @@ namespace WebAPI.Model;
 public class Comment : IEntityWithTime<int>, ISoftDeleteEntity, IOwnedByUser<int>
 {
     public int Id { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
     public string? CommentType { get; set; }
-
-    [Column(TypeName = "nvarchar(2000)")]
-    public string Content { get; set; } = default!;
     public bool IsDeleted { get; set; }
+
+    public string Content { get; set; } = default!;
 
     [ForeignKey(nameof(Author))]
     public int AuthorId { get; set; }
-    public AppUser? Author { get; set; } = default!;
+    public ApplicationUser? Author { get; set; } = default!;
 }
 
 public enum CommentTypes

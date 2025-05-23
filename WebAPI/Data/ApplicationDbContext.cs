@@ -1,4 +1,6 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿#nullable disable
+
+using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +18,7 @@ using WebAPI.Utilities.Services;
 namespace WebAPI.Data;
 
 public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<AppUser, IdentityRole<int>, int>(options)
+    : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
 {
     private const string _fullTextDefaultCatalogName = "qa_default_catalog";
 
@@ -65,6 +67,22 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             .HasValue<AnswerComment>(nameof(Answer));
 
         builder.ApplyConfiguration(new QuestionConfig());
+
+        builder.Entity<ApplicationUser>().Ignore(e => e.ConcurrencyStamp)
+            .Ignore(e => e.SecurityStamp)
+            .Ignore(e => e.LockoutEnabled)
+            .Ignore(e => e.LockoutEnd)
+            .Ignore(e => e.TwoFactorEnabled)
+            .Ignore(e => e.PhoneNumberConfirmed)
+            .Ignore(e => e.EmailConfirmed)
+            .Ignore(e => e.AccessFailedCount);
+
+        builder.Ignore<IdentityUserLogin<int>>();
+
+        builder.Ignore<IdentityUserToken<int>>();
+        builder.Ignore<IdentityUserRole<int>>();
+        builder.Ignore<IdentityUserLogin<int>>();
+        builder.Ignore<IdentityRoleClaim<int>>();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -150,20 +168,18 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
         var a = await tagRepository.SaveChangesAsync();
     }
-
-
     public static async Task Init(WebApplication app, bool run)
     {
         if (!run)
             return;
 
         using var scope = app.Services.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
         await roleManager.CreateAsync(new IdentityRole<int>(Constants.Roles.Admin));
         await roleManager.CreateAsync(new IdentityRole<int>(Constants.Roles.User));
 
-        var user = new AppUser()
+        var user = new ApplicationUser()
         {
             Email = "admin@email.com",
             UserName = "admin@email.com",
@@ -178,7 +194,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         ]);
         await userManager.AddToRoleAsync(user, Constants.Roles.Admin);
 
-        var user1 = new AppUser()
+        var user1 = new ApplicationUser()
         {
             Email = "vinh01234_2@email.com",
             UserName = "vinh01234_2@email.com",
@@ -194,7 +210,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
         await userManager.AddToRoleAsync(user1, Constants.Roles.Admin);
 
-        var user2 = new AppUser()
+        var user2 = new ApplicationUser()
         {
             Email = "vinh01234_1@email.com",
             UserName = "vinh01234_1@email.com",
@@ -218,7 +234,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
         string csvFilePath = "D:\\dev\\myproject\\qa_platform\\back-end\\WebAPI\\WebAPI\\Data\\users.csv";
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var userDb = dbContext.Set<AppUser>();
+        var userDb = dbContext.Set<ApplicationUser>();
         var claimsDb = dbContext.Set<IdentityUserClaim<int>>();
 
         dbContext.Database.SetCommandTimeout(300);
@@ -235,7 +251,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             parser.ReadLine();
         }
 
-        List<AppUser> users = [];
+        List<ApplicationUser> users = [];
         List<IdentityUserClaim<int>> userClaims = [];
         int id = 1;
         while (!parser.EndOfData)
@@ -246,7 +262,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             // Extract the three values
             string userName = fields[0].Replace(' ', '_');
 
-            var user = new AppUser()
+            var user = new ApplicationUser()
             {
                 Email = $"{userName}@email.com",
                 UserName = $"{userName}",
@@ -324,7 +340,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
     public static async Task InitUserRole(WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         dbContext.UserRoles.AddRange(dbContext.Users.Select(e => new IdentityUserRole<int>
@@ -498,9 +514,9 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var users = dbContext.Set<AppUser>();
+        var users = dbContext.Set<ApplicationUser>();
         dbContext.Database.SetCommandTimeout(300);
-        List<AppUser> t = await users.ToListAsync();
+        List<ApplicationUser> t = await users.ToListAsync();
         foreach (var user in t)
         {
             user.Reputation = 0;

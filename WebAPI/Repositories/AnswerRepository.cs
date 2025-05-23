@@ -33,7 +33,7 @@ public class AnswerRepository(ApplicationDbContext dbContext)
         }
 
         errMsg = null;
-        answer.UpdatedAt = DateTime.UtcNow;
+        answer.ModificationDate = DateTime.UtcNow;
         Entities.Update(answer);
     }
 
