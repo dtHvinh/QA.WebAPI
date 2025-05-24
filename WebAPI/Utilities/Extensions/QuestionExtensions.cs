@@ -1,10 +1,12 @@
-﻿using WebAPI.Dto;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Dto;
 using WebAPI.Model;
 using WebAPI.Response.QuestionResponses;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class QuestionExtensions
+[Mapper]
+public static partial class QuestionExtensions
 {
     public static Question ToQuestion(this CreateQuestionDto dto, int authorId)
     {
@@ -38,43 +40,7 @@ public static class QuestionExtensions
         return current;
     }
 
-    public static GetQuestionResponse ToGetQuestionResponse(this Question obj)
-    {
-        var response = new GetQuestionResponse()
-        {
-            Id = obj.Id,
-            Title = obj.Title,
-            Slug = obj.Slug,
-            Content = obj.Content,
-            Author = obj.Author.ToAuthorResponse(),
-
-            IsDuplicate = obj.IsDuplicate,
-            IsClosed = obj.IsClosed,
-            IsSolved = obj.IsSolved,
-            IsDeleted = obj.IsDeleted,
-
-            ViewCount = obj.ViewCount,
-            AnswerCount = obj.AnswerCount,
-            CommentCount = obj.CommentCount,
-
-            Score = obj.Score,
-            CreationDate = obj.CreationDate,
-            ModificationDate = obj.ModificationDate,
-
-            DuplicateQuestionUrl = obj.DuplicateQuestionUrl,
-        };
-
-        if (obj.Tags != null)
-            response.Tags = obj.Tags.Select(x => x.ToTagResonse()).ToList();
-
-        if (obj.Answers != null)
-            response.Answers = obj.Answers.Select(x => x.ToAnswerResponse()).ToList();
-
-        if (obj.Comments != null)
-            response.Comments = obj.Comments.Select(e => e.ToCommentResponse()).ToList();
-
-        return response;
-    }
+    public static partial GetQuestionResponse ToGetQuestionResponse(this Question source);
 
     public static GetQuestionResponse ToGetQuestionResponse(this Question obj, int requesterId)
     {

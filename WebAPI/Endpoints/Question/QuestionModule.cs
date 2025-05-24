@@ -28,31 +28,31 @@ public sealed class QuestionModule : IModule
             .WithTags(nameof(QuestionModule))
             .WithOpenApi();
 
-        group.MapGet("/user", GetUserQuestionHandler)
+        group.MapGet("/user", GetUserQuestion)
             .WithName("GetUserQuestions")
             .WithSummary("Get user's questions")
             .WithDescription("Retrieves a paginated list of questions created by the authenticated user")
             .RequireAuthorization();
 
-        group.MapGet("/", GetQuestionsHandler)
+        group.MapGet("/", GetQuestions)
             .WithName("GetQuestions")
             .WithSummary("Get all questions")
             .WithDescription("Retrieves a paginated list of all questions with sorting options")
             .RequireAuthorization();
 
-        group.MapGet("/view/{id:int}", ViewQuestionDetailHandler)
+        group.MapGet("/view/{id:int}", ViewQuestionDetail)
             .WithName("GetQuestionDetail")
             .WithSummary("Get question details")
             .WithDescription("Retrieves detailed information about a specific question including answers and comments")
             .RequireAuthorization();
 
-        group.MapGet("/search", SearchQuestionHandler)
+        group.MapGet("/search", SearchQuestion)
             .WithName("SearchQuestions")
             .WithSummary("Search questions")
             .WithDescription("Search questions by keyword and tag with pagination support")
             .RequireAuthorization();
 
-        group.MapGet("/you_may_like", QuestionYouMayLikeHandler)
+        group.MapGet("/you_may_like", QuestionYouMayLike)
             .WithName("GetRecommendedQuestions")
             .WithSummary("Get recommended questions")
             .WithDescription("Retrieves personalized question recommendations for the user")
@@ -76,7 +76,7 @@ public sealed class QuestionModule : IModule
             .WithDescription("Finds questions that are similar to the specified question")
             .RequireAuthorization();
 
-        group.MapPost("/", CreateQuestionHandler)
+        group.MapPost("/", CreateQuestion)
             .WithName("CreateQuestion")
             .WithSummary("Create new question")
             .WithDescription("Creates a new question with specified title, content, and tags")
@@ -84,7 +84,7 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateQuestionDto>>()
             .AddEndpointFilter<ForCreateQuestion>();
 
-        group.MapPost("/{questionId:int}/comment", CommentToQuestionHandler)
+        group.MapPost("/{questionId:int}/comment", CommentToQuestion)
             .WithName("AddQuestionComment")
             .WithSummary("Add comment to question")
             .WithDescription("Adds a new comment to the specified question")
@@ -92,28 +92,28 @@ public sealed class QuestionModule : IModule
             .AddEndpointFilter<FluentValidation<CreateCommentDto>>()
             .AddEndpointFilter<ForComment>();
 
-        group.MapPost("/{questionId:int}/answer", AnswerToQuestionHandler)
+        group.MapPost("/{questionId:int}/answer", AnswerToQuestion)
             .WithName("AddAnswer")
             .WithSummary("Answer question")
             .WithDescription("Submits an answer to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<CreateAnswerDto>>();
 
-        group.MapPost("/{questionId:int}/upvote", UpvoteQuestionHandler)
+        group.MapPost("/{questionId:int}/upvote", UpvoteQuestion)
             .WithName("UpvoteQuestion")
             .WithSummary("Upvote question")
             .WithDescription("Adds an upvote to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<ForUpvote>();
 
-        group.MapPost("/{questionId:int}/downvote", DownvoteQuestionHandler)
+        group.MapPost("/{questionId:int}/downvote", DownvoteQuestion)
             .WithName("DownvoteQuestion")
             .WithSummary("Downvote question")
             .WithDescription("Adds a downvote to the specified question")
             .RequireAuthorization()
             .AddEndpointFilter<ForDownVote>();
 
-        group.MapDelete("/{id:int}", DeleteQuestionHandler)
+        group.MapDelete("/{id:int}", DeleteQuestion)
             .WithName("DeleteQuestion")
             .WithSummary("Delete question")
             .WithDescription("Removes a question and all its associated content")
@@ -130,26 +130,26 @@ public sealed class QuestionModule : IModule
             .WithName("RemoveDuplicateFlag")
             .RequireAuthorization();
 
-        group.MapPut("/", UpdateQuestionHandler)
+        group.MapPut("/", UpdateQuestion)
             .WithName("UpdateQuestion")
             .WithSummary("Update question")
             .WithDescription("Updates the content of an existing question")
             .RequireAuthorization()
             .AddEndpointFilter<FluentValidation<UpdateQuestionDto>>();
 
-        group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestionHandler)
+        group.MapPut("/{questionId:int}/accept/{answerId:int}", AcceptQuestion)
             .WithName("AcceptAnswer")
             .WithSummary("Accept answer")
             .WithDescription("Marks an answer as the accepted solution for the question")
             .RequireAuthorization();
 
-        group.MapPut("/{questionId:int}/close", CloseQuestionHandler)
+        group.MapPut("/{questionId:int}/close", CloseQuestion)
             .WithName("CloseQuestion")
             .WithSummary("Close question")
             .WithDescription("Marks a question as closed, preventing new answers and comments")
             .RequireAuthorization();
 
-        group.MapPut("/{questionId:int}/re-open", ReopenQuestionHandler)
+        group.MapPut("/{questionId:int}/re-open", ReopenQuestion)
             .WithName("ReopenQuestion")
             .WithSummary("Re-open a question")
             .WithDescription("Re-open a question")
@@ -203,7 +203,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> QuestionYouMayLikeHandler(
+        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> QuestionYouMayLike(
             [FromQuery] int pageIndex,
             [FromQuery] int pageSize,
             [FromServices] IMediator mediator,
@@ -220,7 +220,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> UpdateQuestionHandler(
+        async Task<Results<Ok<UpdateQuestionResponse>, ProblemHttpResult>> UpdateQuestion(
             [FromBody] UpdateQuestionDto dto,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -238,7 +238,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> AcceptQuestionHandler(
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> AcceptQuestion(
             int questionId,
             int answerId,
             [FromServices] IMediator mediator,
@@ -257,7 +257,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> CloseQuestionHandler(
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> CloseQuestion(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -275,7 +275,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> ReopenQuestionHandler(
+        async Task<Results<Ok<TextResponse>, ProblemHttpResult>> ReopenQuestion(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -293,7 +293,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> DeleteQuestionHandler(
+        async Task<Results<Ok<DeleteQuestionResponse>, ProblemHttpResult>> DeleteQuestion(
             int id,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -311,7 +311,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> UpvoteQuestionHandler(
+        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> UpvoteQuestion(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -329,7 +329,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> DownvoteQuestionHandler(
+        async Task<Results<Ok<VoteResponse>, ProblemHttpResult>> DownvoteQuestion(
             int questionId,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -347,7 +347,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> AnswerToQuestionHandler(
+        async Task<Results<Ok<AnswerResponse>, ProblemHttpResult>> AnswerToQuestion(
             [FromBody] CreateAnswerDto dto,
             int questionId,
             [FromServices] IMediator mediator,
@@ -366,7 +366,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> CommentToQuestionHandler(
+        async Task<Results<Ok<CommentResponse>, ProblemHttpResult>> CommentToQuestion(
             [FromBody] CreateCommentDto dto,
             int questionId,
             [FromServices] IMediator mediator,
@@ -384,7 +384,7 @@ public sealed class QuestionModule : IModule
         return TypedResults.Ok(result.Value);
     }
 
-    private static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestionHandler(
+    private static async Task<Results<Ok<CreateQuestionResponse>, ProblemHttpResult>> CreateQuestion(
         [FromBody] CreateQuestionDto dto,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken = default)
@@ -402,7 +402,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static async
-        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetUserQuestionHandler(
+        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetUserQuestion(
             int pageIndex,
             int pageSize,
             string orderBy,
@@ -422,7 +422,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static async
-        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetQuestionsHandler(
+        Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> GetQuestions(
             int pageIndex,
             int pageSize,
             string orderBy,
@@ -442,7 +442,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static async
-        Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ViewQuestionDetailHandler(
+        Task<Results<Ok<GetQuestionResponse>, ProblemHttpResult>> ViewQuestionDetail(
             int id,
             [FromServices] IMediator mediator,
             CancellationToken cancellationToken = default)
@@ -460,7 +460,7 @@ public sealed class QuestionModule : IModule
     }
 
     private static
-        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> SearchQuestionHandler(
+        async Task<Results<Ok<PagedResponse<GetQuestionResponse>>, ProblemHttpResult>> SearchQuestion(
             [FromQuery] string searchTerm,
             [FromQuery] int tagId,
             [FromQuery] int pageIndex,

@@ -1,17 +1,11 @@
-﻿using WebAPI.Model;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Model;
 using WebAPI.Response.ExternalLinkResponses;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class ExternalLinkExtensions
+[Mapper]
+public static partial class ExternalLinkExtensions
 {
-    public static ExternalLinkResponse ToExternalLinkResponse(this ExternalLinks obj)
-    {
-        return new()
-        {
-            Id = obj.Id,
-            Provider = obj.Provider,
-            Url = obj.Url
-        };
-    }
+    public static partial ExternalLinkResponse ToExternalLinkResponse(this ExternalLinks source);
 }

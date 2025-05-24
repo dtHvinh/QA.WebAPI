@@ -1,3 +1,10 @@
 ﻿namespace WebAPI.Response.CommunityResponses;
 
-public record CommunityMemberResponse(int Id, string Username, string ProfileImage, bool IsOwner, bool IsModerator);
+public class CommunityMemberResponse
+{
+    public int Id { get; set; }
+    public string UserName { get; set; } = default!;
+    public string ProfileImage { get; set; } = default!;
+    public bool IsOwner { get; set; }
+    public bool IsModerator { get; set; }
+}

@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# RMG012: Source member was not found for target member
+dotnet_diagnostic.RMG012.severity = none
+
+# RMG020: Source member is not mapped to any target member
+dotnet_diagnostic.RMG020.severity = none

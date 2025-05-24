@@ -9,7 +9,7 @@ public class CommentResponse : IResourceRight<CommentResponse>
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public string? Content { get; set; }
-    public AuthorResponse? Author { get; set; } = default!;
+    public AuthorResponse Author { get; set; } = default!;
     public string ResourceRight { get; set; } = nameof(ResourceRights.Viewer);
 
     public CommentResponse SetResourceRight(int? requesterId)

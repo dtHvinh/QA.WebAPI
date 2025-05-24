@@ -7,8 +7,8 @@ public class UserResponse : IResourceRight<int>
 {
     public string Username { get; set; } = default!;
     public int Reputation { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ModificationDate { get; set; }
     public string? ProfilePicture { get; set; } = default!;
     public bool IsDeleted { get; set; } = false;
     public int QuestionCount { get; set; }

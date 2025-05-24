@@ -1,60 +1,29 @@
-﻿using WebAPI.Dto;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Dto;
 using WebAPI.Model;
 using WebAPI.Response.CommentResponses;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class CommentExtensions
+[Mapper(AllowNullPropertyAssignment = false)]
+public static partial class CommentExtensions
 {
-    public static CommentResponse ToCommentResponse(this Comment comment)
-    {
-        return new CommentResponse()
-        {
-            Id = comment.Id,
-            Content = comment.Content,
-            CreationDate = comment.CreationDate,
-            ModificationDate = comment.ModificationDate,
-            Author = comment.Author.ToAuthorResponse()
-        };
-    }
+    public static partial CommentResponse ToCommentResponse(this Comment source);
+    public static partial CommentResponse ToCommentResponse(this QuestionComment source);
+    public static partial void ApplyUpdate(this UpdateCommentDto source, Comment target);
 
-    public static CommentResponse ToCommentResponse(this QuestionComment comment)
-    {
-        return new CommentResponse()
-        {
-            Id = comment.Id,
-            Content = comment.Content,
-            CreationDate = comment.CreationDate,
-            ModificationDate = comment.ModificationDate,
-            Author = comment.Author.ToAuthorResponse()
-        };
-    }
-
-    public static Comment UpdateFrom(this Comment comment, UpdateCommentDto dto)
-    {
-        comment.Content = dto.Content;
-        return comment;
-    }
+    private static partial QuestionComment ToQuestionComment(this CreateCommentDto source, int authorId, int questionId);
+    private static partial AnswerComment ToAnswerComment(this CreateCommentDto source, int authorId, int answerId);
 
     public static Comment ToComment(this CreateCommentDto dto, CommentTypes type, int authorId, int targetId)
     {
         if (type == CommentTypes.Question)
         {
-            return new QuestionComment()
-            {
-                Content = dto.Content,
-                AuthorId = authorId,
-                QuestionId = targetId
-            };
+            return ToQuestionComment(dto, authorId, targetId);
         }
         else
         {
-            return new AnswerComment()
-            {
-                Content = dto.Content,
-                AuthorId = authorId,
-                AnswerId = targetId
-            };
+            return ToAnswerComment(dto, authorId, targetId);
         }
     }
 }

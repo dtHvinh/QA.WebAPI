@@ -1,25 +1,14 @@
-﻿using WebAPI.Dto;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Dto;
 using WebAPI.Model;
 using WebAPI.Response.CommunityResponses;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class ChatRoomMessageExtensions
+[Mapper]
+public static partial class ChatRoomMessageExtensions
 {
-    /// <summary>
-    /// Convert ChatRequestDto to ChatRoomMessage 
-    /// by mapping <see cref="ChatRequestDto.ChatRoomId"/> and <see cref="ChatRequestDto.Message"/>
-    /// </summary>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    public static ChatRoomMessage ToChatRoomMessage(this ChatRequestDto dto)
-    {
-        return new ChatRoomMessage
-        {
-            ChatRoomId = dto.ChatRoomId,
-            Message = dto.Message,
-        };
-    }
+    public static partial ChatRoomMessage ToChatRoomMessage(this ChatRequestDto source);
 
     public static ChatRoomMessage WithAuthor(this ChatRoomMessage message, ApplicationUser author)
     {

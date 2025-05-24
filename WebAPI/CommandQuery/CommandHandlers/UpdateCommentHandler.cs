@@ -31,7 +31,9 @@ public class UpdateCommentHandler(
             return GenericResult<CommentResponse>.Failure("You are not authorized to delete this comment");
         }
 
-        _commentRepository.UpdateComment(comment.UpdateFrom(request.Comment));
+        request.Comment.ApplyUpdate(comment);
+
+        _commentRepository.UpdateComment(comment);
 
         var result = await _commentRepository.SaveChangesAsync(cancellationToken);
 

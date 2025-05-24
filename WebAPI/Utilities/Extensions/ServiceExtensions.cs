@@ -62,6 +62,7 @@ public static class ServiceExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(Configuration.GetConnectionString("Postgres"));
+            //options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
         });
 
         services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>

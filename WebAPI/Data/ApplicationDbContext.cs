@@ -24,7 +24,21 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(builder);
+        builder.Entity<ApplicationUser>().Ignore(e => e.ConcurrencyStamp)
+            .Ignore(e => e.SecurityStamp)
+            .Ignore(e => e.LockoutEnabled)
+            .Ignore(e => e.LockoutEnd)
+            .Ignore(e => e.TwoFactorEnabled)
+            .Ignore(e => e.PhoneNumberConfirmed)
+            .Ignore(e => e.EmailConfirmed)
+            .Ignore(e => e.AccessFailedCount);
+
+        builder.Ignore<IdentityUserLogin<int>>();
+
+        builder.Ignore<IdentityUserToken<int>>();
+        builder.Ignore<IdentityUserRole<int>>();
+        builder.Ignore<IdentityUserLogin<int>>();
+        builder.Ignore<IdentityRoleClaim<int>>();
 
         foreach (var entity in GetEntities())
         {
@@ -67,22 +81,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
             .HasValue<AnswerComment>(nameof(Answer));
 
         builder.ApplyConfiguration(new QuestionConfig());
-
-        builder.Entity<ApplicationUser>().Ignore(e => e.ConcurrencyStamp)
-            .Ignore(e => e.SecurityStamp)
-            .Ignore(e => e.LockoutEnabled)
-            .Ignore(e => e.LockoutEnd)
-            .Ignore(e => e.TwoFactorEnabled)
-            .Ignore(e => e.PhoneNumberConfirmed)
-            .Ignore(e => e.EmailConfirmed)
-            .Ignore(e => e.AccessFailedCount);
-
-        builder.Ignore<IdentityUserLogin<int>>();
-
-        builder.Ignore<IdentityUserToken<int>>();
-        builder.Ignore<IdentityUserRole<int>>();
-        builder.Ignore<IdentityUserLogin<int>>();
-        builder.Ignore<IdentityRoleClaim<int>>();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

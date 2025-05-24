@@ -1,17 +1,16 @@
-﻿using WebAPI.Dto;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Dto;
 using WebAPI.Model;
 using WebAPI.Response.AppUserResponses;
 using WebAPI.Response.AuthResponses;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class AppUserExtensions
+[Mapper]
+public static partial class AppUserExtensions
 {
-    public static AuthResponse ToAuthResponseDto(this ApplicationUser user, string accessToken, string refreshToken,
-        IList<string> roles)
-    {
-        return new AuthResponse(accessToken, refreshToken, user.UserName!, user.ProfilePicture, roles);
-    }
+    public static partial AuthResponse ToAuthResponseDto(this ApplicationUser source,
+        string accessToken, string refreshToken, IList<string> roles);
 
     public static ApplicationUser ToAppUser(this RegisterDto dto)
     {
@@ -22,28 +21,7 @@ public static class AppUserExtensions
         };
     }
 
-    public static AuthorResponse? ToAuthorResponse(this ApplicationUser? obj)
-    {
-        return obj is null
-            ? null
-            : new AuthorResponse
-            {
-                Id = obj.Id,
-                Username = obj!.UserName!,
-                ProfilePicture = obj.ProfilePicture,
-                Reputation = obj.Reputation
-            };
-    }
+    public static partial AuthorResponse ToAuthorResponse(this ApplicationUser source);
+    public static partial UserResponse ToUserResponse(this ApplicationUser source);
 
-    public static UserResponse ToUserResponse(this ApplicationUser? obj)
-    {
-        return new UserResponse
-        {
-            ProfilePicture = obj!.ProfilePicture,
-            Username = obj!.UserName!,
-            Reputation = obj.Reputation,
-            CreatedAt = obj.CreationDate,
-            UpdatedAt = obj.ModificationDate
-        };
-    }
 }

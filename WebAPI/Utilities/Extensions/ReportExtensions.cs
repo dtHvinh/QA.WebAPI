@@ -1,12 +1,11 @@
-﻿using WebAPI.Model;
+﻿using Riok.Mapperly.Abstractions;
+using WebAPI.Model;
 using WebAPI.Response.Reports;
 
 namespace WebAPI.Utilities.Extensions;
 
-public static class ReportExtensions
+[Mapper]
+public static partial class ReportExtensions
 {
-    public static GetReportResponse ToGetReportResponse(this Report report)
-    {
-        return new GetReportResponse(report.Id, report.Type, report.TargetId, report.Description, report.Status, report.CreationDate, report.ModificationDate);
-    }
+    public static partial GetReportResponse ToGetReportResponse(this Report report);
 }
